@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--========== Project ==========-->
+    <groupId>cyan.svc</groupId>
+    <artifactId>Nazgul</artifactId>
+    <packaging>pom</packaging>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <!--========== Modules ==========-->
+    <modules>
+        <module>nazgul-core</module>
+        <module>nazgul-example</module>
+    </modules>
+
+    <!--========== Properties ==========-->
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <dropwizard.version>0.9.3</dropwizard.version>
+        <swagger.version>1.5.9</swagger.version>
+        <mysql.jdbc.version>6.0.3</mysql.jdbc.version>
+        <mybatis.version>3.2.7</mybatis.version>
+        <flyway.version>4.0.3</flyway.version>
+        <xdiamond.version>1.0.4</xdiamond.version>
+    </properties>
+
+
+    <!--======================================================-->
+    <!--==================== Dependencies ====================-->
+    <!--======================================================-->
+    <dependencies>
+        <!--========== JUnit ==========-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.5</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>orangelife-release</id>
+            <url>http://developer.17orange.com:18081/nexus/content/repositories/releases/</url>
+            <name>Nexus Release Repository</name>
+        </repository>
+        <snapshotRepository>
+            <id>orangelife-snapshot</id>
+            <url>http://developer.17orange.com:18081/nexus/content/repositories/snapshots</url>
+            <name>Nexus Snapshot Repository</name>
+        </snapshotRepository>
+    </distributionManagement>
+
+</project>

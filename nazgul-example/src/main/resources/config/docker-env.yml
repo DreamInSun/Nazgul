@@ -1,0 +1,7 @@
+SERVICE_NAME: cyan.svc.Nagzul
+# SERVICE_NAME: orange.admin.Download
+SERVICE_VERSION: LTS
+CONFIG_CONN: config.17orange.com
+CONFIG_KEY: 123456
+PROFILE: dev
+API_VERSION: 1.0.0
