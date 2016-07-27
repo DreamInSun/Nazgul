@@ -1,17 +1,26 @@
 package cyan.nazgul.dropwizard;
 
+import com.sun.org.apache.xerces.internal.impl.dv.xs.BooleanDV;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import cyan.nazgul.dropwizard.cli.DockerCommand;
 import cyan.nazgul.dropwizard.component.DbHealthComponent;
 import cyan.nazgul.dropwizard.component.FreemarkerComponent;
 import cyan.nazgul.dropwizard.component.IComponent;
 import cyan.nazgul.dropwizard.component.SwaggerComponent;
 import cyan.nazgul.dropwizard.config.OneRingConfigSourceProvider;
+import cyan.nazgul.dropwizard.resources.BaseResource;
+import cyan.nazgul.dropwizard.resources.IResource;
+import cyan.nazgul.dropwizard.resources.JdbiResource;
+import cyan.nazgul.dropwizard.resources.MybatisResource;
+import cyan.util.clazz.ClassUtil;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,6 +87,8 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
         for (IComponent comp : m_CompList) {
             comp.run(config, env);
         }
+        /*========= Scan Resource & Register ==========*/
+        registerReources(g_classRoot + ".resources", config, env);
     }
 
     public void run() throws Exception {
@@ -102,4 +113,39 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
     }
 
 
+    protected void registerReources(String resPath, TConfig config, Environment env) {
+        g_Logger.info("\r\n/*========== Register Resources ===========*/\r\n" + resPath);
+
+        List<Class<?>> resList = ClassUtil.getClassList(resPath, false, null);
+        for (Class<?> resClazz : resList) {
+            /*========== Create Resource Instance ==========*/
+            Object resInstance = null;
+            try {
+                Class c = Class.forName(resClazz.getName());
+                Class[] parameterTypes = {config.getClass(), Environment.class};
+                java.lang.reflect.Constructor constructor = c.getConstructor(parameterTypes);
+                Object[] parameters = {config, env};
+                resInstance = constructor.newInstance(parameters);
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+            /*========== Register Resource ==========*/
+//            Boolean res1 = resClazz.isAssignableFrom(IResource.class);
+//            Boolean res2 = resClazz.isAssignableFrom(BaseResource.class);
+//            Boolean res3 = resClazz.isAssignableFrom(JdbiResource.class);
+//            Boolean res4 = resClazz.isAssignableFrom(MybatisResource.class);
+
+            //if (resClazz.isAssignableFrom(IResource.class)) {
+                env.jersey().register(resInstance);
+            //}
+        }
+    }
 }

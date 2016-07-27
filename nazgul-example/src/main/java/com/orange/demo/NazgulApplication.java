@@ -1,11 +1,9 @@
 package com.orange.demo;
 
-import com.orange.demo.resources.UserResource;
 import com.orange.demo.resources.HelloWorldResource;
 import com.orange.demo.resources.PersonResource;
+import com.orange.demo.resources.UserResource;
 import cyan.nazgul.dropwizard.DbApplication;
-import cyan.nazgul.dropwizard.manage.RiakClient;
-import cyan.nazgul.dropwizard.manage.RiakClientManager;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -23,28 +21,18 @@ public class NazgulApplication<TConfig extends NazgulConfiguration> extends DbAp
     }
 
     /*========== Application Initialization ==========*/
-    @Override
-    public void initialize(Bootstrap<TConfig> bootstrap) {
-        super.initialize(bootstrap);
-        /*===== Assets Bundle =====*/
-        bootstrap.addBundle(new AssetsBundle("/assets/", "/assets"));
-    }
+//    @Override
+//    public void initialize(Bootstrap<TConfig> bootstrap) {
+//        super.initialize(bootstrap);
+//        /*===== Assets Bundle =====*/
+//        bootstrap.addBundle(new AssetsBundle("/assets/", "/assets"));
+//    }
 
     /*========== Application Run ==========*/
-    @Override
-    public void run(TConfig config, Environment environment) throws Exception {
-        super.run(config, environment);
-        /*===== Manage =====*/
-        RiakClient client = new RiakClient();
-        RiakClientManager riakClientManager = new RiakClientManager(client);
-        environment.lifecycle().manage(riakClientManager);
-        /*===== Task =====*/
-        //environment.admin().addTask(new TruncateDatabaseTask(database));
-        /*===== Register Resources =====*/
-        environment.jersey().register(new UserResource(config, environment));
-        environment.jersey().register(new HelloWorldResource(config, environment));
-        environment.jersey().register(new PersonResource(config, environment));
-    }
+//    @Override
+//    public void run(TConfig config, Environment environment) throws Exception {
+//        super.run(config, environment);
+//    }
 
     /*========== Application Entrance ==========*/
     public static void main(String[] args) throws Exception {

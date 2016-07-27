@@ -7,8 +7,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 /**
  * Created by DreamInSun on 2016/7/22.
  */
-public class MybatisResource {
-
+public class MybatisResource extends BaseResource {
 
     /*========== Static Properties ==========*/
     protected static SqlSessionFactory g_sessionFactory;
@@ -17,7 +16,7 @@ public class MybatisResource {
         MybatisResource.g_sessionFactory = g_sessionFactory;
     }
 
-    protected SqlSessionFactory getSqlSessionFactory(){
+    protected SqlSessionFactory getSqlSessionFactory() {
         return MybatisResource.g_sessionFactory;
     }
 

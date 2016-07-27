@@ -12,12 +12,11 @@ import java.util.Map;
 /**
  * Created by DreamInSun on 2016/7/22.
  */
-public class JdbiResource {
+public class JdbiResource extends BaseResource{
 
     /*========== Static Properties ==========*/
     protected final static DBIFactory g_DbiFactory = new DBIFactory();
     protected static DBI g_jdbi;
-
 
     /*========== Properties ==========*/
     protected Map<Class, Object> m_DaoMap = new HashMap<>();

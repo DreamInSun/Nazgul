@@ -45,4 +45,6 @@ public class DbApplication<TConfig extends DbConfiguration> extends BaseApplicat
             comp.run(config, env);
         }
     }
+
+
 }
