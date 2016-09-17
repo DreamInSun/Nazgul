@@ -37,14 +37,11 @@ Nazgul是基于Dropwizard的Orangelife高度定制版Java微服务开发框架�
 ====================
 ### 项目地址
 
-Web地址
-https://coding.net/u/orangelife/p/orange.core.Downloads/members/orangelife
-
-HTTP下载地址
+Coding.net
 https://coding.net/u/dreaminsun/p/cyan.svc.Nazgul/git
 
-Git下载地址
-git@git.coding.net:orangelife/orange.core.Downloads.git
+GitHub
+https://github.com/DreamInSun/Nazgul
 
 ====================
 ### 开箱操作:
