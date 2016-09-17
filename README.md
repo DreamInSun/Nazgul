@@ -120,5 +120,5 @@ https://github.com/DreamInSun/Nazgul
 * 数据库脚本版本按照V{版本数字}_{主要操作}格式编写。
 * 运行参数：db init，则在有效连接内初始化数据库，添加版本记录，不会执行数据库脚本。
 * 运行参数：db migrate，则对已初始化的数据库进行版本升级，若未初始化会出错。
-* 后续版本中，docker指令--auto-migrate true参数将自动运行db migrate 
+* docker指令使用“--auto-migrate true”参数将自动运行db migrate 
 * 脚本请先在测试数据库执行确保不会中断，造成升级失败。
