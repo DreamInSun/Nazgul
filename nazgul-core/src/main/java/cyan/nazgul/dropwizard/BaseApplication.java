@@ -113,7 +113,6 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
             new_args = argList.toArray(new_args);
             this.m_args = new_args;
         }
-
         /*===== Load Environment Config =====*/
         EnvConfig dockerEnv = null;
         /* Load EnvConfig */
@@ -137,6 +136,15 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
     }
 
 
+    /*========== Assistant Function ==========*/
+
+    /**
+     * Search Resource class inhert from BaseResrouce, and register them.
+     *
+     * @param resPath
+     * @param config
+     * @param env
+     */
     protected void registerReources(String resPath, TConfig config, Environment env) {
         g_Logger.info("\r\n/*========== Register Resources ===========*/\r\n" + resPath);
 

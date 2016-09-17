@@ -41,7 +41,7 @@ Web地址
 https://coding.net/u/orangelife/p/orange.core.Downloads/members/orangelife
 
 HTTP下载地址
-https://git.coding.net/orangelife/orange.core.Downloads.git
+https://coding.net/u/dreaminsun/p/cyan.svc.Nazgul/git
 
 Git下载地址
 git@git.coding.net:orangelife/orange.core.Downloads.git
@@ -115,3 +115,11 @@ git@git.coding.net:orangelife/orange.core.Downloads.git
 * /src/main/resource/web目录为默认静态页服务目录，可以放置静态页工程用于管理界面和交互界面。
 * 实现使用了自带的AssetsBundle，不可再添加AssetsBundle，否则会覆盖现有配置。
 * 若需要其他路径的静态页服务，可以添加Resource服务。
+
+#### 数据库脚本管理
+* 框架使用flyway进行数据库版本管理，版本脚本存放在/src/main/resource/flyway下，分数据库类型存放。
+* 数据库脚本版本按照V{版本数字}_{主要操作}格式编写。
+* 运行参数：db init，则在有效连接内初始化数据库，添加版本记录，不会执行数据库脚本。
+* 运行参数：db migrate，则对已初始化的数据库进行版本升级，若未初始化会出错。
+* 后续版本中，docker指令--auto-migrate参数将自动运行db migrate 
+* 脚本请先在测试数据库执行确保不会中断，造成升级失败。

@@ -44,6 +44,9 @@ public class DockerCommand<T extends Configuration> extends EnvironmentCommand<T
     @Override
     public void configure(Subparser subparser) {
         super.configure(subparser);
+        /*===== Command Option =====*/
+        subparser.addArgument("--auto-migrate").dest("auto-migrate").type(Boolean.class).setDefault(false).required(false).help("Auto run db migrate");
+        subparser.addArgument("--debug").dest("debug").type(Boolean.class).setDefault(false).required(false).help("Run on debug mode");
     }
 
     @Override
