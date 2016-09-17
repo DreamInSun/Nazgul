@@ -6,7 +6,6 @@ import cyan.nazgul.dropwizard.component.*;
 import cyan.nazgul.dropwizard.config.OneRingConfigSourceProvider;
 import cyan.util.clazz.ClassUtil;
 import io.dropwizard.Application;
-import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.slf4j.Logger;
@@ -20,7 +19,7 @@ import java.util.List;
  * Created by DreamInSun on 2016/7/21.
  */
 public class BaseApplication<TConfig extends BaseConfiguration> extends Application<TConfig> {
-    private static final Logger g_Logger = LoggerFactory.getLogger(BaseApplication.class);
+    private static final Logger g_logger = LoggerFactory.getLogger(BaseApplication.class);
 
     /*========== Static Properties ==========*/
     protected static String g_classRoot = null;
@@ -48,7 +47,7 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
     /*========== Application Initialization ==========*/
     @Override
     public void initialize(Bootstrap<TConfig> bootstrap) {
-        System.out.println("\r\n/*========= Initializing ==========*/\r\n");
+        System.out.println("\r\n/*================== Initializing ===================*/\r\n");
         m_bootstrap = bootstrap;
         /*===== Replace Configuration Provider =====*/
         bootstrap.setConfigurationSourceProvider(OneRingConfigSourceProvider.getInstance(g_isDebug, this.getClass()));
@@ -76,7 +75,9 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
 
     @Override
     public void run(TConfig config, Environment env) throws Exception {
-        System.out.println("\r\n/*========= Run Application ==========*/\r\n");
+        g_logger.info("\r\n/*======================================================*/" +
+                "\r\n/*================== Run Application ===================*/" +
+                "\r\n/*======================================================*/\r\n");
 
         /*===== Post Initialize =====*/
         this.postInitialize(EnvConfig.getRuntimeEnvConfig(), m_bootstrap);
@@ -97,7 +98,10 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
     }
 
     public void run() throws Exception {
-        System.out.println("\n\r/*========== Start Application ==========*/\n\r");
+        System.out.println("/*===========================================================*/");
+        System.out.println("/*==================== Start Application ====================*/");
+        System.out.println("/*===========================================================*/\r\n");
+
         /*===== Determine Debug Mode =====*/
         List<String> argList = new ArrayList<>();
         for (String arg : this.m_args) {
@@ -146,12 +150,12 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
      * @param env
      */
     protected void registerReources(String resPath, TConfig config, Environment env) {
-        g_Logger.info("\r\n/*========== Register Resources ===========*/\r\n" + resPath);
+        g_logger.info("\r\n\r\n/*========== Register Resources ===========*/\r\n");
 
         List<Class<?>> resList = ClassUtil.getClassList(resPath, false, null);
 
         for (Class<?> resClazz : resList) {
-            g_Logger.info("Register Class: " + resClazz);
+            g_logger.info("Register Class: " + resClazz);
             /*========== Create Resource Instance ==========*/
             Object resInstance = null;
             try {

@@ -1,8 +1,11 @@
 package cyan.nazgul.dropwizard.cli;
 
+import cyan.nazgul.dropwizard.DbConfiguration;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.cli.EnvironmentCommand;
+import io.dropwizard.db.PooledDataSourceFactory;
+import io.dropwizard.flyway.FlywayFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -10,6 +13,7 @@ import net.sourceforge.argparse4j.inf.Subparser;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
+import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +21,10 @@ import org.slf4j.LoggerFactory;
  * Created by DreamInSun on 2016/7/18.
  */
 public class DockerCommand<T extends Configuration> extends EnvironmentCommand<T> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DockerCommand.class);
+    private static final Logger g_logger = LoggerFactory.getLogger(DockerCommand.class);
+
+    /*========== Static Properties ==========*/
+    private static Bootstrap<?> g_bootstrap = null;
 
     /*========== Properties ==========*/
     private final Class<T> configurationClass;
@@ -51,13 +58,27 @@ public class DockerCommand<T extends Configuration> extends EnvironmentCommand<T
 
     @Override
     protected void run(Environment environment, Namespace namespace, T configuration) throws Exception {
+        /*===== Database Migrate =====*/
+        if (true == namespace.getBoolean("auto-migrate")) {
+            g_logger.info("\r\n\r\n/*========== Migrate Database ==========*/\r\n");
+            if (configuration instanceof DbConfiguration) {
+                /*===== Get Database =====*/
+                DbConfiguration config = (DbConfiguration) configuration;
+                /*===== Init Flyway =====*/
+                final PooledDataSourceFactory datasourceFactory = config.getDataSourceFactory();
+                final FlywayFactory flywayFactory = config.getFlywayFactory(configuration);
+                final Flyway flyway = flywayFactory.build(datasourceFactory.build(g_bootstrap.getMetricRegistry(), "Flyway"));
+                flyway.migrate();
+            }
+        }
+        /*===== Staty Server =====*/
         final Server server = configuration.getServerFactory().build(environment);
         try {
             server.addLifeCycleListener(new LifeCycleListener());
             cleanupAsynchronously();
             server.start();
         } catch (Exception e) {
-            LOGGER.error("Unable to start server, shutting down", e);
+            g_logger.error("Unable to start server, shutting down", e);
             server.stop();
             cleanup();
             throw e;
@@ -68,6 +89,8 @@ public class DockerCommand<T extends Configuration> extends EnvironmentCommand<T
     /*========== Override : ConfiguredCommand ==========*/
     @Override
     public void run(Bootstrap<?> bootstrap, Namespace namespace) throws Exception {
+        g_bootstrap = bootstrap;
+        /*===== Run Command =====*/
         super.run(bootstrap, namespace);
     }
 
