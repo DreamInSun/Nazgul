@@ -1,6 +1,7 @@
 package cyan.nazgul.dropwizard.component;
 
 import com.google.common.collect.ImmutableMap;
+import cyan.nazgul.docker.svc.EnvConfig;
 import cyan.nazgul.dropwizard.BaseConfiguration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -29,6 +30,11 @@ public class FreemarkerComponent<TConfig extends BaseConfiguration> implements I
     @Override
     public void init(Bootstrap bootstrap) {
         bootstrap.addBundle(new FreemarkerViewBundle());
+    }
+
+    @Override
+    public void postInit(EnvConfig envConfig, Bootstrap<TConfig> bootstrap) {
+
     }
 
     @Override

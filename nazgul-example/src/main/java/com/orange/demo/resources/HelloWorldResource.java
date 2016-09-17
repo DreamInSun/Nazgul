@@ -9,6 +9,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.orange.demo.NazgulConfiguration;
 import com.orange.demo.entities.Saying;
 import com.google.common.base.Optional;
+import cyan.nazgul.dropwizard.resources.BaseResource;
 import cyan.svc.EntityOutput;
 import io.dropwizard.jersey.caching.CacheControl;
 import io.dropwizard.setup.Environment;
@@ -16,9 +17,17 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.activation.MimetypesFileTypeMap;
+import javax.servlet.ServletContext;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -27,7 +36,8 @@ import java.util.concurrent.atomic.AtomicLong;
 @Produces(MediaType.APPLICATION_JSON)
 @Timed
 @Metered
-public class HelloWorldResource {
+public class HelloWorldResource extends BaseResource<NazgulConfiguration> {
+    private final static Logger g_logger = LoggerFactory.getLogger(HelloWorldResource.class);
 
     /*========== Properties ==========*/
     private final String template;
@@ -36,6 +46,7 @@ public class HelloWorldResource {
 
     /*========== Constructor ==========*/
     public HelloWorldResource(NazgulConfiguration config, Environment environment) {
+        super(config, environment);
         this.template = config.getTemplate();
         this.defaultName = config.getDefaultName();
         this.counter = new AtomicLong();
@@ -68,5 +79,28 @@ public class HelloWorldResource {
     @CacheControl(maxAge = 6, maxAgeUnit = TimeUnit.HOURS)
     public EntityOutput getTest(@PathParam("id") String id) {
         return new EntityOutput(1, "Normal Test" + id, null);
+    }
+
+
+    /*========= File ==========*/
+    @ApiOperation(
+            value = "获取图片文件",
+            notes = "获取/assets/images文件夹下的image文件")
+    @GET
+    @Path("/image/{imageName}")
+    @Produces("image/*")
+    public Response getImage(@PathParam("imageName") String imageName,
+                             @Context ServletContext application) {
+        g_logger.info("getImage:\t" + imageName);
+        InputStream fileStream = this.getResourceAsStream("assets/images/" + imageName);
+        File file = this.getResource("assets/images/" + imageName);
+
+        /*===== Exception Response ======*/
+        if (null == fileStream) {
+            throw new WebApplicationException(404);
+        }
+        /*===== Response ======*/
+        String contentType = new MimetypesFileTypeMap().getContentType(imageName);
+        return Response.ok(file, contentType).header("", "").build();
     }
 }

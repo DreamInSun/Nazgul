@@ -34,6 +34,12 @@ public class SwaggerComponent<TConfig extends BaseConfiguration> implements ICom
     }
 
     @Override
+    public void postInit(EnvConfig envConfig, Bootstrap<TConfig> bootstrap) {
+
+
+    }
+
+    @Override
     public void run(TConfig baseConfiguration, Environment environment) {
 
         /* Register Listing */

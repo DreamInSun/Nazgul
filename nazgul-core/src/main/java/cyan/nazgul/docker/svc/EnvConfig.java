@@ -81,9 +81,9 @@ public class EnvConfig {
         return envConf;
     }
 
-    public static EnvConfig getFromResource(String resourcePath) throws FileNotFoundException {
+    public static EnvConfig getFromResource(String resourcePath, Class<?> appClass) throws FileNotFoundException {
         EnvConfig envConf = new EnvConfig();
-        envConf.loadFromResource(resourcePath);
+        envConf.loadFromResource(resourcePath, appClass);
         return envConf;
     }
 
@@ -92,8 +92,12 @@ public class EnvConfig {
 
     }
 
-    public void loadFromResource(String path) throws FileNotFoundException {
-        InputStream inputStream = this.getClass().getResourceAsStream(path);
+    public void loadFromResource(String path , Class<?> appClass) throws FileNotFoundException {
+
+        String resPath = appClass.getResource(path).getPath();
+
+
+        InputStream inputStream = appClass.getResourceAsStream(path);
         if (inputStream != null) {
             this.loadFromYmal(inputStream);
         } else {

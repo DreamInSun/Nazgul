@@ -7,7 +7,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 /**
  * Created by DreamInSun on 2016/7/22.
  */
-public class MybatisResource extends BaseResource {
+public class MybatisResource<TConfig extends DbConfiguration> extends BaseResource<TConfig> {
 
     /*========== Static Properties ==========*/
     protected static SqlSessionFactory g_sessionFactory;
@@ -24,7 +24,7 @@ public class MybatisResource extends BaseResource {
     //protected Map<Class, Object> m_DaoMap = new HashMap<>();
 
     /*========== Constructor ==========*/
-    public MybatisResource(DbConfiguration config, Environment environment) {
-
+    public MybatisResource(TConfig config, Environment environment) {
+        super(config, environment);
     }
 }

@@ -21,7 +21,7 @@ import javax.ws.rs.core.MediaType;
 @Api(value = "/people", description = "Person Information", position = 1)
 @Path("/people/{id}")
 @Produces(MediaType.TEXT_HTML)
-public class PersonResource extends JdbiResource {
+public class PersonResource extends JdbiResource<NazgulConfiguration> {
     /*========== Properties =========*/
     private PersonDAO m_personDao = null;
 

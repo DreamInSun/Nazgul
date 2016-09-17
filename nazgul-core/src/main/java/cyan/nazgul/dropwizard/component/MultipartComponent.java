@@ -1,5 +1,6 @@
 package cyan.nazgul.dropwizard.component;
 
+import cyan.nazgul.docker.svc.EnvConfig;
 import cyan.nazgul.dropwizard.BaseConfiguration;
 import io.dropwizard.forms.MultiPartBundle;
 import io.dropwizard.setup.Bootstrap;
@@ -12,6 +13,11 @@ public class MultipartComponent<TConfig extends BaseConfiguration> implements IC
     @Override
     public void init(Bootstrap bootstrap) {
         bootstrap.addBundle(new MultiPartBundle());
+    }
+
+    @Override
+    public void postInit(EnvConfig envConfig, Bootstrap<TConfig> bootstrap) {
+
     }
 
     @Override

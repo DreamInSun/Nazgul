@@ -1,6 +1,7 @@
 package cyan.nazgul.dropwizard.resources;
 
 import cyan.nazgul.dropwizard.DbConfiguration;
+import io.dropwizard.Configuration;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Environment;
 import org.skife.jdbi.v2.DBI;
@@ -12,7 +13,7 @@ import java.util.Map;
 /**
  * Created by DreamInSun on 2016/7/22.
  */
-public class JdbiResource extends BaseResource{
+public class JdbiResource<TConfig extends DbConfiguration> extends BaseResource<TConfig> {
 
     /*========== Static Properties ==========*/
     protected final static DBIFactory g_DbiFactory = new DBIFactory();
@@ -22,7 +23,8 @@ public class JdbiResource extends BaseResource{
     protected Map<Class, Object> m_DaoMap = new HashMap<>();
 
     /*========== Constructor ==========*/
-    public JdbiResource(DbConfiguration config, Environment environment) {
+    public JdbiResource(TConfig config, Environment environment) {
+        super(config, environment);
         if (g_jdbi == null) {
             g_jdbi = g_DbiFactory.build(environment, config.getDataSourceFactory(), "mysql");
         }

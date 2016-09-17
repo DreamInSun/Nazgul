@@ -24,13 +24,13 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
     /*========== Factory ==========*/
     protected static OneRingConfigSourceProvider g_ConfigProcider = null;
 
-    public static OneRingConfigSourceProvider getInstance() {
-        return OneRingConfigSourceProvider.getInstance(false);
+    public static OneRingConfigSourceProvider getInstance(Class<?> appClass) {
+        return OneRingConfigSourceProvider.getInstance(false, appClass);
     }
 
-    public static OneRingConfigSourceProvider getInstance(boolean isDevel) {
+    public static OneRingConfigSourceProvider getInstance(boolean isDevel, Class<?> appClass) {
         if (g_ConfigProcider == null) {
-            g_ConfigProcider = new OneRingConfigSourceProvider(isDevel);
+            g_ConfigProcider = new OneRingConfigSourceProvider(isDevel, appClass);
         }
         return g_ConfigProcider;
     }
@@ -38,7 +38,9 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
     /*========== Properties ==========*/
     protected ObjectMapper m_jsonMapper = new ObjectMapper();
     protected Map<String, Object> configMap = null;
+    protected Class<?> m_AppClass = null;
     protected boolean m_isDevel = false;
+
 
     /*========== Getter & Setter ==========*/
     public Map<String, Object> getConfigMap() {
@@ -46,9 +48,10 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
     }
 
     /*========== Constructor ==========*/
-    protected OneRingConfigSourceProvider(boolean isDevel) {
+    protected OneRingConfigSourceProvider(boolean isDevel, Class<?> appClass) {
         super();
         this.m_isDevel = isDevel;
+        this.m_AppClass = appClass;
     }
 
     /*========== Interface : ConfigurationSourceProvider ==========*/
@@ -74,29 +77,10 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
             g_Logger.error(e.getMessage());
         }
         /*===== Load OneRing Config =====*/
-        EnvConfig dockerEnv = null;
-        try {
-            if (this.m_isDevel) {
-                System.out.println("Get Docker EnvConfig via Developing Mode.");
-                dockerEnv = EnvConfig.getFromResource("/config/docker-env.yml");
-            } else {
-                System.out.println("Get Docker EnvConfig via Standard Mode.");
-                dockerEnv = EnvConfig.getFromEnvironment();
-            }
-            if (dockerEnv != null) {
-                System.out.println(dockerEnv.toString());
-                System.out.println("\r\n/*========== Load OneRing Config ==========*/\r\n");
-                /* Save Env for further usage */
-                EnvConfig.setRuntimeEnvConfig(dockerEnv);
-            }
-            /* Load Config From OneRing */
-            oneRingConfig = new ConfigLoader(dockerEnv).getConfigMap();
-        } catch (Exception e) {
-            g_Logger.error(e.getMessage());
-        }
-        if (dockerEnv == null) {
-            g_Logger.warn("Docker EnvConfig is Null.");
-        }
+        EnvConfig dockerEnv = EnvConfig.getRuntimeEnvConfig();
+        /* Load Config From OneRing */
+        oneRingConfig = new ConfigLoader(dockerEnv).getConfigMap();
+
         /*===== Merge Config =====*/
         if (inputConfig != null) {
             //defaultConfig.putAll(inputConfig);
@@ -127,6 +111,10 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
 
     public Map<String, Object> loadConfigFile(String path) throws Exception {
         Map<String, Object> configMap = new HashMap<>();
+
+        /*===== Debug =====*/
+        String resPath = m_AppClass.getResource("/config/default.yml").getFile();
+        g_Logger.info(resPath);
         /*===== Load File =====*/
         InputStream fileInputStream = null;
         File file = new File(path);
@@ -142,7 +130,7 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
             } else {
                 /* Load From Resource */
                 System.out.println("Load File Resource: " + path);
-                fileInputStream = OneRingConfigSourceProvider.class.getResourceAsStream(path);
+                fileInputStream = m_AppClass.getResourceAsStream(path);
                 if (fileInputStream == null) {
                     throw new FileNotFoundException("Could not find file [" + path + "] in both absolute path and resource path.");
                 }
@@ -185,7 +173,7 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
 
     public String getJarPath() {
         /*===== Get Jar File Path =====*/
-        String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+        String path = this.m_AppClass.getProtectionDomain().getCodeSource().getLocation().getPath();
         try {
             path = java.net.URLDecoder.decode(path, "UTF-8");
         } catch (UnsupportedEncodingException e) {

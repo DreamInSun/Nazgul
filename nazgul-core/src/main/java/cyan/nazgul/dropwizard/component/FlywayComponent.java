@@ -1,5 +1,6 @@
 package cyan.nazgul.dropwizard.component;
 
+import cyan.nazgul.docker.svc.EnvConfig;
 import cyan.nazgul.dropwizard.DbConfiguration;
 import cyan.nazgul.dropwizard.bundle.FlywayBundle;
 import io.dropwizard.setup.Bootstrap;
@@ -20,6 +21,11 @@ public class FlywayComponent<TConfig extends DbConfiguration> implements ICompon
     public void init(Bootstrap bootstrap) {
 
         bootstrap.addBundle(new FlywayBundle<TConfig>(m_klass));
+    }
+
+    @Override
+    public void postInit(EnvConfig envConfig, Bootstrap<TConfig> bootstrap) {
+
     }
 
     @Override

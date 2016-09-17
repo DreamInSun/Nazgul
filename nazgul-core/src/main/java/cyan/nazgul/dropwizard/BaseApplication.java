@@ -1,17 +1,9 @@
 package cyan.nazgul.dropwizard;
 
-import com.sun.org.apache.xerces.internal.impl.dv.xs.BooleanDV;
-import com.sun.org.apache.xpath.internal.operations.Bool;
+import cyan.nazgul.docker.svc.EnvConfig;
 import cyan.nazgul.dropwizard.cli.DockerCommand;
-import cyan.nazgul.dropwizard.component.DbHealthComponent;
-import cyan.nazgul.dropwizard.component.FreemarkerComponent;
-import cyan.nazgul.dropwizard.component.IComponent;
-import cyan.nazgul.dropwizard.component.SwaggerComponent;
+import cyan.nazgul.dropwizard.component.*;
 import cyan.nazgul.dropwizard.config.OneRingConfigSourceProvider;
-import cyan.nazgul.dropwizard.resources.BaseResource;
-import cyan.nazgul.dropwizard.resources.IResource;
-import cyan.nazgul.dropwizard.resources.JdbiResource;
-import cyan.nazgul.dropwizard.resources.MybatisResource;
 import cyan.util.clazz.ClassUtil;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
@@ -20,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +27,7 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
     /*========== Properties ==========*/
     protected List<IComponent<TConfig>> m_CompList = new ArrayList<>();
     protected String[] m_args = null;
+    Bootstrap<TConfig> m_bootstrap = null;
 
     /*========== Configuration ==========*/
     protected Boolean g_isDebug = false;
@@ -49,21 +41,23 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
         /* Init Compoments */
         m_CompList.add(new SwaggerComponent<>());
         m_CompList.add(new DbHealthComponent<>());
+        m_CompList.add(new AssetsComponent<>());
     }
 
     /*========== Application Initialization ==========*/
     @Override
     public void initialize(Bootstrap<TConfig> bootstrap) {
         System.out.println("\r\n/*========= Initializing ==========*/\r\n");
-
+        m_bootstrap = bootstrap;
         /*===== Replace Configuration Provider =====*/
-        bootstrap.setConfigurationSourceProvider(OneRingConfigSourceProvider.getInstance(g_isDebug));
+        bootstrap.setConfigurationSourceProvider(OneRingConfigSourceProvider.getInstance(g_isDebug, this.getClass()));
         /* Enable variable substitution with environment variables */
 //        bootstrap.setConfigurationSourceProvider(
 //                new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(),
 //                        new EnvironmentVariableSubstitutor(false)
 //                )
 //        );
+
         /*===== Initialize Components =====*/
         for (IComponent comp : m_CompList) {
             comp.init(bootstrap);
@@ -72,9 +66,19 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
         bootstrap.addCommand(new DockerCommand(this));
     }
 
+    public void postInitialize(EnvConfig envConfig, Bootstrap<TConfig> bootstrap) {
+         /*===== Initialize Components =====*/
+        for (IComponent comp : m_CompList) {
+            comp.postInit(envConfig, bootstrap);
+        }
+    }
+
     @Override
     public void run(TConfig config, Environment env) throws Exception {
         System.out.println("\r\n/*========= Run Application ==========*/\r\n");
+
+        /*===== Post Initialize =====*/
+        this.postInitialize(EnvConfig.getRuntimeEnvConfig(), m_bootstrap);
 
         /*===== Config Swagger =====*/
         config.swaggerBundleConfiguration.setResourcePackage(this.g_classRoot + ".resources");
@@ -108,6 +112,25 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
             new_args = argList.toArray(new_args);
             this.m_args = new_args;
         }
+
+        /*===== Load Environment Config =====*/
+        EnvConfig dockerEnv = null;
+        /* Load EnvConfig */
+        if (g_isDebug) {
+            System.out.println("Get Docker EnvConfig via Developing Mode.");
+            dockerEnv = EnvConfig.getFromResource("/config/docker-env.yml", this.getClass());
+        } else {
+            System.out.println("Get Docker EnvConfig via Standard Mode.");
+            dockerEnv = EnvConfig.getFromEnvironment();
+        }
+        /* Print EnvConfig */
+        if (dockerEnv != null) {
+            System.out.println(dockerEnv.toString());
+            System.out.println("\r\n/*========== Load OneRing Config ==========*/\r\n");
+                /* Save Env for further usage */
+            EnvConfig.setRuntimeEnvConfig(dockerEnv);
+        }
+
         /*===== Kick Start =====*/
         this.run(this.m_args);
     }
@@ -117,7 +140,9 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
         g_Logger.info("\r\n/*========== Register Resources ===========*/\r\n" + resPath);
 
         List<Class<?>> resList = ClassUtil.getClassList(resPath, false, null);
+
         for (Class<?> resClazz : resList) {
+            g_Logger.info("Register Class: " + resClazz);
             /*========== Create Resource Instance ==========*/
             Object resInstance = null;
             try {
@@ -126,6 +151,7 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
                 java.lang.reflect.Constructor constructor = c.getConstructor(parameterTypes);
                 Object[] parameters = {config, env};
                 resInstance = constructor.newInstance(parameters);
+                env.jersey().register(resInstance);
             } catch (InstantiationException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
@@ -137,15 +163,6 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
             } catch (InvocationTargetException e) {
                 e.printStackTrace();
             }
-            /*========== Register Resource ==========*/
-//            Boolean res1 = resClazz.isAssignableFrom(IResource.class);
-//            Boolean res2 = resClazz.isAssignableFrom(BaseResource.class);
-//            Boolean res3 = resClazz.isAssignableFrom(JdbiResource.class);
-//            Boolean res4 = resClazz.isAssignableFrom(MybatisResource.class);
-
-            //if (resClazz.isAssignableFrom(IResource.class)) {
-                env.jersey().register(resInstance);
-            //}
         }
     }
 }

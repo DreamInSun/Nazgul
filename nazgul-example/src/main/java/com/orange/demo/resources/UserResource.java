@@ -26,7 +26,7 @@ import javax.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
 @Timed
 @Metered
-public class UserResource extends MybatisResource {
+public class UserResource extends MybatisResource<NazgulConfiguration> {
 
     /*========== Constructor =========*/
     public UserResource(NazgulConfiguration config, Environment env) {

@@ -1,4 +1,4 @@
-SERVICE_NAME: cyan.svc.Nagzul
+SERVICE_NAME: cyan.svc.Nazgul
 # SERVICE_NAME: orange.admin.Download
 SERVICE_VERSION: LTS
 CONFIG_CONN: config.17orange.com

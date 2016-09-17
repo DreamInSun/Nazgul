@@ -1,5 +1,6 @@
 package cyan.nazgul.dropwizard.component;
 
+import cyan.nazgul.docker.svc.EnvConfig;
 import cyan.nazgul.dropwizard.BaseConfiguration;
 import cyan.nazgul.dropwizard.auth.ExampleAuthenticator;
 import cyan.nazgul.dropwizard.auth.ExampleAuthorizer;
@@ -24,6 +25,11 @@ public class AuthenComponent<TConfig extends BaseConfiguration> implements IComp
     /*========== Interface : IComponent ==========*/
     @Override
     public void init(Bootstrap bootstrap) {
+
+    }
+
+    @Override
+    public void postInit(EnvConfig envConfig, Bootstrap<TConfig> bootstrap) {
 
     }
 

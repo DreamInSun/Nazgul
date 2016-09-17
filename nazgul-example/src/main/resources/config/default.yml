@@ -21,7 +21,6 @@ swagger:
   resourcePackage: com.example.helloworld.resources
 
 #========== DbConfiguration ==========#
-
 database:
   # url: jdbc:mysql://hamohome.com:13306/dropwizard
   # user: dropwizard
@@ -45,7 +44,6 @@ database:
   evictionInterval: 10s
   # the minimum amount of time an connection must sit idle in the pool before it is eligible for eviction
   minIdleTime: 1 minute
-
 
 flyway:
   # The encoding of SQL migrations. (default: UTF-8)

@@ -1,18 +1,18 @@
 java -jar ./target/Nagzul-0.0.1-SNAPSHOT.jar server D:\WorkStation\Java_WorkSpace\DropWizard\hello-world.yml
 
-java -jar ./target/Nagzul-0.0.1-SNAPSHOT.jar docker config.yml --debug
+java -jar ./target/nazgul-example-0.0.1-SNAPSHOT.jar docker config.yml --debug
 
 NOTE: Debug mode cannot be used in .jar file.
 
-
-
 ====================
+### 项目说明
+
 Nazgul是基于Dropwizard的Orangelife高度定制版Java微服务开发框架。
 能够使用极少的配置，完成微服务的开发工作。
 集代码开发、文档管理、数据库管理、配置管理于一体的快速开发框架。
 完全符合我司开发流程管理特点，量身定制。
 
-主要特性如下:
+#### 主要特性
   1. FatJar模式独立运行，Jettey作为Servlet容器，内存足迹小，节省服务器资源。打包基础应用仅26M.
   1. 直连OneRing服务，支持”应用默认配置+本地运行配置+在线配置“的组合配置模式，支持YAML和JSON格式。
   1. 快速切换开发模式和生产模式，“--debug”参数
@@ -27,7 +27,7 @@ Nazgul是基于Dropwizard的Orangelife高度定制版Java微服务开发框架�
   1. 支持服务内置健康检查
   1. 自带常用Maven插件，用于加速开发
 
-带完成特性：
+#### 待完成特性：
   1. 集成Horoshu，服务代理调用
   1. 制作成Maven-Archetype,直接由IDE创建
   1. 制作Docker打包样例
@@ -35,6 +35,7 @@ Nazgul是基于Dropwizard的Orangelife高度定制版Java微服务开发框架�
   1. UC改造后开放权限接口，用注解直接对接资源
 
 ====================
+### 项目地址
 
 Web地址
 https://coding.net/u/orangelife/p/orange.core.Downloads/members/orangelife
@@ -46,7 +47,7 @@ Git下载地址
 git@git.coding.net:orangelife/orange.core.Downloads.git
 
 ====================
-开箱方式:
+### 开箱操作:
 
 1. 修改Docker配置
    /src/main/resources/config/docker-env.yml
@@ -57,7 +58,6 @@ git@git.coding.net:orangelife/orange.core.Downloads.git
 2. 创建应用 
    在{src包路径}下添加继承自NazgulConfiguration的MyConfiguration
    在{src包路径}下添加继承自NazgulApplication的MyApplicaton<MyConfiguration>
-   
    所有运行配置添加到MyConfiguration
 
 3. 编写应用
@@ -102,3 +102,9 @@ git@git.coding.net:orangelife/orange.core.Downloads.git
    修改Dockerfile的ENV SERVICE_NAME为分配的应用名
 
 ====================
+### Debugm模式运行
+
+* 项目设置了docker-env文件用于加速开发调试，
+  文件路径：/src/main/resources/config/docker-env.yml
+* 当使用启动参数docker --debug启动时，docker-env将替代系统的环境变量。
+* 当项目打包为FatJar发布时，--debug模式自动失效。

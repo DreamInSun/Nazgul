@@ -3,6 +3,7 @@ package cyan.util.clazz;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.net.JarURLConnection;
 import java.net.URL;
@@ -22,65 +23,63 @@ import java.util.jar.JarFile;
  * @version Time：2014年2月10日 下午3:55:59
  */
 public class ClassUtil {
-    public static void main(String[] args) {
-        // 标识是否要遍历该包路径下子包的类名
-//      boolean recursive = false;
-        boolean recursive = true;
-        // 指定的包名
-//      String pkg = "javax.crypto.spec";// 为java/jre6/lib/jce.jar，普通的java工程默认已引用
-//      String pkg = "javax.crypto";
-//      String pkg = "lab.sodino";
-        String pkg = "lab.sodino.clazz";
-        List list = null;
-//      list = getClassList(pkg, recursive, null);
-        // 增加 author.class的过滤项，即可只选出ClassTestDemo
-        list = getClassList(pkg, recursive, author.class);
-
-        for (int i = 0; i < list.size(); i++) {
-            System.out.println(i + ":" + list.get(i));
-        }
-    }
+    private static final org.slf4j.Logger g_Logger = org.slf4j.LoggerFactory.getLogger(ClassUtil.class);
 
     public static List<Class<?>> getClassList(String pkgName, boolean isRecursive, Class<? extends Annotation> annotation) {
         List<Class<?>> classList = new ArrayList<Class<?>>();
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         try {
-            // 按文件的形式去查找
+            /* 按文件的形式去查找 */
             String strFile = pkgName.replaceAll("\\.", "/");
+            g_Logger.info("Resource Package:\t" + strFile);
             Enumeration<URL> urls = loader.getResources(strFile);
             while (urls.hasMoreElements()) {
-                URL url = urls.nextElement();
+                String norlFilePath = URLDecoder.decode(urls.nextElement().toString(), "UTF-8");
+                URL url = new URL(norlFilePath);
+                System.out.println("File Path:" + norlFilePath);
                 if (url != null) {
                     String protocol = url.getProtocol();
-                    String pkgPath = url.getPath();
-                    System.out.println("protocol:" + protocol + " path:" + pkgPath);
+                    String pkgPath = URLDecoder.decode(url.getPath(), "UTF-8");
+                    g_Logger.info("Protocol:[" + protocol + "]\tPath:" + pkgPath);
                     if ("file".equals(protocol)) {
-                        // 本地自己可见的代码
-                        findClassName(classList, pkgName, pkgPath, isRecursive, annotation);
+                        /* 本地自己可见的代码 */
+                        g_Logger.info("Load Classes From Own Package.");
+                        findClassNameFromDir(classList, pkgName, pkgPath, isRecursive, annotation);
                     } else if ("jar".equals(protocol)) {
-                        // 引用第三方jar的代码
-                        findClassName(classList, pkgName, url, isRecursive, annotation);
+                        /* 引用第三方jar的代码 */
+                        g_Logger.info("Load Classes From External JAR.");
+                        findClassNameFromJar(classList, pkgName, url, isRecursive, annotation);
                     }
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            g_Logger.error(e.getMessage());
         }
 
         return classList;
     }
 
-    public static void findClassName(List<Class<?>> clazzList, String pkgName, String pkgPath, boolean isRecursive, Class<? extends Annotation> annotation) {
+    /**
+     * Load Class File Mode
+     *
+     * @param clazzList
+     * @param pkgName
+     * @param pkgPath
+     * @param isRecursive
+     * @param annotation
+     */
+    public static void findClassNameFromDir(List<Class<?>> clazzList, String pkgName, String pkgPath, boolean isRecursive, Class<? extends Annotation> annotation) {
+
         if (clazzList == null) {
             return;
         }
         /*========== Normalize Package Path ==========*/
-        pkgPath = URLDecoder.decode(pkgPath);
         if (pkgPath.startsWith("/")) {
             pkgPath = pkgPath.substring(1);
         }
+        /*========== Find Class File ==========*/
         File[] files = filterClassFiles(pkgPath);// 过滤出.class文件及文件夹
-        System.out.println("files:" + ((files == null) ? "null" : "length=" + files.length));
+        g_Logger.info("files:" + ((files == null) ? "null" : "length=" + files.length));
         if (files != null) {
             for (File f : files) {
                 String fileName = f.getName();
@@ -94,7 +93,7 @@ public class ClassUtil {
                         // 需要继续查找该文件夹/包名下的类
                         String subPkgName = pkgName + "." + fileName;
                         String subPkgPath = pkgPath + "/" + fileName;
-                        findClassName(clazzList, subPkgName, subPkgPath, true, annotation);
+                        findClassNameFromDir(clazzList, subPkgName, subPkgPath, true, annotation);
                     }
                 }
             }
@@ -102,20 +101,25 @@ public class ClassUtil {
     }
 
     /**
-     * 第三方Jar类库的引用。<br/>
+     * Load class JAR mode.
      *
+     * @param clazzList
+     * @param pkgName
+     * @param url
+     * @param isRecursive
+     * @param annotation
      * @throws IOException
      */
-    public static void findClassName(List<Class<?>> clazzList, String pkgName, URL url, boolean isRecursive, Class<? extends Annotation> annotation) throws IOException {
+    public static void findClassNameFromJar(List<Class<?>> clazzList, String pkgName, URL url, boolean isRecursive, Class<? extends Annotation> annotation) throws IOException {
         JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
         JarFile jarFile = jarURLConnection.getJarFile();
-        System.out.println("jarFile:" + jarFile.getName());
         Enumeration<JarEntry> jarEntries = jarFile.entries();
         while (jarEntries.hasMoreElements()) {
             JarEntry jarEntry = jarEntries.nextElement();
             String jarEntryName = jarEntry.getName(); // 类似：sun/security/internal/interfaces/TlsMasterSecret.class
             String clazzName = jarEntryName.replace("/", ".");
             int endIndex = clazzName.lastIndexOf(".");
+
             String prefix = null;
             if (endIndex > 0) {
                 String prefix_name = clazzName.substring(0, endIndex);
@@ -125,13 +129,17 @@ public class ClassUtil {
                 }
             }
             if (prefix != null && jarEntryName.endsWith(".class")) {
-//              System.out.println("prefix:" + prefix +" pkgName:" + pkgName);
+
+                if( clazzName.endsWith(".class")) {
+                    clazzName = clazzName.substring(0, clazzName.length() - ".class".length());
+                }
+
                 if (prefix.equals(pkgName)) {
-                    System.out.println("jar entryName:" + jarEntryName);
+                    g_Logger.info("jar entryName:" + jarEntryName);
                     addClassName(clazzList, clazzName, annotation);
                 } else if (isRecursive && prefix.startsWith(pkgName)) {
                     // 遍历子包名：子类
-                    System.out.println("jar entryName:" + jarEntryName + " isRecursive:" + isRecursive);
+                    g_Logger.info("jar entryName:" + jarEntryName + " isRecursive:" + isRecursive);
                     addClassName(clazzList, clazzName, annotation);
                 }
             }
@@ -165,22 +173,23 @@ public class ClassUtil {
     }
 
     private static void addClassName(List<Class<?>> clazzList, String clazzName, Class<? extends Annotation> annotation) {
+        //g_Logger.info("addClassName:" + clazzName);
         if (clazzList != null && clazzName != null) {
             Class<?> clazz = null;
             try {
+                //g_Logger.info("Class Name :" + clazzName);
                 clazz = Class.forName(clazzName);
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                g_Logger.error(e.getMessage());
             }
-//          System.out.println("isAnnotation=" + clazz.isAnnotation() +" author:" + clazz.isAnnotationPresent(author.class));
 
             if (clazz != null) {
                 if (annotation == null) {
                     clazzList.add(clazz);
-                    System.out.println("add:" + clazz);
+                    g_Logger.info("Find class: " + clazz);
                 } else if (clazz.isAnnotationPresent(annotation)) {
                     clazzList.add(clazz);
-                    System.out.println("add annotation:" + clazz);
+                    g_Logger.info("Find annotation:" + clazz);
                 }
             }
         }
