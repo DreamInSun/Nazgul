@@ -19,7 +19,6 @@ public class FlywayComponent<TConfig extends DbConfiguration> implements ICompon
 
     @Override
     public void init(Bootstrap bootstrap) {
-
         bootstrap.addBundle(new FlywayBundle<TConfig>(m_klass));
     }
 

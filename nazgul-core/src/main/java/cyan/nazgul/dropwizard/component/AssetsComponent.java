@@ -30,7 +30,6 @@ public class AssetsComponent<TConfig extends BaseConfiguration> implements IComp
         String basePath = "/" + projectBase + "/assets";
          /*===== Assets Bundle =====*/
         bootstrap.addBundle(new AssetsBundle("/assets/", basePath + "/", "index.html"));
-
         bootstrap.addBundle(new AssetsBundle("/assets/css", basePath + "/css", null, "css"));
         bootstrap.addBundle(new AssetsBundle("/assets/js", basePath + "/js", null, "js"));
         bootstrap.addBundle(new AssetsBundle("/assets/fonts", basePath + "/fonts", null, "fonts"));

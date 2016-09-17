@@ -102,9 +102,16 @@ git@git.coding.net:orangelife/orange.core.Downloads.git
    修改Dockerfile的ENV SERVICE_NAME为分配的应用名
 
 ====================
-### Debugm模式运行
+### 特性详细说明
+
+#### Debugm模式运行
 
 * 项目设置了docker-env文件用于加速开发调试，
   文件路径：/src/main/resources/config/docker-env.yml
 * 当使用启动参数docker --debug启动时，docker-env将替代系统的环境变量。
 * 当项目打包为FatJar发布时，--debug模式自动失效。
+ 
+#### 静态页服务
+* /src/main/resource/web目录为默认静态页服务目录，可以放置静态页工程用于管理界面和交互界面。
+* 实现使用了自带的AssetsBundle，不可再添加AssetsBundle，否则会覆盖现有配置。
+* 若需要其他路径的静态页服务，可以添加Resource服务。

@@ -6,6 +6,7 @@ import cyan.nazgul.dropwizard.component.*;
 import cyan.nazgul.dropwizard.config.OneRingConfigSourceProvider;
 import cyan.util.clazz.ClassUtil;
 import io.dropwizard.Application;
+import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.slf4j.Logger;
@@ -41,7 +42,7 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
         /* Init Compoments */
         m_CompList.add(new SwaggerComponent<>());
         m_CompList.add(new DbHealthComponent<>());
-        m_CompList.add(new AssetsComponent<>());
+        m_CompList.add(new WebComponent<>());
     }
 
     /*========== Application Initialization ==========*/
