@@ -1,24 +1,33 @@
 #This is the application default configuration. the input file or OneRing will override this.
 
+#========== Project Configuration ==========#
+project:
+  rootPackage: com.orange.demo
+
 #========== NazgulConfiguration ==========#
 template: Hello, %s!
 defaultName: I'm Default
 
+#========== Super Admin ==========#
+superadmin:
+  username: admin
+  passwd: 123456
+
+#========== Authentication ==========#
+authenticationCachePolicy: maximumSize=10000,expireAfterAccess=10m
 #========== FreeMarker ==========#
 #views:
 #  .ftl:
 #    strict_syntax: yes
 
 #========== DefaultServerFactory ==========#
-
 server:
   type: default
   maxThreads: 1024
 
-#========== BaseConfiguration ==========#
-
+#========== DefaultServerFactory ==========#
 swagger:
-  resourcePackage: com.example.helloworld.resources
+  resourcePackage: auto filled project.resourcePackage
 
 #========== DbConfiguration ==========#
 database:

@@ -186,5 +186,4 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
         /*===== Return =====*/
         return path;
     }
-
 }

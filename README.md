@@ -67,7 +67,7 @@ https://github.com/DreamInSun/Nazgul
    在{src包路径}.resource下外放的资源添加@Api系列注解
 
 5. 注册资源
-   在MyApplicaton的run方法下注册资源，（改进版将自动扫描resource包）
+   在MyApplicaton的run方法下注册资源，（1.0.4版后自动扫描resource包）
 
 6. 在OneRing上添加相关的配置
     根据程序内置的配置，写在 /src/main/resources/config/default.yml
@@ -103,6 +103,13 @@ https://github.com/DreamInSun/Nazgul
 ====================
 ### 特性详细说明
 
+
+#### 配置叠加
+* 项目运行配置可划分为：框架配置-基线配置-运行配置-OneRing配置
+* 后一项配置可覆盖前一项配置的相同字段
+* 配置及支持YML和JSON格式，建议使用YML格式
+* OneRing配置为单层KeyValue，通过'.'符号表示层级
+
 #### Debugm模式运行
 
 * 项目设置了docker-env文件用于加速开发调试，
@@ -122,3 +129,10 @@ https://github.com/DreamInSun/Nazgul
 * 运行参数：db migrate，则对已初始化的数据库进行版本升级，若未初始化会出错。
 * docker指令使用“--auto-migrate true”参数将自动运行db migrate 
 * 脚本请先在测试数据库执行确保不会中断，造成升级失败。
+
+====================
+0.2.1
+增加了OneRing服务器可以配置端口的设定
+
+0.2.2
+修正了OneRing配置文件路径问题，兼容Windown 10和网络延迟问题。

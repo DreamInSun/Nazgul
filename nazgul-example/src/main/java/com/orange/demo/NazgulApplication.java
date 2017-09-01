@@ -1,16 +1,23 @@
 package com.orange.demo;
 
-import com.orange.demo.resources.HelloWorldResource;
-import com.orange.demo.resources.PersonResource;
-import com.orange.demo.resources.UserResource;
 import cyan.nazgul.dropwizard.DbApplication;
-import io.dropwizard.assets.AssetsBundle;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+import io.swagger.annotations.Contact;
+import io.swagger.annotations.Info;
+import io.swagger.annotations.License;
+import io.swagger.annotations.SwaggerDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
+@SwaggerDefinition(
+        info = @Info(
+                description = "orange.core.Downloads",
+                version = "0.1.0",
+                title = "应用下载管理服务",
+                termsOfService = "share and care",
+                contact = @Contact(name = "DreamInSun", email = "yancy_chen@hotmail.com", url = "http://cyan.org.cn"),
+                license = @License(name = "Apache 2.0", url = "http://www.apache.org")
+        )
+)
 public class NazgulApplication<TConfig extends NazgulConfiguration> extends DbApplication<TConfig> {
     /*========== Static Properties ==========*/
     static final Logger g_Logger = LoggerFactory.getLogger(NazgulApplication.class);

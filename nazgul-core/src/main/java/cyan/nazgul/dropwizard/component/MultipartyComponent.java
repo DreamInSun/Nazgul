@@ -7,9 +7,9 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 /**
- * Created by DreamInSun on 2016/7/22.
+ * Created by DreamInSun on 2016/9/20.
  */
-public class MultipartComponent<TConfig extends BaseConfiguration> implements IComponent<TConfig> {
+public class MultipartyComponent<TConfig extends BaseConfiguration> implements IComponent<TConfig> {
     @Override
     public void init(Bootstrap bootstrap) {
         bootstrap.addBundle(new MultiPartBundle());
@@ -22,6 +22,7 @@ public class MultipartComponent<TConfig extends BaseConfiguration> implements IC
 
     @Override
     public void run(TConfig config, Environment environment) {
-
+//        environment.jersey().register(MultiPartFeature.class);
+//        environment.jersey().register(MultiPartConfigProvider.class);
     }
 }

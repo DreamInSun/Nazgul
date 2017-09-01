@@ -8,7 +8,7 @@
     <groupId>cyan.svc</groupId>
     <artifactId>Nazgul</artifactId>
     <packaging>pom</packaging>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.2.4</version>
 
     <!--========== Modules ==========-->
     <modules>
@@ -19,7 +19,7 @@
     <!--========== Properties ==========-->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dropwizard.version>0.9.3</dropwizard.version>
+        <dropwizard.version>1.0.0</dropwizard.version>
         <swagger.version>1.5.9</swagger.version>
         <mysql.jdbc.version>6.0.3</mysql.jdbc.version>
         <mybatis.version>3.2.7</mybatis.version>

@@ -8,6 +8,7 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by DreamInSun on 2016/7/21.
@@ -16,11 +17,10 @@ public class FreemarkerComponent<TConfig extends BaseConfiguration> implements I
 
 
     protected class FreemarkerViewBundle extends ViewBundle<TConfig> {
-
         @Override
-        public ImmutableMap<String, ImmutableMap<String, String>> getViewConfiguration(TConfig configuration) {
-            ImmutableMap<String, ImmutableMap<String, String>> configMap =
-                    (ImmutableMap<String, ImmutableMap<String, String>>)
+        public Map<String, Map<String, String>> getViewConfiguration(TConfig configuration) {
+            Map<String, Map<String, String>> configMap =
+                    (Map<String, Map<String, String>>)
                             new HashMap().put(".ftl", new HashMap<String, String>().put("strict_syntax", "yes"));
             return configMap;
         }

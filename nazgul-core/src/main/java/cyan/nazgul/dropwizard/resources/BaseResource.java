@@ -1,20 +1,17 @@
 package cyan.nazgul.dropwizard.resources;
 
 
-import com.sun.org.apache.regexp.internal.RE;
 import cyan.nazgul.docker.svc.EnvConfig;
 import cyan.util.ResourceUtil;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Environment;
-import org.eclipse.jetty.util.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 /**
  * Created by DreamInSun on 2016/7/27.
@@ -34,7 +31,7 @@ public class BaseResource<TConfig extends Configuration> implements IResource<TC
 
     @Override
     public TConfig getConfig() {
-        return null;
+        return this.config;
     }
 
     /*========== Constructor ==========*/
@@ -68,4 +65,33 @@ public class BaseResource<TConfig extends Configuration> implements IResource<TC
         return ret;
     }
     //*/
+
+    /*========= Util : Redirect ==========*/
+    public Response redirect(Response.Status status, String lcoation) {
+
+        return Response.status(status)
+                .header("Content-Type", MediaType.TEXT_HTML)
+                .header("Location", "/" + EnvConfig.getRuntimeEnvConfig().getARTIFACT_ID().toLowerCase() + lcoation)
+                .build();
+    }
+
+    public Response redirect301(String lcoation) {
+        return this.redirect(Response.Status.MOVED_PERMANENTLY, lcoation);
+    }
+
+    public Response redirect302(String lcoation) {
+        return this.redirect(Response.Status.FOUND, lcoation);
+    }
+
+    public Response redirect303(String lcoation) {
+        return this.redirect(Response.Status.SEE_OTHER, lcoation);
+    }
+
+    public Response redirect305(String lcoation) {
+        return this.redirect(Response.Status.USE_PROXY, lcoation);
+    }
+
+    public Response redirect307(String lcoation) {
+        return this.redirect(Response.Status.TEMPORARY_REDIRECT, lcoation);
+    }
 }

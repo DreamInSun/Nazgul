@@ -92,7 +92,7 @@ public class EnvConfig {
 
     }
 
-    public void loadFromResource(String path , Class<?> appClass) throws FileNotFoundException {
+    public void loadFromResource(String path, Class<?> appClass) throws FileNotFoundException {
 
         String resPath = appClass.getResource(path).getPath();
 

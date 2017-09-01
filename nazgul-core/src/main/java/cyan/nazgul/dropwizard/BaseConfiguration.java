@@ -1,7 +1,10 @@
 package cyan.nazgul.dropwizard;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.cache.CacheBuilderSpec;
 import cyan.nazgul.docker.svc.EnvConfig;
+import cyan.nazgul.dropwizard.auth.SuperAdmin;
+import cyan.nazgul.dropwizard.config.ProjectConfig;
 import io.dropwizard.Configuration;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 
@@ -16,7 +19,34 @@ public class BaseConfiguration extends Configuration {
     public EnvConfig envConfig;
 
     /*========= Swagger ==========*/
+    @JsonProperty("project")
+    public ProjectConfig projectConfig;
+
+    /*========= Swagger ==========*/
     @JsonProperty("swagger")
     public SwaggerBundleConfiguration swaggerBundleConfiguration;
 
+    /*========== Properties ==========*/
+    public SuperAdmin getSuperadmin() {
+        return superadmin;
+    }
+
+    public void setSuperadmin(SuperAdmin superadmin) {
+        this.superadmin = superadmin;
+    }
+
+    @JsonProperty("superadmin")
+    private SuperAdmin superadmin;
+
+    /*========== Properties ==========*/
+    public CacheBuilderSpec getAuthenticationCachePolicy() {
+        return authenticationCachePolicy;
+    }
+
+    public void setAuthenticationCachePolicy(CacheBuilderSpec authenticationCachePolicy) {
+        this.authenticationCachePolicy = authenticationCachePolicy;
+    }
+
+    @JsonProperty("authenticationCachePolicy")
+    CacheBuilderSpec authenticationCachePolicy;
 }

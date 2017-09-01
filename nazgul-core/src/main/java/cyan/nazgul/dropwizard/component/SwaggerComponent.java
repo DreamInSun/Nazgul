@@ -28,6 +28,7 @@ public class SwaggerComponent<TConfig extends BaseConfiguration> implements ICom
         bootstrap.addBundle(new SwaggerBundle<TConfig>() {
             @Override
             protected SwaggerBundleConfiguration getSwaggerBundleConfiguration(TConfig configuration) {
+                configuration.swaggerBundleConfiguration.setResourcePackage(configuration.projectConfig.rootPackage + ".resources");
                 return configuration.swaggerBundleConfiguration;
             }
         });

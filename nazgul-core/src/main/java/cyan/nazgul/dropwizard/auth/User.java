@@ -8,17 +8,13 @@ import java.security.Principal;
  */
 public class User implements Principal {
 
+    /*========= Properties ==========*/
+    protected String name;
+
     @Override
     public String getName() {
         return null;
     }
 
-    @Override
-    public boolean implies(Subject subject) {
-        return false;
-    }
 
-    public User(String user) {
-
-    }
 }

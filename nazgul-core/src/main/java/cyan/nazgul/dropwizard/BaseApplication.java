@@ -42,11 +42,13 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
         m_CompList.add(new SwaggerComponent<>());
         m_CompList.add(new DbHealthComponent<>());
         m_CompList.add(new WebComponent<>());
+        m_CompList.add(new MultipartyComponent<>());
+        m_CompList.add(new SuperAdminComponent<>());
     }
 
     /*========== Application Initialization ==========*/
     @Override
-    public void initialize(Bootstrap<TConfig> bootstrap) {
+    public void initialize( Bootstrap<TConfig> bootstrap) {
         System.out.println("\r\n/*================== Initializing ===================*/\r\n");
         m_bootstrap = bootstrap;
         /*===== Replace Configuration Provider =====*/
@@ -78,13 +80,10 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
         g_logger.info("\r\n/*======================================================*/" +
                 "\r\n/*================== Run Application ===================*/" +
                 "\r\n/*======================================================*/\r\n");
-
+        /*===== Update Project Config =====*/
+        config.projectConfig.rootPackage = g_classRoot;
         /*===== Post Initialize =====*/
         this.postInitialize(EnvConfig.getRuntimeEnvConfig(), m_bootstrap);
-
-        /*===== Config Swagger =====*/
-        config.swaggerBundleConfiguration.setResourcePackage(this.g_classRoot + ".resources");
-
         /*===== Special Component =====*/
         //TODO Freemarker must be add here
         m_CompList.add(new FreemarkerComponent<>());

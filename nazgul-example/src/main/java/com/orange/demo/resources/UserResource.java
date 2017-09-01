@@ -7,6 +7,7 @@ import com.orange.demo.entities.User;
 import com.orange.demo.mappers.UsersMapper;
 import cyan.nazgul.dropwizard.resources.MybatisResource;
 import cyan.svc.EntityOutput;
+import cyan.util.FileOperation;
 import io.dropwizard.setup.Environment;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -14,9 +15,14 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.InputStream;
 
 /**
  * Created by DreamInSun on 2016/7/21.
@@ -67,5 +73,46 @@ public class UserResource extends MybatisResource<NazgulConfiguration> {
     public EntityOutput createUser(User user) {
 //        m_userDao.createUser(user.id, user.name);
         return new EntityOutput(0, "ok", null);
+    }
+
+
+    @ApiOperation(value = "表单提交用户数据")
+    @POST
+    @Path("/add")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.TEXT_HTML)
+    @RolesAllowed("SUPER_ADMIN")
+    public Response addUser(
+            @FormDataParam("name") String name,
+            @FormDataParam("age") int age) {
+
+        return Response.status(200)
+                .entity("addUser is called, name : " + name + ", age : " + age)
+                .build();
+
+    }
+
+    //    /*========= Upload File ==========*/
+    @ApiOperation(value = "上传头像")
+    @POST
+    @Path("/upload/portrait/{fileName}")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.TEXT_HTML)
+    @RolesAllowed("SUPER_ADMIN")
+    public Response uploadPortrait(
+            @PathParam("fileName") String fileName,
+            @FormDataParam("file") InputStream inputStream,
+            @FormDataParam("file") FormDataContentDisposition fileDisposition
+    ) {
+
+        /*==== Parse Input =====*/
+        String fileFullName = fileDisposition.getFileName();
+        /*==== Determin ====*/
+        String saveDir = "D:\\upload";
+        String saveFileName = fileName + fileFullName.substring(fileFullName.indexOf("."), fileFullName.length());
+        /*==== Save File ====*/
+        String savePath = FileOperation.saveInputSteam(inputStream, saveDir, saveFileName);
+        /*==== Return ====*/
+        return Response.ok().entity(savePath).build();
     }
 }
