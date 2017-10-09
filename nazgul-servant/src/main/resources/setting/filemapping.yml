@@ -1,0 +1,9 @@
+packageBase: cyan.nazgul.startup
+
+dockerfile: ./dockerfile
+mavenPom: ./pom.xml
+
+dockerEnv: ./src/main/resources/config/docker-env.yml
+defaultConf: ./src/main/resources/config/default.yml
+
+

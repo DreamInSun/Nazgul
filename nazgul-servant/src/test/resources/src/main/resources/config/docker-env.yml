@@ -1,0 +1,7 @@
+---
+SERVICE_NAME: "cyan.nazgul.example"
+SERVICE_VERSION: "LTS"
+PROFILE: "dev"
+CONFIG_CONN: "config.ecoho.cn"
+CONFIG_KEY: "123456"
+API_VERSION: "1.0.0"
