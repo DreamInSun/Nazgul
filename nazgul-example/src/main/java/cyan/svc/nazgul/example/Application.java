@@ -1,4 +1,4 @@
-package com.orange.demo;
+package cyan.svc.nazgul.example;
 
 import cyan.nazgul.dropwizard.DbApplication;
 import io.swagger.annotations.Contact;
@@ -18,13 +18,13 @@ import org.slf4j.LoggerFactory;
                 license = @License(name = "Apache 2.0", url = "http://www.apache.org")
         )
 )
-public class NazgulApplication<TConfig extends NazgulConfiguration> extends DbApplication<TConfig> {
+public class Application<TConfig extends Configuration> extends DbApplication<TConfig> {
     /*========== Static Properties ==========*/
-    static final Logger g_Logger = LoggerFactory.getLogger(NazgulApplication.class);
+    static final Logger g_Logger = LoggerFactory.getLogger(Application.class);
 
     /*========== Constructor ==========*/
-    public NazgulApplication(String[] args) {
-        super(args, NazgulConfiguration.class);
+    public Application(String[] args) {
+        super(args, Configuration.class);
     }
 
     /*========== Application Initialization ==========*/
@@ -43,6 +43,6 @@ public class NazgulApplication<TConfig extends NazgulConfiguration> extends DbAp
 
     /*========== Application Entrance ==========*/
     public static void main(String[] args) throws Exception {
-        new NazgulApplication<>(args).run();
+        new Application<>(args).run();
     }
 }
