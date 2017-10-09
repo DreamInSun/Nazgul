@@ -3,6 +3,7 @@ package cyan.nazgul.dropwizard;
 import cyan.nazgul.dropwizard.component.FlywayComponent;
 import cyan.nazgul.dropwizard.component.IComponent;
 import cyan.nazgul.dropwizard.component.MyBatisComponent;
+import cyan.nazgul.dropwizard.resources.IResource;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.slf4j.Logger;
@@ -41,8 +42,13 @@ public class DbApplication<TConfig extends DbConfiguration> extends BaseApplicat
     @Override
     public void run(TConfig config, Environment env) throws Exception {
         super.run(config, env);
+        /*===== Initialize DataBase Component =====*/
         for (IComponent comp : m_DbCompList) {
             comp.run(config, env);
+        }
+        /*===== Initialize Resource After Component is prepared =====*/
+        for (IResource<TConfig> res : m_resourceList) {
+            res.initialize(config, env);
         }
     }
 

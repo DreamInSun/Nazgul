@@ -2,9 +2,9 @@
 
 #========== Project Configuration ==========#
 project:
-  rootPackage: com.orange.demo
+  rootPackage: cyan.svc.nazgul.example
 
-#========== NazgulConfiguration ==========#
+#========== Configuration ==========#
 template: Hello, %s!
 defaultName: I'm Default
 
@@ -34,7 +34,7 @@ database:
   # url: jdbc:mysql://hamohome.com:13306/dropwizard
   # user: dropwizard
   # password: 123456
-  driverClass: com.mysql.jdbc.Driver
+  driverClass: com.mysql.cj.jdbc.Driver
   properties:
     charSet: UTF-8
   # the maximum amount of time to wait on an empty pool before throwing an exception

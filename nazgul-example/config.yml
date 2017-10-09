@@ -1,8 +1,0 @@
-template: Hunt, %s !
-defaultName: Nazgul
-
-database:
-  driverClass: com.mysql.cj.jdbc.Driver
-  password: af99670e04
-  url: jdbc:mysql://hamohome.com:13306/dropwizard
-  user: dropwizard

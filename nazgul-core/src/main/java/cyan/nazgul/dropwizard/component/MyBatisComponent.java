@@ -40,7 +40,7 @@ public class MyBatisComponent<TConfig extends DbConfiguration> implements ICompo
 
     @Override
     public void run(TConfig config, Environment environment) {
-        MybatisResource.setG_sessionFactory(mybatisBundle.getSqlSessionFactory());
+        MybatisResource.setSqlSessionFactory(mybatisBundle.getSqlSessionFactory());
     }
 
 

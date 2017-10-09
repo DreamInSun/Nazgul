@@ -1,6 +1,5 @@
 package cyan.nazgul.docker.svc;
 
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.yaml.snakeyaml.Yaml;
 
@@ -71,16 +70,6 @@ public class EnvConfig {
         return envConf;
     }
 
-    public static EnvConfig getDefault() throws Exception {
-        EnvConfig envConf = new EnvConfig();
-        envConf.setCONFIG_CONN("config.17orange.com");
-        envConf.setPROFILE("Product");
-        envConf.setSERVICE_VERSION("LTS");
-        envConf.setCONFIG_KEY("123456");
-        envConf.setSERVICE_NAME("orange.demo.DockerCI");
-        return envConf;
-    }
-
     public static EnvConfig getFromResource(String resourcePath, Class<?> appClass) throws FileNotFoundException {
         EnvConfig envConf = new EnvConfig();
         envConf.loadFromResource(resourcePath, appClass);
@@ -95,7 +84,6 @@ public class EnvConfig {
     public void loadFromResource(String path, Class<?> appClass) throws FileNotFoundException {
 
         String resPath = appClass.getResource(path).getPath();
-
 
         InputStream inputStream = appClass.getResourceAsStream(path);
         if (inputStream != null) {
@@ -140,7 +128,7 @@ public class EnvConfig {
     public void setSERVICE_NAME(String SERVICE_NAME) throws Exception {
         this.SERVICE_NAME = SERVICE_NAME;
         if (this.SERVICE_NAME != null) {
-            String[] svcNameSegments = SERVICE_NAME.split("(?=[A-Z])");
+            //String[] svcNameSegments = SERVICE_NAME.split("(?=[A-Z])");
             int pos_splitter = SERVICE_NAME.lastIndexOf(".");
             if (pos_splitter > 0) {
                 this.GROUP_ID = SERVICE_NAME.substring(0, pos_splitter);
@@ -149,7 +137,6 @@ public class EnvConfig {
                 throw new Exception("SERVICE_NAME format Error.");
             }
         }
-
     }
 
     public String getGROUP_ID() {
@@ -193,7 +180,10 @@ public class EnvConfig {
     }
 
     /*==========  ==========*/
-
+    public String getFullName() {
+        return this.SERVICE_NAME + '|' + this.SERVICE_VERSION + '|' + this.getPROFILE()+ '|' + this.API_VERSION
+                + '#' + this.CONFIG_CONN + '|' + this.CONFIG_KEY;
+    }
 
     /*========== toString ==========*/
 

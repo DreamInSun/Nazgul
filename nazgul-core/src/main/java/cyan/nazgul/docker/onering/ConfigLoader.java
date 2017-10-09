@@ -2,7 +2,6 @@ package cyan.nazgul.docker.onering;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.deser.std.NumberDeserializers;
 import cyan.nazgul.docker.svc.EnvConfig;
 import io.github.xdiamond.client.XDiamondConfig;
 

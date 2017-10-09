@@ -132,7 +132,16 @@ https://github.com/DreamInSun/Nazgul
 
 ====================
 0.2.1
-增加了OneRing服务器可以配置端口的设定
+增加了OneRing服务器可以配置端口的设定，注意配置拉取端口默认是5678，一般读不到配置都是端口不通。
 
 0.2.2
 修正了OneRing配置文件路径问题，兼容Windown 10和网络延迟问题。
+
+0.2.3
+优化了OneRing远程读取配置时的设定，预防了OneRing在高负荷下Timeout问题
+
+0.2.4
+处理了特殊情况下OneRing连接不上时出现的内存溢出错误
+
+0.2.5
+增加Resource的initialize方法，可以在Application基础组件初始化完毕后再次对Resouece需要依赖基础组件的部分进行初始化

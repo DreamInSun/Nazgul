@@ -17,8 +17,13 @@ import java.io.InputStream;
  * Created by DreamInSun on 2016/7/27.
  */
 public class BaseResource<TConfig extends Configuration> implements IResource<TConfig> {
-    @SuppressWarnings("Unused")
-    private static final Logger g_logger = LoggerFactory.getLogger(BaseResource.class);
+    //@SuppressWarnings("Unused")
+    //private static final Logger g_logger = LoggerFactory.getLogger(BaseResource.class);
+
+    /*========== Logger ==========*/
+    protected Logger getLogger() {
+        return LoggerFactory.getLogger(this.getClass());
+    }
 
     /*========== Properties ==========*/
     protected Environment enviroment;
@@ -34,12 +39,19 @@ public class BaseResource<TConfig extends Configuration> implements IResource<TC
         return this.config;
     }
 
+
     /*========== Constructor ==========*/
     public BaseResource(TConfig config, Environment env) {
         this.config = config;
         this.enviroment = env;
         /* Setup Base Variables */
         ResourceUtil.setG_namespace(EnvConfig.getRuntimeEnvConfig().getSERVICE_NAME());
+    }
+
+    @Override
+    public int initialize(TConfig config, Environment env) {
+        this.getLogger().info("Initializing " + this.getClass().getName());
+        return 0;
     }
 
     public File getResource(String path) {

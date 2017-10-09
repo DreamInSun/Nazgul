@@ -4,6 +4,7 @@ import cyan.nazgul.docker.svc.EnvConfig;
 import cyan.nazgul.dropwizard.cli.DockerCommand;
 import cyan.nazgul.dropwizard.component.*;
 import cyan.nazgul.dropwizard.config.OneRingConfigSourceProvider;
+import cyan.nazgul.dropwizard.resources.IResource;
 import cyan.util.clazz.ClassUtil;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -26,6 +28,7 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
 
     /*========== Properties ==========*/
     protected List<IComponent<TConfig>> m_CompList = new ArrayList<>();
+    protected List<IResource<TConfig>> m_resourceList = null;
     protected String[] m_args = null;
     Bootstrap<TConfig> m_bootstrap = null;
 
@@ -48,7 +51,7 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
 
     /*========== Application Initialization ==========*/
     @Override
-    public void initialize( Bootstrap<TConfig> bootstrap) {
+    public void initialize(Bootstrap<TConfig> bootstrap) {
         System.out.println("\r\n/*================== Initializing ===================*/\r\n");
         m_bootstrap = bootstrap;
         /*===== Replace Configuration Provider =====*/
@@ -93,7 +96,7 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
             comp.run(config, env);
         }
         /*========= Scan Resource & Register ==========*/
-        registerReources(g_classRoot + ".resources", config, env);
+        m_resourceList = registerReources(g_classRoot + ".resources", config, env);
     }
 
     public void run() throws Exception {
@@ -148,22 +151,27 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
      * @param config
      * @param env
      */
-    protected void registerReources(String resPath, TConfig config, Environment env) {
+    protected List<IResource<TConfig>> registerReources(String resPath, TConfig config, Environment env) {
         g_logger.info("\r\n\r\n/*========== Register Resources ===========*/\r\n");
 
         List<Class<?>> resList = ClassUtil.getClassList(resPath, false, null);
+        List<IResource<TConfig>> resourceList = new LinkedList<IResource<TConfig>>();
 
         for (Class<?> resClazz : resList) {
             g_logger.info("Register Class: " + resClazz);
             /*========== Create Resource Instance ==========*/
             Object resInstance = null;
             try {
+                /* Patch for debug file */
+                if(resClazz.getName().endsWith("$1")) continue;
                 Class c = Class.forName(resClazz.getName());
                 Class[] parameterTypes = {config.getClass(), Environment.class};
                 java.lang.reflect.Constructor constructor = c.getConstructor(parameterTypes);
                 Object[] parameters = {config, env};
                 resInstance = constructor.newInstance(parameters);
                 env.jersey().register(resInstance);
+                /* Add to Resource List */
+                resourceList.add((IResource<TConfig>) resInstance);
             } catch (InstantiationException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
@@ -176,5 +184,7 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
                 e.printStackTrace();
             }
         }
+        return resourceList;
     }
+
 }
