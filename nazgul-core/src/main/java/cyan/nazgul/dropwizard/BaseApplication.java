@@ -18,8 +18,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * Nazgul BaseApplication
+ * This Class is the full functioned Startup application. other Applcation can be Inherit from this one. Such as DbApplication extends a default jdbc database.
  * Created by DreamInSun on 2016/7/21.
  */
+@SuppressWarnings ( { "unchecked", "rawtypes" } )
 public class BaseApplication<TConfig extends BaseConfiguration> extends Application<TConfig> {
     private static final Logger g_logger = LoggerFactory.getLogger(BaseApplication.class);
 
@@ -47,6 +50,7 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
         m_CompList.add(new WebComponent<>());
         m_CompList.add(new MultipartyComponent<>());
         m_CompList.add(new SuperAdminComponent<>());
+        m_CompList.add(new JobComponent<>(g_classRoot));
     }
 
     /*========== Application Initialization ==========*/
@@ -120,7 +124,7 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
             this.m_args = new_args;
         }
         /*===== Load Environment Config =====*/
-        EnvConfig dockerEnv = null;
+        EnvConfig dockerEnv;
         /* Load EnvConfig */
         if (g_isDebug) {
             System.out.println("Get Docker EnvConfig via Developing Mode.");
@@ -147,23 +151,23 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
     /**
      * Search Resource class inhert from BaseResrouce, and register them.
      *
-     * @param resPath
-     * @param config
-     * @param env
+     * @param resPath resource class root package name
+     * @param config applcation configuration
+     * @param env applcation environment
      */
     protected List<IResource<TConfig>> registerReources(String resPath, TConfig config, Environment env) {
         g_logger.info("\r\n\r\n/*========== Register Resources ===========*/\r\n");
 
         List<Class<?>> resList = ClassUtil.getClassList(resPath, false, null);
-        List<IResource<TConfig>> resourceList = new LinkedList<IResource<TConfig>>();
+        List<IResource<TConfig>> resourceList = new LinkedList<>();
 
         for (Class<?> resClazz : resList) {
             g_logger.info("Register Class: " + resClazz);
             /*========== Create Resource Instance ==========*/
-            Object resInstance = null;
+            Object resInstance;
             try {
                 /* Patch for debug file */
-                if(resClazz.getName().endsWith("$1")) continue;
+                if (resClazz.getName().endsWith("$1")) continue;
                 Class c = Class.forName(resClazz.getName());
                 Class[] parameterTypes = {config.getClass(), Environment.class};
                 java.lang.reflect.Constructor constructor = c.getConstructor(parameterTypes);
@@ -172,16 +176,8 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
                 env.jersey().register(resInstance);
                 /* Add to Resource List */
                 resourceList.add((IResource<TConfig>) resInstance);
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                g_logger.error(e.getMessage());
             }
         }
         return resourceList;

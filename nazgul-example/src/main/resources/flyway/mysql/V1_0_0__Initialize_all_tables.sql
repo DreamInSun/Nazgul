@@ -144,3 +144,13 @@ ALTER TABLE dls_res_mngm COMMENT '同一个应用版本，有不同的profile。
 根据OS区分';
 
 
+/*===== Example =====*/
+CREATE TABLE user
+(
+  id        CHAR(36) NOT NULL,
+  name      CHAR(36) NOT NULL,
+  user      VARCHAR(64),
+  ts_create TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  ts_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
