@@ -17,7 +17,7 @@ import java.util.List;
  * @see <a>https://github.com/spinscale/dropwizard-jobs</a>
  * Created by DreamInSun on 2017/9/15.
  */
-@SuppressWarnings ( { "unchecked", "rawtypes" } )
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class JobComponent<TConfig extends BaseConfiguration> implements IComponent<TConfig> {
 
     /*========== Logger ==========*/
@@ -30,8 +30,6 @@ public class JobComponent<TConfig extends BaseConfiguration> implements ICompone
     /*========== Constructor ==========*/
     public JobComponent(String classRoot) {
         m_classRoot = classRoot;
-        jobsBunlde = new JobsBundle() {
-        };
     }
 
     /*========== Interface : IComponent ==========*/
@@ -41,10 +39,12 @@ public class JobComponent<TConfig extends BaseConfiguration> implements ICompone
 
         /*===== Create Jobgs ====*/
         List<Job> jobList = scanJobs(m_classRoot + ".jobs");
-        Job[] jobs = new Job[jobList.size()];
-        jobList.toArray(jobs);
-        jobsBunlde = new JobsBundle(jobs);
-        bootstrap.addBundle(jobsBunlde);
+        if (jobList != null && jobList.size() > 0) {
+            Job[] jobs = new Job[jobList.size()];
+            jobList.toArray(jobs);
+            jobsBunlde = new JobsBundle(jobs);
+            bootstrap.addBundle(jobsBunlde);
+        }
     }
 
     @Override
@@ -62,10 +62,10 @@ public class JobComponent<TConfig extends BaseConfiguration> implements ICompone
     protected List<Job> scanJobs(String resPath) {
         g_Logger.info("\r\n\r\n/*========== Register Resources ===========*/\r\n");
 
-        List<Class<?>> resList = ClassUtil.getClassList(resPath, false, null);
+        List<Class<?>> clzList = ClassUtil.getClassList(resPath, false, null);
         List<Job> jobList = new LinkedList<>();
 
-        for (Class<?> resClazz : resList) {
+        for (Class<?> resClazz : clzList) {
             g_Logger.info("Register Jobs: " + resClazz);
             /*========== Create Resource Instance ==========*/
             Object resInstance;

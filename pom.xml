@@ -8,18 +8,17 @@
     <groupId>cyan.svc</groupId>
     <artifactId>Nazgul</artifactId>
     <packaging>pom</packaging>
-    <version>0.2.5-SNAPSHOT</version>
+    <version>0.2.7-SNAPSHOT</version>
 
     <!--========== Modules ==========-->
     <modules>
         <module>nazgul-core</module>
-        <module>nazgul-example</module>
     </modules>
 
     <!--========== Properties ==========-->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dropwizard.version>1.0.0</dropwizard.version>
+        <dropwizard.version>1.2.1</dropwizard.version>
         <swagger.version>1.5.9</swagger.version>
         <mysql.jdbc.version>6.0.3</mysql.jdbc.version>
         <mybatis.version>3.2.7</mybatis.version>
@@ -35,16 +34,16 @@
     </dependencies>
 
     <distributionManagement>
-        <!--<repository>-->
-            <!--<id>orangelife-release</id>-->
-            <!--<url>http://developer.17orange.com:18081/nexus/content/repositories/releases/</url>-->
-            <!--<name>Nexus Release Repository</name>-->
-        <!--</repository>-->
-        <!--<snapshotRepository>-->
-            <!--<id>orangelife-snapshot</id>-->
-            <!--<url>http://developer.17orange.com:18081/nexus/content/repositories/snapshots</url>-->
-            <!--<name>Nexus Snapshot Repository</name>-->
-        <!--</snapshotRepository>-->
+        <repository>
+            <id>cyan-release</id>
+            <url>http://repo.cyan.org.cn:18081/repository/cyan-release/</url>
+            <name>Nexus Release Repository</name>
+        </repository>
+        <snapshotRepository>
+            <id>cyan-snapshot</id>
+            <url>http://repo.cyan.org.cn:18081/repository/cyan-snapshot/</url>
+            <name>Nexus Snapshot Repository</name>
+        </snapshotRepository>
     </distributionManagement>
 
 </project>

@@ -3,7 +3,10 @@ package cyan.nazgul.dropwizard.component;
 import com.loginbox.dropwizard.mybatis.MybatisBundle;
 import cyan.nazgul.docker.svc.EnvConfig;
 import cyan.nazgul.dropwizard.DbConfiguration;
+import cyan.nazgul.dropwizard.container.GlobalInstance;
 import cyan.nazgul.dropwizard.resources.MybatisResource;
+import cyan.nazgul.mngr.BaseMngr;
+import cyan.nazgul.mngr.MyBatisMngr;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -40,7 +43,9 @@ public class MyBatisComponent<TConfig extends DbConfiguration> implements ICompo
 
     @Override
     public void run(TConfig config, Environment environment) {
+        MyBatisMngr.setSqlSessionFactory(mybatisBundle.getSqlSessionFactory());
         MybatisResource.setSqlSessionFactory(mybatisBundle.getSqlSessionFactory());
+        GlobalInstance.setSqlSessionFactory(mybatisBundle.getSqlSessionFactory());
     }
 
 

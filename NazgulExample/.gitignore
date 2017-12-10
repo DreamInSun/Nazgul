@@ -1,0 +1,29 @@
+# =========== Output ===========
+
+# =========== Log ===========
+log\
+*.log
+
+# =========== MAVEN ===========
+!/target/*.jar
+/target/*/
+/target/original-*
+
+# =========== IDEA ===========
+*\.idea*
+*.iml
+
+# =========== Eclipse ===========
+*\.classpath
+*\.project
+*\.settings*
+*\.myeclipse*
+
+# =========== SVN ===========
+*\.svn*
+doc/
+src/main/resources/assets/css/
+src/main/resources/assets/fonts/
+src/main/resources/assets/js/
+src/main/resources/flyway/h2/
+src/main/resources/flyway/oracle/

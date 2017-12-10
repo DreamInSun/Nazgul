@@ -1,0 +1,13 @@
+template: Hunt, %s !
+defaultName: Nazgul
+
+database:
+  driverClass: com.mysql.cj.jdbc.Driver
+  password: ucenter
+  url: jdbc:mysql://120.77.205.43:3308/ucenter?characterEncoding=utf8&useSSL=false&autoReconnect=true
+  user: ucenter
+
+server:
+  applicationConnectors:
+    - type: http
+      port: 8080

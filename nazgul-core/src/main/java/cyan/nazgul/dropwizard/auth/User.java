@@ -1,6 +1,5 @@
 package cyan.nazgul.dropwizard.auth;
 
-import javax.security.auth.Subject;
 import java.security.Principal;
 
 /**

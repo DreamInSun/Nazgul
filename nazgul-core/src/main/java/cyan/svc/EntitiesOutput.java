@@ -23,4 +23,6 @@ public class EntitiesOutput extends Output {
         super(errCode, errInfo);
         this.entities = entities;
     }
+
+
 }

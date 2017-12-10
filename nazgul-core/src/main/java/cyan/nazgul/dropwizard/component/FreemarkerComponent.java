@@ -1,6 +1,5 @@
 package cyan.nazgul.dropwizard.component;
 
-import com.google.common.collect.ImmutableMap;
 import cyan.nazgul.docker.svc.EnvConfig;
 import cyan.nazgul.dropwizard.BaseConfiguration;
 import io.dropwizard.setup.Bootstrap;

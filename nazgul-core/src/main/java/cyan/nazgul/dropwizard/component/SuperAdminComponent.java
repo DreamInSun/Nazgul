@@ -1,6 +1,5 @@
 package cyan.nazgul.dropwizard.component;
 
-import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.Lists;
 import cyan.nazgul.docker.svc.EnvConfig;
 import cyan.nazgul.dropwizard.BaseConfiguration;
@@ -10,9 +9,7 @@ import cyan.nazgul.dropwizard.auth.SuperAdminAuthorizer;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.AuthValueFactoryProvider;
-import io.dropwizard.auth.CachingAuthenticator;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
-import io.dropwizard.auth.basic.BasicCredentials;
 import io.dropwizard.auth.chained.ChainedAuthFilter;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;

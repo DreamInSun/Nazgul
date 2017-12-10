@@ -1,7 +1,6 @@
 package cyan.nazgul.dropwizard.resources;
 
 import cyan.nazgul.dropwizard.DbConfiguration;
-import io.dropwizard.Configuration;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Environment;
 import org.skife.jdbi.v2.DBI;

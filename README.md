@@ -145,3 +145,8 @@ https://github.com/DreamInSun/Nazgul
 
 0.2.5
 增加Resource的initialize方法，可以在Application基础组件初始化完毕后再次对Resouece需要依赖基础组件的部分进行初始化
+
+0.2.6
+增加了定時任務組件
+增加了Websocket組件
+升级Dropwizard到1.2.0

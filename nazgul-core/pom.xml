@@ -6,11 +6,13 @@
     <parent>
         <artifactId>Nazgul</artifactId>
         <groupId>cyan.svc</groupId>
-        <version>0.2.5-SNAPSHOT</version>
+        <version>0.2.7-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <!--========== Module ==========-->
     <artifactId>Nazgul-core</artifactId>
+    <version>0.2.7-SNAPSHOT</version>
+
     <!--======================================================-->
     <!--==================== Dependencies ====================-->
     <!--======================================================-->
@@ -46,35 +48,17 @@
             <artifactId>dropwizard-jobs-core</artifactId>
             <version>3.0.0</version>
         </dependency>
-
-        <!--========== Jersey ==========-->
-        <!--<dependency>-->
-        <!--<groupId>org.glassfish.jersey.media</groupId>-->
-        <!--<artifactId>jersey-media-multipart</artifactId>-->
-        <!--<version>2.23.2</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-        <!--<groupId>com.sun.jersey.contribs</groupId>-->
-        <!--<artifactId>jersey-multipart</artifactId>-->
-        <!--<version>1.19.2</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-        <!--<groupId>commons-fileupload</groupId>-->
-        <!--<artifactId>commons-fileupload</artifactId>-->
-        <!--<version>1.3</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>com.liveperson</groupId>
+            <artifactId>dropwizard-websockets</artifactId>
+            <version>1.1.0</version>
+        </dependency>
 
         <!--========== xDiamond ==========-->
         <dependency>
             <groupId>io.github.hengyunabc.xdiamond</groupId>
             <artifactId>xdiamond-client</artifactId>
             <version>${xdiamond.version}</version>
-        </dependency>
-        <!--========== J2EE ==========-->
-        <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version>1.4.7</version>
         </dependency>
         <!--========== Flyway ==========-->
         <dependency>
@@ -128,9 +112,9 @@
         </dependency>
         <!-- ========== Email ========== -->
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-javamail_1.4_spec</artifactId>
-            <version>1.7.1</version>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4.7</version>
         </dependency>
         <!--========== Guave ==========-->
         <dependency>
@@ -138,8 +122,14 @@
             <artifactId>guava</artifactId>
             <version>21.0</version>
         </dependency>
-    </dependencies>
+        <!--========== RSQL ==========-->
+        <dependency>
+            <groupId>cz.jirutka.rsql</groupId>
+            <artifactId>rsql-parser</artifactId>
+            <version>2.1.0</version>
+        </dependency>
 
+    </dependencies>
 
     <!--=================================================-->
     <!--==================== Plugins ====================-->

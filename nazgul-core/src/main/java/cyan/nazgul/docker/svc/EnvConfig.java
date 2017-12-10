@@ -1,6 +1,7 @@
 package cyan.nazgul.docker.svc;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import cyan.nazgul.dropwizard.container.GlobalInstance;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileNotFoundException;
@@ -26,6 +27,7 @@ public class EnvConfig {
 
     public static void setRuntimeEnvConfig(EnvConfig runtimeEnvConfig) {
         EnvConfig.runtimeEnvConfig = runtimeEnvConfig;
+        GlobalInstance.setEnvConfig(runtimeEnvConfig);
     }
 
     /*========== Properties ==========*/
@@ -181,7 +183,7 @@ public class EnvConfig {
 
     /*==========  ==========*/
     public String getFullName() {
-        return this.SERVICE_NAME + '|' + this.SERVICE_VERSION + '|' + this.getPROFILE()+ '|' + this.API_VERSION
+        return this.SERVICE_NAME + '|' + this.SERVICE_VERSION + '|' + this.getPROFILE() + '|' + this.API_VERSION
                 + '#' + this.CONFIG_CONN + '|' + this.CONFIG_KEY;
     }
 

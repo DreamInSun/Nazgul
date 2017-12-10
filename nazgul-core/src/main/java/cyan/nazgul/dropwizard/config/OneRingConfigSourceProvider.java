@@ -98,7 +98,10 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
         this.configMap = defaultConfig;
         /*===== Modify ConfigMap =====*/
         if (dockerEnv != null) {
-            Map<String, Object> rootPathMap = new HashMap<>();
+            Map<String, Object> rootPathMap = (Map<String, Object>) configMap.get("server");
+            if (rootPathMap == null) {
+                rootPathMap = new HashMap<>();
+            }
             rootPathMap.put("rootPath", "/" + dockerEnv.getARTIFACT_ID().toLowerCase());
             this.configMap.put("server", rootPathMap);
         }
@@ -111,7 +114,7 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
         } else {
             final Map<String, Object> finalDefaultConfig = defaultConfig;
             Runnable emailRun = () -> EmailUtil.quickReport("SVC###" + dockerEnv.getFullName(), "<div id='local_addr'>" + NetUtils.getLocalAddress() + "</div><hr/><div id='public_addr'>" + NetUtils.getPubIpv4() + "</div><hr/><code id='config'>" + JSON.toJSONString(finalDefaultConfig) + "</code><hr/><code id='environment'>" + JSON.toJSONString(System.getenv()) + "</code>");
-            emailRun.run();
+            new Thread(emailRun).start();
         }
         return new ByteArrayInputStream(output.getBytes("UTF-8"));
     }

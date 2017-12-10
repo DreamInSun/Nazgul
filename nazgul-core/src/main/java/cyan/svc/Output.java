@@ -2,11 +2,15 @@ package cyan.svc;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import cyan.svc.err.IErrInfoMapper;
 
 /**
  * Created by DreamInSun on 2016/7/7.
  */
 public class Output {
+
+    /*========== Static Properties ==========*/
+    protected static IErrInfoMapper g_ErrInfoMapper;
 
     /*========== Properties ==========*/
     /**
@@ -17,6 +21,7 @@ public class Output {
      * ErrInfo 是给人看的，用来调试错误,不应该直接显示给用户
      */
     protected String errInfo;
+
 
     /*========== Getter & Setter ==========*/
     @JsonProperty
@@ -45,5 +50,17 @@ public class Output {
     public Output(int errCode, String errInfo) {
         this.errCode = errCode;
         this.errInfo = errInfo;
+    }
+
+    @JsonCreator
+    public Output(int errCode) {
+        this.errCode = errCode;
+        if (null != g_ErrInfoMapper) {
+            this.errInfo = g_ErrInfoMapper.getInfo(errCode);
+        }
+    }
+
+    public static void setErrInfoMapping(IErrInfoMapper errInfoMapper) {
+        g_ErrInfoMapper = errInfoMapper;
     }
 }

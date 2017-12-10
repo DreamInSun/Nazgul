@@ -17,8 +17,8 @@ import java.io.InputStream;
  * Created by DreamInSun on 2016/7/27.
  */
 public class BaseResource<TConfig extends Configuration> implements IResource<TConfig> {
-    //@SuppressWarnings("Unused")
-    //private static final Logger g_logger = LoggerFactory.getLogger(BaseResource.class);
+//    @SuppressWarnings("Unused")
+//    private static final Logger g_logger = LoggerFactory.getLogger(BaseResource.class);
 
     /*========== Logger ==========*/
     protected Logger getLogger() {
@@ -106,4 +106,5 @@ public class BaseResource<TConfig extends Configuration> implements IResource<TC
     public Response redirect307(String lcoation) {
         return this.redirect(Response.Status.TEMPORARY_REDIRECT, lcoation);
     }
+
 }
