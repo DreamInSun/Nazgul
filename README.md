@@ -1,21 +1,27 @@
-java -jar ./target/Nagzul-0.0.1-SNAPSHOT.jar server D:\WorkStation\Java_WorkSpace\DropWizard\hello-world.yml
-
-java -jar ./target/nazgul-example-0.0.1-SNAPSHOT.jar docker config.yml --debug
-
-NOTE: Debug mode cannot be used in .jar file.
 
 ====================
-### 项目说明
+## 运行说明
 
-Nazgul是基于Dropwizard的Orangelife高度定制版Java微服务开发框架。
+开发模式运行语句：java -jar ./target/NagzulExample.jar docker /config/config.devel.yml --debug --offline
+部署模式运行语句：java -jar ./target/NagzulExample.jar docker /config/config.devel.yml
+
+NOTE: Debug mode cannot be used in .jar file.
+注意：Debug 模式在Jar模式是失效的
+
+====================
+## 项目说明
+
+Nazgul是基于Dropwizard的Cyan高度定制版Java微服务开发框架。
 能够使用极少的配置，完成微服务的开发工作。
 集代码开发、文档管理、数据库管理、配置管理于一体的快速开发框架。
-完全符合我司开发流程管理特点，量身定制。
+完全符合标准CICD开发流程管理模式。
+配合运维工具链，可以进行大规模微服务治理。
 
-#### 主要特性
+### 主要特性
   1. FatJar模式独立运行，Jettey作为Servlet容器，内存足迹小，节省服务器资源。打包基础应用仅26M.
   1. 直连OneRing服务，支持”应用默认配置+本地运行配置+在线配置“的组合配置模式，支持YAML和JSON格式。
-  1. 快速切换开发模式和生产模式，“--debug”参数
+  1. 快速切换开发模式和生产模式，"--debug"参数
+  1. 离线运行模式,脱离OneRing独立运行 "--offline"参数
   1. 支持完整JAX-RS，使用Jersey库
   1. 自动生成swagger文档，直接在线测试
   1. 支持轻量级JDBI数据库访问
@@ -26,16 +32,28 @@ Nazgul是基于Dropwizard的Orangelife高度定制版Java微服务开发框架�
   1. 支持Consul服务注册
   1. 支持服务内置健康检查
   1. 自带常用Maven插件，用于加速开发
+  1. Docker打包样例 NazgulExample
+  1. 兼容Horushu 
+      https://github.com/DreamInSun/Horoshu
+  1. 支持JPA
+  1. 支持QueryDSL
+  1. 支持RSQL查询参数
+      https://github.com/jirutka/rsql-parser
+  1. 支持定时任务，Jobs
+  1. 配套开箱工具Nazgul-servant
+  1. 支持Shiro权限控制
 
-#### 待完成特性：
+### 计划特性：
   1. 集成Horoshu，服务代理调用
-  1. 制作成Maven-Archetype,直接由IDE创建
-  1. 制作Docker打包样例
+  1. 制作成Maven-Archetype,直接由IDE创建 
   1. 约定配置自动解析
   1. UC改造后开放权限接口，用注解直接对接资源
+  1. Metric集成Kafka，Zabbix
+        https://github.com/hengyunabc/zabbix-sender
+        https://github.com/hengyunabc/metrics-zabbix
 
 ====================
-### 项目地址
+## 项目地址
 
 Coding.net
 https://coding.net/u/dreaminsun/p/cyan.svc.Nazgul/git
@@ -44,7 +62,7 @@ GitHub
 https://github.com/DreamInSun/Nazgul
 
 ====================
-### 开箱操作:
+## 开箱操作:
 
 1. 修改Docker配置
    /src/main/resources/config/docker-env.yml
@@ -150,3 +168,26 @@ https://github.com/DreamInSun/Nazgul
 增加了定時任務組件
 增加了Websocket組件
 升级Dropwizard到1.2.0
+
+0.2.7
+增加了JPA支持
+新增了DbResource，DbMngr基础类
+优化了数据库类对SqlSessionFactory的获取
+MyBatisMngr类改为MybatisMngr
+新增了QuerySQL的支持
+新增了EntityManeger
+新增了JPA支持
+优化了依赖包
+新增了Shiro支持
+新增了default.yml配置项
+
+0.2.8
+支持RSQL https://github.com/jirutka/rsql-parser
+
+
+0.3.0
+集成了SpringContext
+可以使用Spring-data-jpa
+
+
+NOTE. 引入的Spring系列组件违背了Nazgul的轻量化选型原则，也造成了依赖包的冲突，在后续的版本中会把该部分组件剥离为独立的工程nazgul-spring

@@ -12,9 +12,11 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
+ * WebSocket组件
  * @see <a>https://github.com/LivePersonInc/dropwizard-websockets</a>
  * Created by DreamInSun on 2017/9/15.
  */
+@SuppressWarnings("unchecked")
 public class WebSocketComponent<TConfig extends BaseConfiguration> implements IComponent<TConfig> {
 
     /*========== Logger ==========*/

@@ -2,20 +2,14 @@
 
 #========== Project Configuration ==========#
 project:
-  rootPackage: cyan.svc.nazgul.example
+  rootPackage: cyan.svc.nazgulexample
 
 #========== Configuration ==========#
-template: Hello, %s!
-defaultName: I'm Default
 
 #========== Super Admin ==========#
 superadmin:
   username: admin
-  passwd: 123456
-
-#========== Server Config ==========#
-server:
-
+  password: 123456
 
 #========== Cross Doamin ==========#
 crossdomain:
@@ -40,13 +34,22 @@ server:
   applicationConnectors:
     - type: http
       port: 8080
+  adminConnectors:
+    - type: http
+      port: 28080
 
 #========== DefaultServerFactory ==========#
 swagger:
   resourcePackage: auto filled project.resourcePackage
 
+#========== Shiro ==========#
+#See https://github.com/silb/shiro-jersey#configure-shiro
+shiro:
+  iniConfigs: ["classpath:config/shiro.ini"]
+
 #========== DbConfiguration ==========#
 database:
+  # The following config will be set on
   # url: jdbc:mysql://hamohome.com:13306/dropwizard
   # user: dropwizard
   # password: 123456
@@ -133,9 +136,44 @@ logging:
     org.apache.ibatis.common.jdbc.SimpleDataSource: DEBUG
     org.apache.ibatis.common.jdbc.ScriptRunner: DEBUG
     org.apache.ibatis.sqlmap.engine.impl.SqlMapClientDelegate: DEBUG
-    #UCenter
-    cyan.core.ucenter: INFO
-    cyan.core.ucenter.mappers: DEBUG
+    #Hibernate
+    org.hibernate: WARN
+    #QuertDsl
+    com.querydsl: INFO
+    #FreeMarker
+    freemarker: INFO
+    #Jobs
+    de.spinscale.dropwizard.jobs: WARN
+    org.quartz.core: WARN
+    #Shiro
+    org.apache.shiro: INFO
+    #Netty
+    io.netty: INFO
+    #==== Application =====
+    cyan.svc.nazgulexample: INFO
+    cyan.svc.nazgulexample.mappers: DEBUG
 
   appenders:
     - type: console
+      #threshold: WARN
+      #target: stderr
+
+#    - type: file
+#      # The file to which current statements will be logged.
+#      currentLogFilename: ./logs/example.log
+#      # When the log file rotates, the archived log will be renamed to this and gzipped. The
+#      # %d is replaced with the previous day (yyyy-MM-dd). Custom rolling windows can be created
+#      # by passing a SimpleDateFormat-compatible format as an argument: "%d{yyyy-MM-dd-hh}".
+#      archivedLogFilenamePattern: ./logs/example-%d.log.gz
+#      # The number of archived files to keep.
+#      archivedFileCount: 5
+#      # The timezone used to format dates. HINT: USE THE DEFAULT, UTC.
+#      timeZone: UTC
+
+#    - type: syslog
+#      # The hostname of the syslog server to which statements will be sent.
+#      # N.B.: If this is the local host, the local syslog instance will need to be configured to
+#      # listen on an inet socket, not just a Unix socket.
+#      host: localhost
+#      # The syslog facility to which statements will be sent.
+#      facility: local0

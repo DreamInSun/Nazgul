@@ -7,8 +7,10 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 /**
+ * JAX-RS支持 Multipart的启动组件
  * Created by DreamInSun on 2016/9/20.
  */
+@SuppressWarnings("unchecked")
 public class MultipartyComponent<TConfig extends BaseConfiguration> implements IComponent<TConfig> {
     @Override
     public void init(Bootstrap bootstrap) {

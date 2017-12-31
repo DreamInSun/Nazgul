@@ -1,13 +1,20 @@
-template: Hunt, %s !
-defaultName: Nazgul
+#该配置用户部署环境，会被复制到部署镜像中作为高于Default配置的高一级基线配置。
+#同时作为运维人员对配置中心的配置项的参考
 
+#========== SuperAdmin ==========#
+superadmin:
+  username: admin
+  password: 123456
+
+#========== JDBC ==========#
 database:
   driverClass: com.mysql.cj.jdbc.Driver
-  password: ucenter
-  url: jdbc:mysql://120.77.205.43:3308/ucenter?characterEncoding=utf8&useSSL=false&autoReconnect=true
-  user: ucenter
+  password: nazgul
+  url: jdbc:mysql://rm-wz9k4pu4q2op9l984eo.mysql.rds.aliyuncs.com:3306/nazgul?characterEncoding=utf8&useSSL=false&autoReconnect=true
+  user: nazgul
 
-server:
-  applicationConnectors:
-    - type: http
-      port: 8080
+#========== LOG LEVEL ==========#
+logging:
+  # The default level of all loggers. Can be OFF, ERROR, WARN, INFO,
+  # DEBUG, TRACE, or ALL.
+  level: INFO

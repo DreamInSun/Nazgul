@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * 定时任务组件
  * @see <a>https://github.com/spinscale/dropwizard-jobs</a>
  * Created by DreamInSun on 2017/9/15.
  */
@@ -61,7 +62,7 @@ public class JobComponent<TConfig extends BaseConfiguration> implements ICompone
 
     protected List<Job> scanJobs(String resPath) {
         g_Logger.info("\r\n\r\n/*========== Register Resources ===========*/\r\n");
-
+        System.out.println("## Scan Jobs");
         List<Class<?>> clzList = ClassUtil.getClassList(resPath, false, null);
         List<Job> jobList = new LinkedList<>();
 

@@ -5,15 +5,16 @@ import cyan.nazgul.docker.svc.EnvConfig;
 import cyan.nazgul.dropwizard.DbConfiguration;
 import cyan.nazgul.dropwizard.container.GlobalInstance;
 import cyan.nazgul.dropwizard.resources.MybatisResource;
-import cyan.nazgul.mngr.BaseMngr;
-import cyan.nazgul.mngr.MyBatisMngr;
+import cyan.nazgul.mngr.MybatisMngr;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 /**
+ * MyBatic的启动组件
  * Created by DreamInSun on 2016/7/21.
  */
+@SuppressWarnings("unchecked")
 public class MyBatisComponent<TConfig extends DbConfiguration> implements IComponent<TConfig> {
 
     /*========== Constructor ==========*/
@@ -30,21 +31,16 @@ public class MyBatisComponent<TConfig extends DbConfiguration> implements ICompo
     }
 
     /*========== Interface : IComponent ==========*/
-    @Override
     public void init(Bootstrap bootstrap) {
         bootstrap.addBundle(mybatisBundle);
 
     }
 
-    @Override
     public void postInit(EnvConfig envConfig, Bootstrap<TConfig> bootstrap) {
 
     }
 
-    @Override
     public void run(TConfig config, Environment environment) {
-        MyBatisMngr.setSqlSessionFactory(mybatisBundle.getSqlSessionFactory());
-        MybatisResource.setSqlSessionFactory(mybatisBundle.getSqlSessionFactory());
         GlobalInstance.setSqlSessionFactory(mybatisBundle.getSqlSessionFactory());
     }
 

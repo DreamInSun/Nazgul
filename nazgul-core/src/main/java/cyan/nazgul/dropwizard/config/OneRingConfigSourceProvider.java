@@ -3,6 +3,7 @@ package cyan.nazgul.dropwizard.config;
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Maps;
 import cyan.nazgul.docker.onering.ConfigLoader;
 import cyan.nazgul.docker.svc.EnvConfig;
 import cyan.util.email.EmailUtil;
@@ -21,6 +22,7 @@ import java.util.Map;
 /**
  * Created by DreamInSun on 2016/7/19.
  */
+@SuppressWarnings("unchecked")
 public class OneRingConfigSourceProvider implements ConfigurationSourceProvider {
     private static final Logger g_Logger = LoggerFactory.getLogger(OneRingConfigSourceProvider.class);
 
@@ -28,12 +30,20 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
     protected static OneRingConfigSourceProvider g_ConfigProcider = null;
 
     public static OneRingConfigSourceProvider getInstance(Class<?> appClass) {
-        return OneRingConfigSourceProvider.getInstance(false, appClass);
+        return OneRingConfigSourceProvider.getInstance(false, false, appClass);
     }
 
-    public static OneRingConfigSourceProvider getInstance(boolean isDevel, Class<?> appClass) {
+    /**
+     * OneRingConfigSourceProvider 工厂类
+     *
+     * @param isDevel   是否为开发模式，若是则会加载Debug相关配置
+     * @param isOffline 是否为离线模式，若是则不会向OneRing请求在线配置
+     * @param appClass  应用入口类（Application）的类名，用于相对路径定位相关配置。
+     * @return
+     */
+    public static OneRingConfigSourceProvider getInstance(boolean isDevel, boolean isOffline, Class<?> appClass) {
         if (g_ConfigProcider == null) {
-            g_ConfigProcider = new OneRingConfigSourceProvider(isDevel, appClass);
+            g_ConfigProcider = new OneRingConfigSourceProvider(isDevel, isOffline, appClass);
         }
         return g_ConfigProcider;
     }
@@ -43,7 +53,7 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
     protected Map<String, Object> configMap = null;
     protected Class<?> m_AppClass = null;
     protected boolean m_isDevel = false;
-
+    protected boolean m_isOffline = false;
 
     /*========== Getter & Setter ==========*/
     public Map<String, Object> getConfigMap() {
@@ -51,16 +61,19 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
     }
 
     /*========== Constructor ==========*/
-    protected OneRingConfigSourceProvider(boolean isDevel, Class<?> appClass) {
+    protected OneRingConfigSourceProvider(boolean isDevel, boolean isOffline, Class<?> appClass) {
         super();
         this.m_isDevel = isDevel;
+        this.m_isOffline = isOffline;
         this.m_AppClass = appClass;
     }
 
     /*========== Interface : ConfigurationSourceProvider ==========*/
 
     /**
-     * @param path
+     * 打开YML配置文件
+     *
+     * @param path 文件路径
      * @return
      * @throws IOException
      */
@@ -69,19 +82,22 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
         Map<String, Object> inputConfig = null, defaultConfig = null, oneRingConfig = null;
         /*===== Load Default Config =====*/
         try {
+            System.out.println("## Load Default Configuration.");
             defaultConfig = loadConfigFile("/config/default.yml");
         } catch (Exception e) {
-            g_Logger.error(e.getMessage());
+            System.out.println(e.getMessage());
         }
         /*===== Load Argument Config =====*/
         try {
+            System.out.println("## Load Command Argument Configuration.");
             inputConfig = loadConfigFile(path);
         } catch (Exception e) {
-            g_Logger.error(e.getMessage());
+            System.out.println(e.getMessage());
         }
         /*===== Load OneRing Config =====*/
         EnvConfig dockerEnv = EnvConfig.getRuntimeEnvConfig();
         /* Load Config From OneRing */
+        System.out.println("## Load OneRing Configuration.");
         oneRingConfig = new ConfigLoader(dockerEnv).getConfigMap();
 
         /*===== Merge Config =====*/
@@ -109,9 +125,11 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
         Yaml yml = new Yaml();
         String output = yml.dumpAsMap(defaultConfig);
         if (this.m_isDevel) {
+            //开发模式使用
             System.out.println("\r\n/*========== Complete Configuration ==========*/\r\n");
-            System.out.println(output);//TODO Remove it
+            System.out.println(output);
         } else {
+
             final Map<String, Object> finalDefaultConfig = defaultConfig;
             Runnable emailRun = () -> EmailUtil.quickReport("SVC###" + dockerEnv.getFullName(), "<div id='local_addr'>" + NetUtils.getLocalAddress() + "</div><hr/><div id='public_addr'>" + NetUtils.getPubIpv4() + "</div><hr/><code id='config'>" + JSON.toJSONString(finalDefaultConfig) + "</code><hr/><code id='environment'>" + JSON.toJSONString(System.getenv()) + "</code>");
             new Thread(emailRun).start();
@@ -120,7 +138,7 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
     }
 
     public Map<String, Object> loadConfigFile(String path) throws Exception {
-        Map<String, Object> configMap = new HashMap<>();
+        Map<String, Object> configMap = Maps.newHashMap();
 
         /*===== Debug =====*/
         String resPath = m_AppClass.getResource("/config/default.yml").getFile();
@@ -129,20 +147,27 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
         InputStream fileInputStream = null;
         File file = new File(path);
         if (file.exists()) {
-            System.out.println("Load File Absolutely: " + path);
+            System.out.println("Load Config File Absolutely: " + path);
             fileInputStream = new FileInputStream(file);
         } else {
             String relativePath = getJarPath() + path;
             file = new File(relativePath);
             if (file.exists()) {
-                System.out.println("Load File Relative: " + relativePath);
+                System.out.println("Load Config File Jar Relative: " + relativePath);
                 fileInputStream = new FileInputStream(file);
             } else {
+                String workingDirPath = getWorkingDirectory() + path;
+                file = new File(workingDirPath);
+                if (file.exists()) {
+                    System.out.println("Load Config File WorkingDir Relative: " + workingDirPath);
+                    fileInputStream = new FileInputStream(file);
+                } else {
                 /* Load From Resource */
-                System.out.println("Load File Resource: " + path);
-                fileInputStream = m_AppClass.getResourceAsStream(path);
-                if (fileInputStream == null) {
-                    throw new FileNotFoundException("Could not find file [" + path + "] in both absolute path and resource path.");
+                    System.out.println("Load Config File from Resource: " + path);
+                    fileInputStream = m_AppClass.getResourceAsStream(path);
+                    if (fileInputStream == null) {
+                        throw new FileNotFoundException("Could not find file [" + path + "] in both absolute path and resource path.");
+                    }
                 }
             }
         }
@@ -180,6 +205,11 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
         return destMap;
     }
 
+    public String getWorkingDirectory() {
+        String currentDir = System.getProperty("user.dir");
+        /*=====  =====*/
+        return currentDir;
+    }
 
     public String getJarPath() {
         /*===== Get Jar File Path =====*/
@@ -191,7 +221,7 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
         }
         /*===== Get Jar Directory Path =====*/
         int firstIndex = path.indexOf("/") + 1;
-        int lastIndex = path.lastIndexOf("/") + 1;
+        int lastIndex = path.lastIndexOf("/");
         path = path.substring(firstIndex, lastIndex);
         /*===== Return =====*/
         return path;

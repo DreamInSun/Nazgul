@@ -12,6 +12,9 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
+ * 应用（环境、容器及运行参数）运行环境配置
+ * 配置来源为环境变量及运行参数。
+ * 根据配置的内容不同，应用会做出一些不同的预设反应，例如载入的配置，是否在线获取配置等。
  * Created by DreamInSun on 2016/7/4.
  */
 public class EnvConfig {
@@ -45,7 +48,12 @@ public class EnvConfig {
     protected String CONFIG_KEY;
 
     protected String GROUP_ID;
+
     protected String ARTIFACT_ID;
+
+    /* Addtional Status Flag */
+    protected Boolean isDebug;
+    protected Boolean isOffline;
 
     /*========== Factory ==========*/
     public static EnvConfig getFromEnvironment() {
@@ -181,7 +189,24 @@ public class EnvConfig {
         this.API_VERSION = API_VERSION;
     }
 
-    /*==========  ==========*/
+
+    public Boolean getIsDebug() {
+        return isDebug;
+    }
+
+    public void setIsDebug(Boolean isDebug) {
+        this.isDebug = isDebug;
+    }
+
+    public Boolean getIsOffline() {
+        return isOffline;
+    }
+
+    public void setIsOffline(Boolean isOffline) {
+        this.isOffline = isOffline;
+    }
+
+    /*========== Export Function ==========*/
     public String getFullName() {
         return this.SERVICE_NAME + '|' + this.SERVICE_VERSION + '|' + this.getPROFILE() + '|' + this.API_VERSION
                 + '#' + this.CONFIG_CONN + '|' + this.CONFIG_KEY;

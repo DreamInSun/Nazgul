@@ -8,6 +8,7 @@ import cyan.nazgul.dropwizard.config.CrossdomainConfig;
 import cyan.nazgul.dropwizard.config.ProjectConfig;
 import io.dropwizard.Configuration;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
+import org.secnod.dropwizard.shiro.ShiroConfiguration;
 
 /**
  * 基础应用配置，默认内置模块：
@@ -41,6 +42,18 @@ public class BaseConfiguration extends Configuration {
 
     public void setCrossdomainConfig(CrossdomainConfig crossdomainConfig) {
         this.crossdomainConfig = crossdomainConfig;
+    }
+
+     /*========= Shiro ==========*/
+     @JsonProperty("shiro")
+    private ShiroConfiguration shiroConfig;
+
+    public ShiroConfiguration getShiroConfig() {
+        return shiroConfig;
+    }
+
+    public void setShiroConfig(ShiroConfiguration shiroConfig) {
+        this.shiroConfig = shiroConfig;
     }
 
     /*========= Swagger ==========*/

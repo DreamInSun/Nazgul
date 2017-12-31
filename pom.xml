@@ -24,6 +24,7 @@
         <mybatis.version>3.2.7</mybatis.version>
         <flyway.version>4.0.3</flyway.version>
         <xdiamond.version>1.0.4</xdiamond.version>
+        <querydsl.version>4.1.4</querydsl.version>
     </properties>
 
     <!--======================================================-->

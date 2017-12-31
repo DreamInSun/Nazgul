@@ -18,8 +18,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Docker 启动命令处理组件
  * Created by DreamInSun on 2016/7/18.
  */
+@SuppressWarnings("unchecked")
 public class DockerCommand<T extends Configuration> extends EnvironmentCommand<T> {
     private static final Logger g_logger = LoggerFactory.getLogger(DockerCommand.class);
 

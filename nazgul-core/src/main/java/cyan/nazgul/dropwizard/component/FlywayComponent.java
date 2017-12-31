@@ -7,8 +7,10 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 /**
+ * Flyaway数据库启动组件
  * Created by DreamInSun on 2016/7/21.
  */
+@SuppressWarnings("unchecked")
 public class FlywayComponent<TConfig extends DbConfiguration> implements IComponent<TConfig> {
 
     protected Class m_klass;

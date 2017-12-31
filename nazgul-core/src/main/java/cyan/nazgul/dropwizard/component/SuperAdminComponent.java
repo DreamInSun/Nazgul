@@ -18,8 +18,10 @@ import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import java.util.List;
 
 /**
+ * 应用超管访问管理组件
  * Created by DreamInSun on 2016/7/21.
  */
+@SuppressWarnings("unchecked")
 public class SuperAdminComponent<TConfig extends BaseConfiguration> implements IComponent<TConfig> {
 
     /*========== Constructor ==========*/

@@ -13,8 +13,10 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Generics;
 
 /**
+ * Dropwizard-flyway Bundle
  * Created by DreamInSun on 2016/7/22.
  */
+@SuppressWarnings("unchecked")
 public class FlywayBundle<T extends DbConfiguration> implements Bundle, DatabaseConfiguration<T>, FlywayConfiguration<T> {
 
     /*========== Properties =========*/
@@ -30,7 +32,7 @@ public class FlywayBundle<T extends DbConfiguration> implements Bundle, Database
         if (m_klass == null) {
             m_klass = Generics.getTypeParameter(getClass(), Configuration.class);
         }
-        bootstrap.addCommand(new DbCommand<T>(this, this, m_klass));
+        bootstrap.addCommand(new DbCommand<>(this, this, m_klass));
     }
 
     @Override

@@ -2,6 +2,7 @@ package cyan.nazgul.docker.onering;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Maps;
 import cyan.nazgul.docker.svc.EnvConfig;
 import io.github.xdiamond.client.XDiamondConfig;
 
@@ -13,6 +14,7 @@ import java.util.Map;
 /**
  * Created by DreamInSun on 2016/7/6.
  */
+@SuppressWarnings("unchecked")
 public class ConfigLoader {
 
     /*========== Static Properties ==========*/
@@ -30,43 +32,46 @@ public class ConfigLoader {
     /*========== Constructor ==========*/
     public ConfigLoader(EnvConfig envConfig) {
         if (envConfig == null) return;
+
+        if (envConfig.getIsOffline() == false) {
         /*===== PreProcess Support Port =====*/
-        String config_conn = envConfig.getCONFIG_CONN();
-        int config_port = 0;
-        String[] res = config_conn.split(":");
-        if (res.length > 1) {
-            config_conn = res[0];
-            config_port = Integer.parseInt(res[1]);
-        }
+            String config_conn = envConfig.getCONFIG_CONN();
+            int config_port = 0;
+            String[] res = config_conn.split(":");
+            if (res.length > 1) {
+                config_conn = res[0];
+                config_port = Integer.parseInt(res[1]);
+            }
 
         /*===== Init xDiamond Client =====*/
-        m_xDiamondConf.setServerHost(config_conn);
-        if (0 != config_port) {
-            m_xDiamondConf.setServerPort(config_port);
-        }
-        /* */
-        m_xDiamondConf.setProfile(envConfig.getPROFILE());
-        m_xDiamondConf.setVersion(envConfig.getSERVICE_VERSION());
-        m_xDiamondConf.setGroupId(envConfig.getGROUP_ID());
-        m_xDiamondConf.setArtifactId(envConfig.getARTIFACT_ID());
-        m_xDiamondConf.setSecretKey(envConfig.getCONFIG_KEY());
-
-        /*===== Load From OneRing =====*/
-        m_xDiamondConf.setMaxTrySaveTimes(50);
-        m_xDiamondConf.setMaxRetryIntervalSeconds(600);
-        m_xDiamondConf.setRetryIntervalSeconds(10);
-        m_xDiamondConf.setMaxTrySaveTimes(100);
-        /* Download Config */
-        m_xDiamondConf.init();
-        this.configFilePath = m_xDiamondConf.getConfigFilePath();
-        System.out.println("Waiting for Load OneRing Config File...");
+            m_xDiamondConf.setServerHost(config_conn);
+            if (0 != config_port) {
+                m_xDiamondConf.setServerPort(config_port);
+            }
+            m_xDiamondConf.setProfile(envConfig.getPROFILE());
+            m_xDiamondConf.setVersion(envConfig.getSERVICE_VERSION());
+            m_xDiamondConf.setGroupId(envConfig.getGROUP_ID());
+            m_xDiamondConf.setArtifactId(envConfig.getARTIFACT_ID());
+            m_xDiamondConf.setSecretKey(envConfig.getCONFIG_KEY());
+            /*===== Load From OneRing =====*/
+            m_xDiamondConf.setMaxTrySaveTimes(50);
+            m_xDiamondConf.setMaxRetryIntervalSeconds(600);
+            m_xDiamondConf.setRetryIntervalSeconds(10);
+            m_xDiamondConf.setMaxTrySaveTimes(100);
+            /* Download Config */
+            m_xDiamondConf.init();
+            this.configFilePath = m_xDiamondConf.getConfigFilePath();
+            System.out.println("Waiting for Load OneRing Config File...");
 
         /*===== Save Path =====*/
 //        String dirPath =
 //                m_xDiamondConf.getLocalConfigPath() + File.separator + m_xDiamondConf.getGroupId() + File.separator + m_xDiamondConf.getArtifactId() + File.separator
 //                        + m_xDiamondConf.getVersion() + File.separator + m_xDiamondConf.getProfile();
 //        this.configFilePath = dirPath + File.separator + "config.json";
-        System.out.println("OneRing Config File Path: " + this.configFilePath);
+            System.out.println("OneRing Config File Path: " + this.configFilePath);
+        } else {
+            System.out.println("Command Argument set '--offline', escape download configuration from OneRing service.");
+        }
     }
 
     public File getConfigFile() throws FileNotFoundException {
@@ -89,7 +94,7 @@ public class ConfigLoader {
         InputStream fileInputStream = new FileInputStream(new File(this.configFilePath));
         List<LinkedHashMap<String, Object>> result = g_jsonMapper.readValue(fileInputStream, new TypeReference<List<Map<String, Object>>>() {
         });
-        retMap = new LinkedHashMap<>();
+        retMap = Maps.newLinkedHashMap();
         /*===== Format Return Map =====*/
         for (Map<String, Object> configItem : result) {
             Map<String, Object> configValue = (Map<String, Object>) configItem.get("config");

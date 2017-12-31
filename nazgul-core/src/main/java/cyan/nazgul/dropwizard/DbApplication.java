@@ -1,8 +1,7 @@
 package cyan.nazgul.dropwizard;
 
-import cyan.nazgul.dropwizard.component.FlywayComponent;
-import cyan.nazgul.dropwizard.component.IComponent;
-import cyan.nazgul.dropwizard.component.MyBatisComponent;
+import com.google.common.collect.Lists;
+import cyan.nazgul.dropwizard.component.*;
 import cyan.nazgul.dropwizard.resources.IResource;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -15,18 +14,21 @@ import java.util.List;
 /**
  * Created by DreamInSun on 2016/7/21.
  */
+@SuppressWarnings("unchecked")
 public class DbApplication<TConfig extends DbConfiguration> extends BaseApplication<TConfig> {
     private static final Logger g_Logger = LoggerFactory.getLogger(DbApplication.class);
 
     /*========== Properties ==========*/
-    protected List<IComponent<TConfig>> m_DbCompList = new ArrayList<>();
+    protected List<IComponent<TConfig>> m_DbCompList = Lists.newArrayList();
 
     /*========== Constructor ==========*/
     protected DbApplication(String[] args, Class configClass) {
         super(args);
         /* Db Management Component */
         m_DbCompList.add(new MyBatisComponent<>(g_classRoot));
+        m_DbCompList.add(new EntityManagerComponent<>(g_classRoot));
         m_DbCompList.add(new FlywayComponent<>(configClass));
+        //m_DbCompList.add(new SpringContextComponent<>());
     }
 
     /*========== Application Initialization ==========*/

@@ -7,8 +7,10 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 /**
+ * 自定义附件注册组件
  * Created by DreamInSun on 2016/7/21.
  */
+@SuppressWarnings("unchecked")
 public class AssetsComponent<TConfig extends BaseConfiguration> implements IComponent<TConfig> {
 
     /*========== Constructor ==========*/

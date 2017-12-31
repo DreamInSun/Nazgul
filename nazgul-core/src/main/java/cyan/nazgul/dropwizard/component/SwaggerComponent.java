@@ -12,8 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Swagger组件
  * Created by DreamInSun on 2016/7/21.
  */
+@SuppressWarnings("unchecked")
 public class SwaggerComponent<TConfig extends BaseConfiguration> implements IComponent<TConfig> {
     private static final Logger g_Logger = LoggerFactory.getLogger(SwaggerComponent.class);
 
@@ -36,7 +38,6 @@ public class SwaggerComponent<TConfig extends BaseConfiguration> implements ICom
 
     @Override
     public void postInit(EnvConfig envConfig, Bootstrap<TConfig> bootstrap) {
-
 
     }
 

@@ -41,6 +41,7 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
 
     /*========== Configuration ==========*/
     protected Boolean g_isDebug = false;
+    protected Boolean g_isOffline = false;
 
     /*========== Constructor ==========*/
     protected BaseApplication(String[] args) {
@@ -48,23 +49,25 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
         /* Save Run Arguments */
         this.m_args = args;
         g_classRoot = this.getClass().getPackage().getName();
-        /* Init Compoments */
+        /* Init Component */
         m_CompList.add(new SwaggerComponent<>());
         m_CompList.add(new DbHealthComponent<>());
         m_CompList.add(new WebComponent<>());
         m_CompList.add(new MultipartyComponent<>());
         m_CompList.add(new SuperAdminComponent<>());
-        m_CompList.add(new JobComponent<>(g_classRoot));
+        /* Optional Component */
+        //m_CompList.add(new JobComponent<>(g_classRoot));
+        //m_CompList.add(new ShiroComponent<>());
         //m_CompList.add(new WebSocketComponent<>(g_classRoot));
     }
 
     /*========== Application Initialization ==========*/
     @Override
     public void initialize(Bootstrap<TConfig> bootstrap) {
-        System.out.println("\r\n/*================== Initializing ===================*/\r\n");
+        System.out.println("\r\n/*================== Initializing Dropwizard ===================*/\r\n");
         m_bootstrap = bootstrap;
         /*===== Replace Configuration Provider =====*/
-        bootstrap.setConfigurationSourceProvider(OneRingConfigSourceProvider.getInstance(g_isDebug, this.getClass()));
+        bootstrap.setConfigurationSourceProvider(OneRingConfigSourceProvider.getInstance(g_isDebug, g_isOffline, this.getClass()));
         /* Enable variable substitution with environment variables */
 //        bootstrap.setConfigurationSourceProvider(
 //                new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(),
@@ -120,21 +123,26 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
 
         /*===== Determine Debug Mode =====*/
         List<String> argList = new ArrayList<>();
+        int specialArgCnt = 0;
         for (String arg : this.m_args) {
             if (arg.equals("--debug")) {
                 g_isDebug = true;
+                specialArgCnt++;
+            } else if (arg.equals("--offline")) {
+                g_isOffline = true;
+                specialArgCnt++;
             } else {
                 argList.add(arg);
             }
         }
-        /* Remove --debug */
-        if (g_isDebug) {
-            String[] new_args = new String[m_args.length - 1];
-            new_args = argList.toArray(new_args);
-            this.m_args = new_args;
-        }
+        /* Remove Special Arguments */
+        String[] new_args = new String[argList.size()];
+        new_args = argList.toArray(new_args);
+        this.m_args = new_args;
+
         /*===== Load Environment Config =====*/
         EnvConfig dockerEnv;
+        //TODO add offline flag
         /* Load EnvConfig */
         if (g_isDebug) {
             System.out.println("Get Docker EnvConfig via Developing Mode.");
@@ -143,6 +151,9 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
             System.out.println("Get Docker EnvConfig via Standard Mode.");
             dockerEnv = EnvConfig.getFromEnvironment();
         }
+        /* Additonal Status Flag */
+        dockerEnv.setIsDebug(g_isDebug);
+        dockerEnv.setIsOffline(g_isOffline);
         /* Print EnvConfig */
         if (dockerEnv != null) {
             System.out.println(dockerEnv.toString());

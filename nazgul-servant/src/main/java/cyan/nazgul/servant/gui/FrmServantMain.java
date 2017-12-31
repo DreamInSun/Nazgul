@@ -1,5 +1,6 @@
 package cyan.nazgul.servant.gui;
 
+import cyan.nazgul.servant.editor.DefaultConfigEditor;
 import cyan.nazgul.servant.entity.FileMapping;
 import cyan.nazgul.servant.util.FileUtil;
 import cyan.nazgul.servant.editor.DockerEnvEditor;
@@ -44,6 +45,7 @@ public class FrmServantMain {
     private DockerfileEditor m_dockerfileEditor;
     private PomEditor m_pomEditor;
     private DockerEnvEditor m_dockerEnvEditor;
+    private DefaultConfigEditor m_defaultConfigEditor;
 
     /*========== GUI Listener ==========*/
     public FrmServantMain() {
@@ -52,6 +54,8 @@ public class FrmServantMain {
         m_dockerfileEditor = new DockerfileEditor(m_fileMapping.getDockerfile());
         m_pomEditor = new PomEditor(m_fileMapping.getMavenPom());
         m_dockerEnvEditor = new DockerEnvEditor(m_fileMapping.getDockerEnv());
+        m_defaultConfigEditor = new DefaultConfigEditor(m_fileMapping.getDefaultConf());
+
         /*===== Load SvcConfig =====*/
         m_SvcConfig = m_dockerfileEditor.loadSvcConfig();
         /*===== Working Directory =====*/
@@ -111,7 +115,6 @@ public class FrmServantMain {
         m_SvcConfig.setConf_conn(txt_conf_conn.getText());
         m_SvcConfig.setConf_key(txt_conn_key.getText());
         m_SvcConfig.setApi_version(txt_api_version.getText());
-
     }
 
 }

@@ -7,8 +7,10 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 /**
+ * 静态页服务组件
  * Created by DreamInSun on 2016/7/21.
  */
+@SuppressWarnings("unchecked")
 public class WebComponent<TConfig extends BaseConfiguration> implements IComponent<TConfig> {
 
     /*========== Constructor ==========*/

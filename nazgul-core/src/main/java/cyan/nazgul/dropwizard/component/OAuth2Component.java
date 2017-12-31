@@ -21,8 +21,10 @@ import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import java.util.List;
 
 /**
+ * OAuth 2.0 的启动组件
  * Created by DreamInSun on 2016/7/21.
  */
+@SuppressWarnings("unchecked")
 public class OAuth2Component<TConfig extends BaseConfiguration> implements IComponent<TConfig> {
 
     /*========== Constructor ==========*/

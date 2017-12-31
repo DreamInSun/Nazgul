@@ -1,0 +1,33 @@
+#该配置用于开发环境，可以覆盖Default等信息，用于隔离开发环境和正式环境。
+
+#========== SuperAdmin ==========#
+#该配置是一个实例项，说明如果天机一个项目自定义配置
+superadmin:
+  username: admin
+  password: 123456
+
+#========== JDBC ==========#
+#该配置是一个
+database:
+  driverClass: com.mysql.cj.jdbc.Driver
+  password: nazgul
+  url: jdbc:mysql://rm-wz9k4pu4q2op9l984eo.mysql.rds.aliyuncs.com:3306/nazgul?characterEncoding=utf8&useSSL=false&autoReconnect=true
+  user: nazgul
+
+#========== DefaultServerFactory ==========#
+#该配置用于在本地开启多个服务联动时，默认监听端口都为8080的情况下，临时修改服务端口，避开Bind Port Already Used报错。
+server:
+  type: default
+  maxThreads: 1024
+  applicationConnectors:
+    - type: http
+      port: 8080
+  adminConnectors:
+    - type: http
+      port: 28080
+
+#========== LOG LEVEL ==========#
+logging:
+  # The default level of all loggers. Can be OFF, ERROR, WARN, INFO,
+  # DEBUG, TRACE, or ALL.
+  level: DEBUG

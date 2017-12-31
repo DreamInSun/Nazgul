@@ -8,8 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Flyway 启动命令处理组件
  * Created by DreamInSun on 2016/7/18.
  */
+@SuppressWarnings("unchecked")
 public class FlywayCommand<T extends DbConfiguration> extends DbCommand<T> {
     private static final Logger g_Logger = LoggerFactory.getLogger(FlywayCommand.class);
 

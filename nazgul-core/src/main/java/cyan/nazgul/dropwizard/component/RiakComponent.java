@@ -8,8 +8,10 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 /**
+ * Riak监控组件
  * Created by DreamInSun on 2016/7/21.
  */
+@SuppressWarnings("unchecked")
 public class RiakComponent<TConfig extends BaseConfiguration> implements IComponent<TConfig> {
 
     /*========== Constructor ==========*/

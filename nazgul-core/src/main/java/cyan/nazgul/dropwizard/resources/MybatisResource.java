@@ -1,6 +1,7 @@
 package cyan.nazgul.dropwizard.resources;
 
 import cyan.nazgul.dropwizard.DbConfiguration;
+import cyan.nazgul.dropwizard.container.GlobalInstance;
 import io.dropwizard.setup.Environment;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -8,17 +9,13 @@ import org.apache.ibatis.session.SqlSessionFactory;
 /**
  * Created by DreamInSun on 2016/7/22.
  */
+@SuppressWarnings("unchecked")
 public class MybatisResource<TConfig extends DbConfiguration> extends BaseResource<TConfig> {
 
     /*========== Static Properties ==========*/
-    protected static SqlSessionFactory g_sqlSessionFactory;
-
-    public static void setSqlSessionFactory(SqlSessionFactory g_sessionFactory) {
-        MybatisResource.g_sqlSessionFactory = g_sessionFactory;
-    }
 
     protected SqlSessionFactory getSqlSessionFactory() {
-        return MybatisResource.g_sqlSessionFactory;
+        return GlobalInstance.getSqlSessionFactory();
     }
 
     /*========== Properties ==========*/

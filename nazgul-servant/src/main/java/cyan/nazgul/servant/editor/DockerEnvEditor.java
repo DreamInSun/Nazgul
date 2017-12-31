@@ -79,8 +79,6 @@ public class DockerEnvEditor {
 
         Yaml yaml = new Yaml();
         Map<String, Object> map = (Map<String, Object>) yaml.load(jsonAsYaml);
-
-
     }
 
 

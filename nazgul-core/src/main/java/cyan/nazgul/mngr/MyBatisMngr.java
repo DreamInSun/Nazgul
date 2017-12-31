@@ -1,5 +1,6 @@
 package cyan.nazgul.mngr;
 
+import cyan.nazgul.dropwizard.container.GlobalInstance;
 import io.dropwizard.setup.Environment;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -7,20 +8,15 @@ import org.apache.ibatis.session.SqlSessionFactory;
 /**
  * Created by DreamInSun on 2017/10/24.
  */
-public class MyBatisMngr<TConfig> extends BaseMngr<TConfig> {
+@SuppressWarnings("unchecked")
+public class MybatisMngr<TConfig> extends BaseMngr<TConfig> {
     /*========== Static Properties ==========*/
-    protected static SqlSessionFactory g_sqlSessionFactory;
-
-    public static void setSqlSessionFactory(SqlSessionFactory g_sessionFactory) {
-        MyBatisMngr.g_sqlSessionFactory = g_sessionFactory;
-    }
-
     protected SqlSessionFactory getSqlSessionFactory() {
-        return MyBatisMngr.g_sqlSessionFactory;
+        return GlobalInstance.getSqlSessionFactory();
     }
 
     /*========== Constructor ==========*/
-    public MyBatisMngr(TConfig config, Environment env) {
+    public MybatisMngr(TConfig config, Environment env) {
         super(config, env);
     }
 
@@ -39,7 +35,7 @@ public class MyBatisMngr<TConfig> extends BaseMngr<TConfig> {
         return ret;
     }
 
-   public interface SqlHandler<TMapper> {
+    public interface SqlHandler<TMapper> {
         Object execute(TMapper mapper);
     }
 }
