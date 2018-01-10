@@ -8,9 +8,6 @@ project:
 #========== Configuration ==========#
 
 #========== Super Admin ==========#
-superadmin:
-  username: admin
-  password: 123456
 
 #========== Cross Doamin ==========#
 crossdomain:

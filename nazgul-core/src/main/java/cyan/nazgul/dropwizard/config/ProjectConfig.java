@@ -7,7 +7,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class ProjectConfig {
 
+    /*========== Properties ==========*/
     @JsonProperty("rootPackage")
-    public String rootPackage;
+    private String rootPackage;
 
+    /*========== Getter @ Setter  ==========*/
+
+    public String getRootPackage() {
+        return rootPackage;
+    }
+
+    public void setRootPackage(String rootPackage) {
+        this.rootPackage = rootPackage;
+    }
 }

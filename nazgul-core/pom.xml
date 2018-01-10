@@ -6,12 +6,12 @@
     <parent>
         <artifactId>Nazgul</artifactId>
         <groupId>cyan.svc</groupId>
-        <version>0.2.7-SNAPSHOT</version>
+        <version>0.3.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <!--========== Module ==========-->
     <artifactId>Nazgul-core</artifactId>
-    <version>0.2.7-SNAPSHOT</version>
+    <version>0.3.1</version>
 
 
     <!--======================================================-->
@@ -125,13 +125,18 @@
             <artifactId>commons-codec</artifactId>
             <version>1.11</version>
         </dependency>
+        <!--<dependency>-->
+        <!--<groupId>org.apache.commons</groupId>-->
+        <!--<artifactId>commons-lang3</artifactId>-->
+        <!--<version>3.7</version>-->
+        <!--</dependency>-->
         <!-- ========== Email ========== -->
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
             <version>1.4.7</version>
         </dependency>
-        <!--========== Guave ==========-->
+        <!--========== Guava ==========-->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -149,11 +154,10 @@
             <version>2.0.2</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.openjpa</groupId>
-            <artifactId>openjpa-kernel</artifactId>
-            <version>2.3.0</version>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>5.1.0.Final</version>
         </dependency>
-
         <!--========== QueryDsl ==========-->
         <dependency>
             <groupId>com.querydsl</groupId>
@@ -225,7 +229,19 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <!--========== Plugin: Source ===========-->
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!--========== Plugin: proguard ===========-->
             <plugin>
                 <groupId>com.github.wvengen</groupId>

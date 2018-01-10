@@ -7,7 +7,7 @@ ENV CONFIG_CONN       config.ecoho.cn
 ENV SERVICE_NAME      cyan.svc.NazgulExample
 ENV SERVICE_VERSION   LTS
 ENV PROFILE           product
-ENV API_VERSION       1.2.1
+ENV API_VERSION       1.3.1
 
 #========== Configuration ==========
 

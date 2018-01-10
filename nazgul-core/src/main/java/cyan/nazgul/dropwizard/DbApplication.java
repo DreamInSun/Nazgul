@@ -28,6 +28,7 @@ public class DbApplication<TConfig extends DbConfiguration> extends BaseApplicat
         m_DbCompList.add(new MyBatisComponent<>(g_classRoot));
         m_DbCompList.add(new EntityManagerComponent<>(g_classRoot));
         m_DbCompList.add(new FlywayComponent<>(configClass));
+        m_DbCompList.add(new RestEntityComponent<>());
         //m_DbCompList.add(new SpringContextComponent<>());
     }
 

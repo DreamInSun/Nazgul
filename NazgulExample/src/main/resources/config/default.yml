@@ -149,6 +149,10 @@ logging:
     org.apache.shiro: INFO
     #Netty
     io.netty: INFO
+    #RSQL
+    com.github.tennaito.rsql: DEBUG
+    #Commons
+    org.apache.commons: INFO
     #==== Application =====
     cyan.svc.nazgulexample: INFO
     cyan.svc.nazgulexample.mappers: DEBUG

@@ -3,133 +3,144 @@
 <mapper namespace="cyan.svc.nazgulexample.mappers.PersonMapper">
     <!--auto generated Code-->
     <resultMap id="BaseResultMap" type="cyan.svc.nazgulexample.entities.Person">
-        <result column="pid" property="pid" jdbcType="INTEGER"/>
+        <result column="person_id" property="personId" jdbcType="VARCHAR"/>
         <result column="name" property="name" jdbcType="VARCHAR"/>
-        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="age" property="age" jdbcType="INTEGER"/>
+        <result column="gender" property="gender" jdbcType="INTEGER"/>
+        <result column="first_name" property="firstName" jdbcType="VARCHAR"/>
+        <result column="last_name" property="lastName" jdbcType="VARCHAR"/>
+        <result column="id" property="id" jdbcType="BIGINT"/>
         <result column="ts_create" property="tsCreate" jdbcType="TIMESTAMP"/>
         <result column="ts_update" property="tsUpdate" jdbcType="TIMESTAMP"/>
-        <result column="age" property="age"/>
-        <result column="gender" property="gender"/>
-        <result column="first_name" property="firstName"/>
-        <result column="last_name" property="lastName"/>
+        <result column="item_stat" property="itemStat" jdbcType="INTEGER"/>
     </resultMap>
 
     <!--auto generated Code-->
     <sql id="Base_Column_List">
-        pid,
+        person_id,
         name,
-        id,
-        ts_create,
-        ts_update,
         age,
         gender,
         first_name,
-        last_name
+        last_name,
+        id,
+        ts_create,
+        ts_update,
+        item_stat
     </sql>
 
     <!--auto generated Code-->
     <insert id="insert" useGeneratedKeys="true" keyProperty="person.id">
         INSERT INTO naz_person (
-            pid,
+            person_id,
             name,
-            id,
-            ts_create,
-            ts_update,
             age,
             gender,
             first_name,
-            last_name
+            last_name,
+            id,
+            ts_create,
+            ts_update,
+            item_stat
         ) VALUES (
-            #{person.pid},
-            #{person.name},
-            #{person.id},
-            #{person.tsCreate},
-            #{person.tsUpdate},
-            #{person.age},
-            #{person.gender},
-            #{person.firstName},
-            #{person.lastName}
+            #{person.personId,jdbcType=VARCHAR},
+            #{person.name,jdbcType=VARCHAR},
+            #{person.age,jdbcType=INTEGER},
+            #{person.gender,jdbcType=INTEGER},
+            #{person.firstName,jdbcType=VARCHAR},
+            #{person.lastName,jdbcType=VARCHAR},
+            #{person.id,jdbcType=BIGINT},
+            #{person.tsCreate,jdbcType=TIMESTAMP},
+            #{person.tsUpdate,jdbcType=TIMESTAMP},
+            #{person.itemStat,jdbcType=INTEGER}
         )
-	</insert>
+    </insert>
 
     <!--auto generated Code-->
     <insert id="insertSelective" useGeneratedKeys="true" keyProperty="person.id">
         INSERT INTO naz_person
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="person.pid!=null"> pid,</if>
+            <if test="person.personId!=null"> person_id,</if>
             <if test="person.name!=null"> name,</if>
-            <if test="person.id!=null"> id,</if>
-            <if test="person.tsCreate!=null"> ts_create,</if>
-            <if test="person.tsUpdate!=null"> ts_update,</if>
             <if test="person.age!=null"> age,</if>
             <if test="person.gender!=null"> gender,</if>
             <if test="person.firstName!=null"> first_name,</if>
-            <if test="person.lastName!=null"> last_name</if>
+            <if test="person.lastName!=null"> last_name,</if>
+            <if test="person.id!=null"> id,</if>
+            <if test="person.tsCreate!=null"> ts_create,</if>
+            <if test="person.tsUpdate!=null"> ts_update,</if>
+            <if test="person.itemStat!=null"> item_stat,</if>
         </trim>
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="person.pid!=null"> #{person.pid},</if>
-            <if test="person.name!=null"> #{person.name},</if>
-            <if test="person.id!=null"> #{person.id},</if>
-            <if test="person.tsCreate!=null"> #{person.tsCreate},</if>
-            <if test="person.tsUpdate!=null"> #{person.tsUpdate},</if>
-            <if test="person.age!=null"> #{person.age},</if>
-            <if test="person.gender!=null"> #{person.gender},</if>
-            <if test="person.firstName!=null"> #{person.firstName},</if>
-            <if test="person.lastName!=null"> #{person.lastName}</if>
+            <if test="person.personId!=null">#{person.personId,jdbcType=VARCHAR},
+            </if>
+            <if test="person.name!=null">#{person.name,jdbcType=VARCHAR},
+            </if>
+            <if test="person.age!=null">#{person.age,jdbcType=INTEGER},
+            </if>
+            <if test="person.gender!=null">#{person.gender,jdbcType=INTEGER},
+            </if>
+            <if test="person.firstName!=null">#{person.firstName,jdbcType=VARCHAR},
+            </if>
+            <if test="person.lastName!=null">#{person.lastName,jdbcType=VARCHAR},
+            </if>
+            <if test="person.id!=null">#{person.id,jdbcType=BIGINT},
+            </if>
+            <if test="person.tsCreate!=null">#{person.tsCreate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="person.tsUpdate!=null">#{person.tsUpdate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="person.itemStat!=null">#{person.itemStat,jdbcType=INTEGER},
+            </if>
         </trim>
-	</insert>
+    </insert>
 
     <!--auto generated Code-->
-    <insert id="insertList">        INSERT INTO naz_person(
+    <insert id="insertList">
+        INSERT INTO naz_person (
         <include refid="Base_Column_List"/>
         )VALUES
         <foreach collection="persons" item="person" index="index" separator=",">
             (
-            #{person.pid},
-            #{person.name},
-            #{person.id},
-            #{person.tsCreate},
-            #{person.tsUpdate},
-            #{person.age},
-            #{person.gender},
-            #{person.firstName},
-            #{person.lastName}
+            #{person.personId,jdbcType=VARCHAR},
+            #{person.name,jdbcType=VARCHAR},
+            #{person.age,jdbcType=INTEGER},
+            #{person.gender,jdbcType=INTEGER},
+            #{person.firstName,jdbcType=VARCHAR},
+            #{person.lastName,jdbcType=VARCHAR},
+            #{person.id,jdbcType=BIGINT},
+            #{person.tsCreate,jdbcType=TIMESTAMP},
+            #{person.tsUpdate,jdbcType=TIMESTAMP},
+            #{person.itemStat,jdbcType=INTEGER}
             )
         </foreach>
-	</insert>
+    </insert>
 
     <!--auto generated Code-->
     <update id="update">
         UPDATE naz_person
         <set>
-            <if test="person.pid != null"> pid = #{person.pid},</if>
-            <if test="person.name != null"> name = #{person.name},</if>
-            <if test="person.id != null"> id = #{person.id},</if>
-            <if test="person.tsCreate != null"> ts_create = #{person.tsCreate},</if>
-            <if test="person.tsUpdate != null"> ts_update = #{person.tsUpdate},</if>
-            <if test="person.age != null"> age = #{person.age},</if>
-            <if test="person.gender != null"> gender = #{person.gender},</if>
-            <if test="person.firstName != null"> first_name = #{person.firstName},</if>
-            <if test="person.lastName != null"> last_name = #{person.lastName}</if>
+            <if test="person.personId != null"> person_id= #{person.personId,jdbcType=VARCHAR},</if>
+            <if test="person.name != null"> name= #{person.name,jdbcType=VARCHAR},</if>
+            <if test="person.age != null"> age= #{person.age,jdbcType=INTEGER},</if>
+            <if test="person.gender != null"> gender= #{person.gender,jdbcType=INTEGER},</if>
+            <if test="person.firstName != null"> first_name= #{person.firstName,jdbcType=VARCHAR},</if>
+            <if test="person.lastName != null"> last_name= #{person.lastName,jdbcType=VARCHAR},</if>
+            <if test="person.id != null"> id= #{person.id,jdbcType=BIGINT},</if>
+            <if test="person.tsCreate != null"> ts_create= #{person.tsCreate,jdbcType=TIMESTAMP},</if>
+            <if test="person.tsUpdate != null"> ts_update= #{person.tsUpdate,jdbcType=TIMESTAMP},</if>
+            <if test="person.itemStat != null"> item_stat= #{person.itemStat,jdbcType=INTEGER}</if>
         </set>
-		WHERE id = #{person.id,jdbcType=INTEGER}
+        WHERE id = #{person.id,jdbcType=BIGINT}
     </update>
 
-    <!--auto generated by codehelper on 2017-12-27 12:09:13-->
-    <select id="findOneByPid" resultMap="BaseResultMap">
+<!--auto generated by codehelper on 2018-01-10 22:22:54-->
+	<select id="findOneById" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from naz_person
-        where pid=#{pid,jdbcType=INTEGER}
-    </select>
-
-    <!--auto generated by codehelper on 2017-12-27 12:09:42-->
-    <select id="findOneById" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from naz_person
-        where id=#{id,jdbcType=INTEGER}
+        where id=#{id,jdbcType=BIGINT}
     </select>
 </mapper>
 

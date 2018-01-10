@@ -1,10 +1,15 @@
 package cyan.svc;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.jaxrs.json.annotation.JSONP;
 import cyan.svc.err.IErrInfoMapper;
+
+import java.lang.reflect.Array;
+import java.util.List;
 
 /**
  * Created by DreamInSun on 2016/7/7.
@@ -19,6 +24,14 @@ public class EntityOutput extends Output {
     @JsonProperty
     @JsonInclude(value = Include.NON_NULL)
     private String entityClz;
+
+    @JsonProperty
+    @JsonIgnore
+    private Integer page;
+
+    @JsonProperty
+    @JsonIgnore
+    private Integer size;
 
     /*========== Getter & Setter ==========*/
     public Object getEntity() {
@@ -35,6 +48,22 @@ public class EntityOutput extends Output {
 
     public void setEntityClz(String entityClz) {
         this.entityClz = entityClz;
+    }
+
+    public Integer getPage() {
+        return page;
+    }
+
+    public void setPage(Integer page) {
+        this.page = page;
+    }
+
+    public Integer getSize() {
+        return size;
+    }
+
+    public void setSize(Integer size) {
+        this.size = size;
     }
 
     /*========== Factory ==========*/
@@ -61,16 +90,33 @@ public class EntityOutput extends Output {
     @JsonCreator
     public EntityOutput(int errCode, String errInfo, Object entity) {
         super(errCode, errInfo);
-        this.entityClz = entity.getClass().getSimpleName();
-        this.entity = entity;
+        if (entity != null) {
+            this.entityClz = entity.getClass().getSimpleName();
+            this.entity = entity;
+        }
     }
 
     @JsonCreator
     public EntityOutput(int errCode, Object entity) {
         super(errCode);
         if (entity != null) {
-            this.entityClz = entity.getClass().getSimpleName();
             this.entity = entity;
+            /* Set Additional Information */
+            if (entity.getClass().isArray()) {                //如果是Array
+                int size = Array.getLength(entity);
+                this.setSize(size);
+                if (size != 0) {
+                    this.setEntityClz(Array.get(entity, 0).getClass().getSimpleName());
+                }
+            } else if (entity instanceof List) {              //如果是List
+                int size = ((List) entity).size();
+                this.setSize(size);
+                if (size != 0) {
+                    this.setEntityClz(((List) entity).get(0).getClass().getSimpleName());
+                }
+            } else {
+                this.entityClz = entity.getClass().getSimpleName();
+            }
         }
     }
 }

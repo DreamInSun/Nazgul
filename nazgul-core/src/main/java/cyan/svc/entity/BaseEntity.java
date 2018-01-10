@@ -2,6 +2,8 @@ package cyan.svc.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -39,39 +41,71 @@ import java.sql.Timestamp;
  * @NamedQuery(name="***",query="*** hql ***"),
  * @NamedQuery(name="***",query="*** hql ***")
  * })： 命名查询注解，指定命名查询语句，query字段只能写JPQL 查询语句，不能写普通的sql 语句。
+ * <p>
+ * @GeneratorValue(strategy=GenerationType.xxx) ：
+ * GenerationType.AUTO：让Hibernate根据数据库方言自动选择主键生成策略。
+ * GenerationType.IDENTITY: 适宜MySQL、SqlServer有自增长列的数据库。
+ * GenerationType.SEQUENCE：适宜Oracle这种没有自增长有sequence的数据库。
+ * GenerationType.TABLE: 适宜所有的数据库,因为它会单独生成一张表来维护主键生成。
+ * <p>
+ * @Column : 持久化类中属性转化成数据库表中列的相关信息。
+ * name：指定列名。
+ * length: 该列支持的长度。
+ * precision：有效的总位数。(BigDecimal)。
+ * scale：小数点的位数。(BigDecimal)。
+ * unique： 唯一约束。
+ * nullable：非空约束。
+ * insertable：是否允许插入true：允许 false: 不允许。
+ * updatable：是否允许修改true：允许 false: 不允许。
+ * columnDefinition ：指定列的定义。
+ * <p>
+ * //@DynamicInsert(true) //动态插入，根据持久化对象的属性是否有值，生成相应的Sql语句
+ * //@DynamicUpdate(true) //动态修改，会判断持久化对象中的属性，那些属性改变，才会生成相应的update语句（持久化状态下做修改）
+ * @SelectBeforeUpdate(true) //修改之前先进行查询，查询得到持久化对象与脱管状态下的对象进行比较，那些属性改变生成sql语句。
  */
 @MappedSuperclass
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class BaseEntity implements Serializable {
     /*========== Properties ==========*/
     /**
      * 逻辑主键
      */
     @Id
+    @Generated(value = GenerationTime.INSERT)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, length = 64, unique = true, updatable = false)
+    @Column(name = "id", nullable = false, length = 64, unique = true, insertable = false, updatable = false)
     @JsonProperty
-    protected Integer id;
+    protected Long id;
 
     /**
      * 记录创建时间戳 DEFAULT CURRENT_TIMESTAMP
      */
     @JsonIgnore
-    @Column(name = "ts_create", nullable = false, updatable = false)
+    @Column(name = "ts_create", nullable = false, insertable = false, updatable = false)
     protected Timestamp tsCreate;
 
     /**
      * 记录更新时间戳 DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
      */
     @JsonIgnore
-    @Column(name = "ts_update", nullable = false)
+    @Column(name = "ts_update", nullable = false, insertable = false, updatable = false)
     protected Timestamp tsUpdate;
 
+    /**
+     * 记录状态，伪删除等使用，1-为有效， 0-为无效（已删除）
+     *
+     * @return
+     */
+    @JsonIgnore
+    @Column(name = "item_stat", nullable = false, insertable = false, updatable = true, columnDefinition = "INT default 1")
+    protected Integer itemStat;
+
     /*========== Getter & Setter ==========*/
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -89,6 +123,19 @@ public abstract class BaseEntity implements Serializable {
 
     public void setTsUpdate(Timestamp tsUpdate) {
         this.tsUpdate = tsUpdate;
+    }
+
+    public Integer getItemStat() {
+        return itemStat;
+    }
+
+    public void setItemStat(Integer itemStat) {
+        this.itemStat = itemStat;
+    }
+
+    /*========= Assistant Function ==========*/
+    public void delete() {
+        this.itemStat = 0;
     }
 }
 

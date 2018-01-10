@@ -15,9 +15,7 @@ public interface PersonMapper {
 
     int update(@Param("person") Person person);
 
-    Person findOneByPid(@Param("pid")Integer pid);
-
-     Person findOneById(@Param("id")Integer id);
+    Person findOneById(@Param("id")Long id);
 
 
 }

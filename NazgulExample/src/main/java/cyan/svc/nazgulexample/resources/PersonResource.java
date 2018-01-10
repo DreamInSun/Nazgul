@@ -96,7 +96,6 @@ public class PersonResource extends DbResource<Configuration> {
     @Override
     public int initialize(Configuration configuration, Environment env) {
         super.initialize(configuration, env);
-        this.getLogger().info("PersonResource initializing.");
         return 0;
     }
 
@@ -141,7 +140,7 @@ public class PersonResource extends DbResource<Configuration> {
     @GET
     @Path("/pid/{pid}")
     public PersonView getPerson(
-            @ApiParam(value = "Person ID", required = true, example = "2") @PathParam("pid") int pid,
+            @ApiParam(value = "Person ID", required = true, example = "2") @PathParam("pid") String personId,
             @Context EntityManager entityManager
     ) {
 
@@ -151,8 +150,8 @@ public class PersonResource extends DbResource<Configuration> {
         QPerson qPerson = QPerson.person;
         List<String> persons = this.getQueryFactory().select(qPerson.name).from(qPerson).groupBy(qPerson.name).fetch();
         this.getLogger().info(JSON.toJSONString(persons));
-
-        Person person = this.getQueryFactory().selectFrom(qPerson).where(qPerson.pid.eq(pid)).fetchFirst();
+        /*===== Query =====*/
+        Person person = this.getQueryFactory().selectFrom(qPerson).where(qPerson.personId.eq(personId)).fetchFirst();
         return new PersonView(person);
     }
 
@@ -168,7 +167,7 @@ public class PersonResource extends DbResource<Configuration> {
             @ApiResponse(code = ErrCode.ROUTE_MAPPING_SOURCE_PORT_ILLEGAL, message = "源端口格式错误"),
             @ApiResponse(code = ErrCode.ROUTE_MAPPING_TARGET_HOST_ILLEGAL, message = "目标主机格式错误"),
             @ApiResponse(code = ErrCode.ROUTE_MAPPING_TARGET_PORT_ILLEGAL, message = "目标端口格式错误"),
-            @ApiResponse(code = ErrCode.ROUTE_MAPPING_PERSISTANCE_ERROR, message = "写入数据库错误"),
+            @ApiResponse(code = ErrCode.ROUTE_MAPPING_PERSISTENCE_ERROR, message = "写入数据库错误"),
     })
     @GET
     @Path("/image/{imageName}")
@@ -205,7 +204,7 @@ public class PersonResource extends DbResource<Configuration> {
             @ApiResponse(code = ErrCode.ROUTE_MAPPING_SOURCE_PORT_ILLEGAL, message = "源端口格式错误"),
             @ApiResponse(code = ErrCode.ROUTE_MAPPING_TARGET_HOST_ILLEGAL, message = "目标主机格式错误"),
             @ApiResponse(code = ErrCode.ROUTE_MAPPING_TARGET_PORT_ILLEGAL, message = "目标端口格式错误"),
-            @ApiResponse(code = ErrCode.ROUTE_MAPPING_PERSISTANCE_ERROR, message = "写入数据库错误"),
+            @ApiResponse(code = ErrCode.ROUTE_MAPPING_PERSISTENCE_ERROR, message = "写入数据库错误"),
     })
     @GET
     @Path("/entity/{clz}")
@@ -221,6 +220,7 @@ public class PersonResource extends DbResource<Configuration> {
         Node rootNode = new RSQLParser().parse(search);
         // Visit the node to retrieve CriteriaQuery
         CriteriaQuery<Person> query = rootNode.accept(visitor, entityMngr);
+
         // Do all sort of operations you want with the criteria query
         //query.orderBy("id DESC");
         // Execute and get results
@@ -281,7 +281,7 @@ public class PersonResource extends DbResource<Configuration> {
     @Path("/id/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public EntityOutput getUserByID(
-            @ApiParam(value = "Person的逻辑主键，默认为ID", required = true, example = "1") @PathParam("id") int id) {
+            @ApiParam(value = "Person的逻辑主键，默认为ID", required = true, example = "1") @PathParam("id") Long id) {
         Person person = null;
         try (SqlSession session = this.getSqlSessionFactory().openSession()) {
             PersonMapper personMpr = session.getMapper(PersonMapper.class);
@@ -301,7 +301,8 @@ public class PersonResource extends DbResource<Configuration> {
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public EntityOutput createUser(Person person) {
+    public EntityOutput createUser(
+            @ApiParam(value = "person对象的JSON字符串") Person person) {
 //        m_userDao.createUser(user.id, user.name);
         return EntityOutput.getInstance(ErrCode.SUCCESS, person);
     }

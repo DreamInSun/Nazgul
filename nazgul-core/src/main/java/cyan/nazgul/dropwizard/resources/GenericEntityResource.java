@@ -1,16 +1,15 @@
-package cyan.svc.nazgulexample.resources;
+package cyan.nazgul.dropwizard.resources;
 
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
 import com.github.tennaito.rsql.jpa.JpaCriteriaQueryVisitor;
 import com.google.common.collect.Maps;
+import cyan.nazgul.dropwizard.DbConfiguration;
 import cyan.nazgul.dropwizard.config.ProjectConfig;
-import cyan.nazgul.dropwizard.resources.DbResource;
 import cyan.svc.EntityOutput;
 import cyan.svc.entity.BaseEntity;
 import cyan.svc.err.BaseErrCode;
-import cyan.svc.nazgulexample.Configuration;
 import cyan.util.clazz.ClassUtil;
 import cz.jirutka.rsql.parser.RSQLParser;
 import cz.jirutka.rsql.parser.ast.RSQLVisitor;
@@ -38,13 +37,14 @@ import java.util.Optional;
  * 虽然使用动态技术，API性能下降，但能大大提升原型的开发效率。
  * 在线上运行中可根据具体情况再对性能瓶颈部分使用Mybatis或JDBI技术进行查询优化。或者缓存优化。
  */
-@Api(value = "/entity 实体REST管理", description = "提供了泛类型JPA实体的CURDL基础API")
-@Path(value = "/entity")
+@Api(value = "实体基础API", description = "Entity CURDL")
+@Path(value = "/rest")
 @Produces(MediaType.APPLICATION_JSON)
 @Counted
 @Timed
 @Metered(name = "EntityResource")
-public class EntityResource extends DbResource<Configuration> {
+@SuppressWarnings("uncheked")
+public class GenericEntityResource extends DbResource<DbConfiguration> {
 
     /*========== Static Properties =========*/
     public static final int DFLT_PAGE_IDX = 1;
@@ -56,7 +56,7 @@ public class EntityResource extends DbResource<Configuration> {
     private final Map<String, Class<?>> m_entityClzMap = Maps.newHashMap();
 
     /*========== Constructor =========*/
-    public EntityResource(Configuration config, Environment env) {
+    public GenericEntityResource(DbConfiguration config, Environment env) {
         super(config, env);
         m_projectConfig = config.getProjectConfig();
         m_entityPackage = m_projectConfig.getRootPackage() + ".entities";
@@ -77,7 +77,7 @@ public class EntityResource extends DbResource<Configuration> {
     }
 
     @Override
-    public int initialize(Configuration config, Environment env) {
+    public int initialize(DbConfiguration config, Environment env) {
         super.initialize(config, env);
         return 0;
     }
@@ -117,7 +117,7 @@ public class EntityResource extends DbResource<Configuration> {
         }
         /*===== Build Dynamic SQL =====*/
         RSQLParser rsqlParser = new RSQLParser();
-        /* 伪删除筛选 */
+        //伪删除筛选
         search = search + " and itemStat == 1";
         CriteriaQuery query = rsqlParser.parse(search).accept(visitor, this.getEntityManager());
         if (query == null) {

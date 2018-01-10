@@ -11,7 +11,7 @@ log\
 
 # =========== IDEA ===========
 *\.idea*
-*.iml
+# *.iml
 
 # =========== Eclipse ===========
 *\.classpath

@@ -97,7 +97,7 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
                 "\r\n/*======================================================*/\r\n");
         /*===== Update Project Config =====*/
         GlobalInstance.setConfiguration(config);
-        config.getProjectConfig().rootPackage = g_classRoot;
+        config.getProjectConfig().setRootPackage(g_classRoot);
         /*===== Post Initialize =====*/
         this.postInitialize(EnvConfig.getRuntimeEnvConfig(), m_bootstrap);
         /*===== Special Component =====*/

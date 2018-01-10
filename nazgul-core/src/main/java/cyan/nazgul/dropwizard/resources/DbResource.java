@@ -22,10 +22,7 @@ public class DbResource<TConfig extends DbConfiguration> extends MybatisResource
     protected static EntityManager g_EntityManager;
 
     public EntityManager getEntityManager() {
-        if (g_EntityManager == null) {
-            g_EntityManager = GlobalInstance.getEntityManagerFactory().createEntityManager();
-        }
-        return g_EntityManager;
+        return  this.getEntityManagerFactory().createEntityManager();
     }
 
     public EntityManagerFactory getEntityManagerFactory() {

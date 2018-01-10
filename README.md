@@ -1,3 +1,4 @@
+Nagul是一个基于Dropwizard的集成微服务开发框架，使用了大量的约定
 
 ====================
 ## 运行说明
@@ -184,10 +185,8 @@ MyBatisMngr类改为MybatisMngr
 0.2.8
 支持RSQL https://github.com/jirutka/rsql-parser
 
+0.3.0 
+完成了泛类型的实体REST API，实现CURDL中的List。
+可以使用数据库逆向生产JPA对象，直接提供API
+或者定义JPA对象，生成数据库脚本以及提供REST API
 
-0.3.0
-集成了SpringContext
-可以使用Spring-data-jpa
-
-
-NOTE. 引入的Spring系列组件违背了Nazgul的轻量化选型原则，也造成了依赖包的冲突，在后续的版本中会把该部分组件剥离为独立的工程nazgul-spring
