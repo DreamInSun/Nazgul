@@ -196,3 +196,5 @@ MyBatisMngr类改为MybatisMngr
 0.3.2 
 GenericEntityResource增加了Entity列表和JsonSchema
 修改了基础支持，ServiceName支持'-'分割和'.'等价，用于ServiceName不支持dot的场景。例如Consul（与DNS混淆）
+升级了Nazgul-servantb版本0.3.0
+升级了NazgulExample版本1.4.0
