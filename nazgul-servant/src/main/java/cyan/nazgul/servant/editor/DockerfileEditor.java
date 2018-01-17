@@ -1,6 +1,7 @@
 package cyan.nazgul.servant.editor;
 
 import cyan.nazgul.servant.entity.SvcConfig;
+import cyan.nazgul.servant.util.FileUtil;
 
 import java.io.*;
 
@@ -47,6 +48,9 @@ public class DockerfileEditor {
                                 break;
                             case "API_VERSION":
                                 svcConfig.setApi_version(cmdArr[2]);
+                                break;
+                            case "CMD":
+
                                 break;
                         }
                     }
@@ -98,6 +102,8 @@ public class DockerfileEditor {
                                 break;
                         }
                     }
+                }else if("CMD".equals(cmdArr[0])){
+                    line = "CMD java -jar /usr/local/" + svcConfig.getArtifactId() + "-" + svcConfig.getApi_version() + ".jar docker /config/config.yml";
                 }
                 /*=====  =====*/
                 bufWriter.write(line + "\n");
@@ -108,23 +114,12 @@ public class DockerfileEditor {
             bufWriter.close();
             bufReader.close();
             /*===== Rename Output File =====*/
-            contentCopy(outFile, inFile);
+            FileUtil.contentCopy(outFile, inFile);
             outFile.delete();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void contentCopy(File inFile, File outFile) throws IOException {
-        BufferedReader bufReader = new BufferedReader(new FileReader(inFile));
-        BufferedWriter bufWriter = new BufferedWriter(new FileWriter(outFile));
-        String line = bufReader.readLine();
-        while (line != null) {
-            bufWriter.write(line + "\n");
-            line = bufReader.readLine();
-        }
-        bufWriter.flush();
-        bufWriter.close();
-        bufReader.close();
-    }
+
 }

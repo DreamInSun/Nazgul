@@ -67,7 +67,7 @@ public class PomEditor {
         /* Set Node */
         if (svcConfig != null) {
             if (null != svcConfig.getSvc_name()) {
-                String svcName = svcConfig.getSvc_name();
+                String svcName = svcConfig.getSvc_name().replace('-', '.');
                 String groupId = null;
                 String artifactId = null;
                 if (svcName != null) {
@@ -90,5 +90,24 @@ public class PomEditor {
     }
 
     /*========== Assistent Function ==========*/
+    public static String getGroupId(Document pomDoc){
 
+        Node nodeGroupId = pomDoc.selectSingleNode("/pom:project/pom:groupId");
+        return nodeGroupId.getText();
+    }
+
+    public static String getArtifactId(Document pomDoc){
+        Node nodeArifactId = pomDoc.selectSingleNode("/pom:project/pom:artifactId");
+        return nodeArifactId.getText();
+    }
+
+    public static String getVersion(Document pomDoc){
+        Node nodeVesion = pomDoc.selectSingleNode("/pom:project/pom:version");
+        return  nodeVesion.getText();
+    }
+
+    public static String getBuildName(Document pomDoc){
+        Node nodeBuildName = pomDoc.selectSingleNode("/pom:project/pom:build/pom:finalName");
+        return  nodeBuildName.getText();
+    }
 }

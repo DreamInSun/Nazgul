@@ -6,12 +6,12 @@
     <parent>
         <artifactId>Nazgul</artifactId>
         <groupId>cyan.svc</groupId>
-        <version>0.3.1</version>
+        <version>0.3.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <!--========== Module ==========-->
     <artifactId>Nazgul-core</artifactId>
-    <version>0.3.1</version>
+    <version>0.3.2</version>
 
 
     <!--======================================================-->
@@ -102,6 +102,12 @@
             <groupId>com.loginbox.mybatis</groupId>
             <artifactId>dropwizard-mybatis</artifactId>
             <version>1.2.1</version>
+        </dependency>
+        <!-- ========== jackson ========== -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-jsonSchema</artifactId>
+            <version>2.9.3</version>
         </dependency>
         <!-- ========== Database ========== -->
         <dependency>

@@ -20,16 +20,31 @@ public class SvcConfig {
     protected String conf_key;
     @JsonProperty("API_VERSION")
     protected String api_version;
+    @JsonIgnore
+    protected String groupId;
+    @JsonIgnore
+    protected String artifactId;
 
     /*========== Getter & Setter ==========*/
     @JsonGetter("SERVICE_NAME")
     public String getSvc_name() {
-        return svc_name;
+        return svc_name.replace(".", "-");
     }
 
     @JsonSetter("SERVICE_NAME")
     public void setSvc_name(String svc_name) {
-        this.svc_name = svc_name;
+        this.svc_name = svc_name.replace("-", ".");
+        if (this.svc_name != null) {
+            /*===== Consul Compitable =====*/
+            String serviceName = svc_name.replace("-", ".");
+            /*===== Parse =====*/
+            //String[] svcNameSegments = SERVICE_NAME.split("(?=[A-Z])");
+            int pos_splitter = serviceName.lastIndexOf(".");
+            if (pos_splitter > 0) {
+                this.groupId = serviceName.substring(0, pos_splitter);
+                this.artifactId = serviceName.substring(pos_splitter + 1);
+            }
+        }
     }
 
     @JsonGetter("SERVICE_VERSION")
@@ -80,5 +95,18 @@ public class SvcConfig {
     @JsonSetter("API_VERSION")
     public void setApi_version(String api_version) {
         this.api_version = api_version;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public String getArtifactId() {
+        return artifactId;
+    }
+
+    /*========== Assistant ==========*/
+    public String getRootPackage() {
+        return (this.getGroupId() + '.' + this.getArtifactId()).toLowerCase();
     }
 }

@@ -31,7 +31,8 @@ public class DockerEnvEditor {
         SvcConfig svcConfig = null;
         try {
             /*===== Yml to Object =====*/
-            BufferedInputStream bufferedInputStream = (BufferedInputStream) Resources.getResource(m_filePath).getContent();
+
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(new File(this.m_filePath)));
             Map configMap = (Map<?, ?>) (new Yaml().load(bufferedInputStream));
             /*===== Deserialization =====*/
             ObjectMapper objMapper = new ObjectMapper();

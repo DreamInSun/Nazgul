@@ -32,6 +32,13 @@ public class FileMapping {
     @JsonProperty("defaultConf")
     private String defaultConf;
 
+    @JsonProperty("develConf")
+    private String develConf;
+
+    @JsonProperty("productConf")
+    private String productConf;
+
+
     /*========== Getter & Setter ==========*/
     @JsonAnyGetter
     public String getPackageBase() {
@@ -81,5 +88,21 @@ public class FileMapping {
     @JsonAnySetter
     public void setDefaultConf(String defaultConf) {
         this.defaultConf = defaultConf;
+    }
+    @JsonAnyGetter
+    public String getDevelConf() {
+        return develConf;
+    }
+    @JsonAnySetter
+    public void setDevelConf(String develConf) {
+        this.develConf = develConf;
+    }
+    @JsonAnyGetter
+    public String getProductConf() {
+        return productConf;
+    }
+    @JsonAnySetter
+    public void setProductConf(String productConf) {
+        this.productConf = productConf;
     }
 }

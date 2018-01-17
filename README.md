@@ -190,3 +190,9 @@ MyBatisMngr类改为MybatisMngr
 可以使用数据库逆向生产JPA对象，直接提供API
 或者定义JPA对象，生成数据库脚本以及提供REST API
 
+0.3.1
+完成了GenericEntityResource作为基础组件，提供实体的CURDL能力.
+
+0.3.2 
+GenericEntityResource增加了Entity列表和JsonSchema
+修改了基础支持，ServiceName支持'-'分割和'.'等价，用于ServiceName不支持dot的场景。例如Consul（与DNS混淆）

@@ -77,4 +77,18 @@ public class FileUtil {
         }
         return sb.toString();
     }
+
+
+    public static void contentCopy(File inFile, File outFile) throws IOException {
+        BufferedReader bufReader = new BufferedReader(new FileReader(inFile));
+        BufferedWriter bufWriter = new BufferedWriter(new FileWriter(outFile));
+        String line = bufReader.readLine();
+        while (line != null) {
+            bufWriter.write(line + "\n");
+            line = bufReader.readLine();
+        }
+        bufWriter.flush();
+        bufWriter.close();
+        bufReader.close();
+    }
 }

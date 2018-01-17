@@ -3,14 +3,20 @@ package cyan.svc.nazgulexample.resources;
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.jsonschema.JsonSchema;
 import com.github.tennaito.rsql.jpa.JpaCriteriaQueryVisitor;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import cyan.nazgul.dropwizard.config.ProjectConfig;
 import cyan.nazgul.dropwizard.resources.DbResource;
+import cyan.nazgul.dropwizard.resources.GenericEntityResource;
 import cyan.svc.EntityOutput;
 import cyan.svc.entity.BaseEntity;
 import cyan.svc.err.BaseErrCode;
 import cyan.svc.nazgulexample.Configuration;
+import cyan.util.JsonUtil;
 import cyan.util.clazz.ClassUtil;
 import cz.jirutka.rsql.parser.RSQLParser;
 import cz.jirutka.rsql.parser.ast.RSQLVisitor;
@@ -27,8 +33,11 @@ import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -81,6 +90,38 @@ public class EntityResource extends DbResource<Configuration> {
         super.initialize(config, env);
         return 0;
     }
+
+    /*========= Class Definition API ==========*/
+    @ApiOperation(value = "获取支持的实体列表",
+            notes = " "
+    )
+    @GET
+    @Path("/clz")
+    public EntityOutput getClzList() {
+        List<String> retList = Lists.newArrayList(m_entityClzMap.keySet());
+        Collections.sort(retList);
+        return EntityOutput.getInstance(BaseErrCode.SUCCESS, retList);
+    }
+
+    @ApiOperation(value = "获取指定实体的字段定义",
+            notes = "该API用于输出指定实体的JsonSchema定义"
+    )
+    @GET
+    @Path("/clz/{clz}/jsonschema")
+    public Response getClzJsonSchema(
+            @ApiParam(value = "JPA类的名称，entities文件夹以下相对路径,子路径用'.'分隔,例如admin.SuperAdmin", required = true, example = "Person") @PathParam("clz") String clz
+    ) throws IllegalAccessException, InstantiationException, IOException {
+        /*===== Class =====*/
+        Class<?> entityClz = m_entityClzMap.get(clz);
+        if (null == entityClz) {
+            return Response.noContent().build();
+        }
+
+        /*===== Format Entity Definition =====*/
+        String schemaStr = JsonUtil.getJsonSchema(entityClz);
+        return Response.ok(schemaStr).build();
+    }
+
 
     /*========= GET / Retrieve ==========*/
     @ApiOperation(value = "按照查询语句获取实体列表",
@@ -281,7 +322,7 @@ public class EntityResource extends DbResource<Configuration> {
         EntityTransaction entityTransaction = entityMngr.getTransaction();
         entityTransaction.begin();
         try {
-            ((BaseEntity)entity).delete();
+            ((BaseEntity) entity).delete();
             entityMngr.merge(entity);
             entityMngr.flush();
         } catch (IllegalArgumentException e) {

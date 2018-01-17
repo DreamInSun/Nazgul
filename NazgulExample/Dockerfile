@@ -4,10 +4,10 @@ MAINTAINER "DreamInSun"
 
 #========== Environment ==========
 ENV CONFIG_CONN       config.ecoho.cn
-ENV SERVICE_NAME      cyan.svc.NazgulExample
+ENV SERVICE_NAME      cyan-svc-NazgulExample
 ENV SERVICE_VERSION   LTS
 ENV PROFILE           product
-ENV API_VERSION       1.3.1
+ENV API_VERSION       1.4.0
 
 #========== Configuration ==========
 
@@ -25,4 +25,4 @@ RUN chmod a+x /shell/*
 
 #========= Start Service ==========
 #ENTRYPOINT ["/shell/docker-entrypoint.sh"]
-CMD java -jar /usr/local/NazgulExample.jar docker /config/config.yml
+CMD java -jar /usr/local/NazgulExample-1.4.0.jar docker /config/config.yml

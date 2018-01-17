@@ -6,4 +6,6 @@ mavenPom: ./pom.xml
 dockerEnv: ./src/main/resources/config/docker-env.yml
 defaultConf: ./src/main/resources/config/default.yml
 
+develConf: ./config/config.yml
+productConf: ./config/config.devel.yml
 

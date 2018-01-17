@@ -36,6 +36,10 @@ public class EnvConfig {
     /*========== Properties ==========*/
     @JsonProperty
     protected String CONFIG_CONN;
+
+    /**
+     * {}-{}-{}
+     */
     @JsonProperty
     protected String SERVICE_NAME;
     @JsonProperty
@@ -136,13 +140,16 @@ public class EnvConfig {
     }
 
     public void setSERVICE_NAME(String SERVICE_NAME) throws Exception {
-        this.SERVICE_NAME = SERVICE_NAME;
+        this.SERVICE_NAME = SERVICE_NAME.replace("-", ".");
         if (this.SERVICE_NAME != null) {
+            /*===== Consul Compitable =====*/
+            String serviceName = SERVICE_NAME;
+            /*===== Parse =====*/
             //String[] svcNameSegments = SERVICE_NAME.split("(?=[A-Z])");
-            int pos_splitter = SERVICE_NAME.lastIndexOf(".");
+            int pos_splitter = serviceName.lastIndexOf(".");
             if (pos_splitter > 0) {
-                this.GROUP_ID = SERVICE_NAME.substring(0, pos_splitter);
-                this.ARTIFACT_ID = SERVICE_NAME.substring(pos_splitter + 1);
+                this.GROUP_ID = serviceName.substring(0, pos_splitter);
+                this.ARTIFACT_ID = serviceName.substring(pos_splitter + 1);
             } else {
                 throw new Exception("SERVICE_NAME format Error.");
             }

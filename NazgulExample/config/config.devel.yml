@@ -9,7 +9,6 @@ superadmin:
 #========== JDBC ==========#
 #该配置是一个
 database:
-  driverClass: com.mysql.cj.jdbc.Driver
   password: nazgul
   url: jdbc:mysql://rm-wz9k4pu4q2op9l984eo.mysql.rds.aliyuncs.com:3306/nazgul?characterEncoding=utf8&useSSL=false&autoReconnect=true
   user: nazgul
@@ -31,3 +30,7 @@ logging:
   # The default level of all loggers. Can be OFF, ERROR, WARN, INFO,
   # DEBUG, TRACE, or ALL.
   level: DEBUG
+
+integer: 1
+float : 12.42312314123
+boolean: true

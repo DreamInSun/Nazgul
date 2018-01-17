@@ -1,7 +1,7 @@
 ---
-SERVICE_NAME: "cyan.svc.NazgulExample"
+SERVICE_NAME: "cyan-svc-NazgulExample"
 SERVICE_VERSION: "LTS"
 PROFILE: "dev"
 CONFIG_CONN: "config.ecoho.cn"
 CONFIG_KEY: ""
-API_VERSION: "1.3.1"
+API_VERSION: "1.4.0"
