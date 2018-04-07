@@ -5,11 +5,13 @@ import cyan.nazgul.dropwizard.container.GlobalInstance;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 
 /**
  * Created by DreamInSun on 2017/11/30.
  */
+@Provider
 public class CrossDomainFilter implements Filter {
 
     /*========== Properties ==========*/

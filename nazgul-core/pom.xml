@@ -11,8 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
     <!--========== Module ==========-->
     <artifactId>Nazgul-core</artifactId>
-    <version>0.3.2</version>
-
+    <version>0.3.3-SNAPSHOT</version>
 
     <!--======================================================-->
     <!--==================== Dependencies ====================-->
@@ -64,6 +63,11 @@
             <artifactId>dropwizard-shiro</artifactId>
             <version>0.2.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.toastshaman</groupId>
+            <artifactId>dropwizard-auth-jwt</artifactId>
+            <version>1.1.2-0</version>
+        </dependency>
         <!--========== xDiamond ==========-->
         <dependency>
             <groupId>io.github.hengyunabc.xdiamond</groupId>
@@ -77,21 +81,21 @@
             <version>${flyway.version}</version>
         </dependency>
         <!--========== Swagger ==========-->
-        <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-annotations</artifactId>
-            <version>${swagger.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-jaxrs</artifactId>
-            <version>${swagger.version}</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>io.swagger</groupId>-->
+            <!--<artifactId>swagger-annotations</artifactId>-->
+            <!--<version>${swagger.version}</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>io.swagger</groupId>-->
+            <!--<artifactId>swagger-jaxrs</artifactId>-->
+            <!--<version>${swagger.version}</version>-->
+        <!--</dependency>-->
         <!--========== 3rd Dropwizard ==========-->
         <dependency>
             <groupId>com.smoketurner</groupId>
             <artifactId>dropwizard-swagger</artifactId>
-            <version>1.0.0-1</version>
+            <version>1.3.0-1</version>
         </dependency>
         <dependency>
             <groupId>io.dropwizard.modules</groupId>
@@ -131,11 +135,27 @@
             <artifactId>commons-codec</artifactId>
             <version>1.11</version>
         </dependency>
-        <!--<dependency>-->
-        <!--<groupId>org.apache.commons</groupId>-->
-        <!--<artifactId>commons-lang3</artifactId>-->
-        <!--<version>3.7</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <!--========== Jedis ==========-->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>2.9.0</version>
+        </dependency>
+        <dependency>
+            <groupId>de.ruedigermoeller</groupId>
+            <artifactId>fst</artifactId>
+            <version>2.57</version>
+        </dependency>
         <!-- ========== Email ========== -->
         <dependency>
             <groupId>javax.mail</groupId>
@@ -238,6 +258,7 @@
             <!--========== Plugin: Source ===========-->
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>3.0.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>

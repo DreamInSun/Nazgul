@@ -9,11 +9,9 @@ import com.google.common.base.Optional;
 import cyan.nazgul.dropwizard.resources.DbResource;
 import cyan.svc.EntityOutput;
 import cyan.svc.nazgulexample.Configuration;
-import cyan.svc.nazgulexample.config.SuperAdminConfig;
 import cyan.svc.nazgulexample.contract.ErrCode;
 import cyan.svc.nazgulexample.entities.Person;
 import cyan.svc.nazgulexample.entities.QPerson;
-import cyan.svc.nazgulexample.entities.admin.SuperAdmin;
 import cyan.svc.nazgulexample.mappers.PersonMapper;
 import cyan.svc.nazgulexample.views.PersonView;
 import cyan.util.FileOperation;
@@ -85,12 +83,10 @@ import java.util.concurrent.TimeUnit;
 public class PersonResource extends DbResource<Configuration> {
 
     /*========== Properties =========*/
-    SuperAdminConfig m_superAdminConfig;
 
     /*========== Constructor =========*/
     public PersonResource(Configuration config, Environment env) {
         super(config, env);
-        m_superAdminConfig = this.getConfig().getSuperAdminConfig();
     }
 
     @Override
@@ -114,7 +110,7 @@ public class PersonResource extends DbResource<Configuration> {
                     "@Produces(MediaType.APPLICATION_JSON)表示使用Json编码格式返回。</br>" +
                     "请求参数可以使用@QueryParam/@HeaderParam/@PathParam的标准JAX-RS注解的方式注入。</br>" +
                     "参数可以使用Optional<Integer>，在路径匹配不到的时候不填。也可以使用@DefaultValue添加匹配不到时的默认值。",
-            response = SuperAdmin.class)
+            response = Person.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "成功返回"),
             @ApiResponse(code = 400, message = "No Name Provided")

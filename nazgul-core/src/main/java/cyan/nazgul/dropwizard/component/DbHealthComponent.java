@@ -27,6 +27,5 @@ public class DbHealthComponent<TConfig extends BaseConfiguration> implements ICo
     public void run(TConfig config, Environment environment) {
         final Database database = new Database();
         environment.healthChecks().register("database", new DatabaseHealthCheck(database));
-
     }
 }

@@ -31,6 +31,6 @@ public class BaseMngr<TConfig> {
 
     /*========== Assistant Function ==========*/
     protected Object getMngr(Class<? extends BaseMngr> clz) {
-        return MngrFactory.getMngr(clz);
+        return MngrFactory.getMngr(clz, this.m_config, this.m_env);
     }
 }

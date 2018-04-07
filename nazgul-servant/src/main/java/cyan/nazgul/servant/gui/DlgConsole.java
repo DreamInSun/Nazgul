@@ -11,6 +11,10 @@ public class DlgConsole extends JDialog {
     private JTextArea txtareaConsole;
 
     public DlgConsole() {
+        SwingUtilities.invokeLater(() -> init());
+    }
+
+    private void init(){
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);

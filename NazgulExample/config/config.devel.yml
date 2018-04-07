@@ -4,14 +4,22 @@
 #该配置是一个实例项，说明如果天机一个项目自定义配置
 superadmin:
   username: admin
-  password: 123456
+  passwd: 123456
 
 #========== JDBC ==========#
 #该配置是一个
 database:
   password: nazgul
-  url: jdbc:mysql://rm-wz9k4pu4q2op9l984eo.mysql.rds.aliyuncs.com:3306/nazgul?characterEncoding=utf8&useSSL=false&autoReconnect=true
+  url: jdbc:mysql://rm-wz9k4pu4q2op9l984eo.mysql.rds.aliyuncs.com:3306/nazgul?characterEncoding=utf8&useSSL=false&autoReconnect=true&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull
   user: nazgul
+
+#========== Service ==========#
+
+svc:
+  #该配置项为本项目的部署域
+  baseDomain: core.cyan.org.cn
+  ucenter:  http://core.cyan.org.cn/ucenter
+
 
 #========== DefaultServerFactory ==========#
 #该配置用于在本地开启多个服务联动时，默认监听端口都为8080的情况下，临时修改服务端口，避开Bind Port Already Used报错。
@@ -30,7 +38,3 @@ logging:
   # The default level of all loggers. Can be OFF, ERROR, WARN, INFO,
   # DEBUG, TRACE, or ALL.
   level: DEBUG
-
-integer: 1
-float : 12.42312314123
-boolean: true

@@ -3,10 +3,11 @@ package cyan.nazgul.dropwizard;
 import cyan.nazgul.docker.svc.EnvConfig;
 import cyan.nazgul.dropwizard.cli.DockerCommand;
 import cyan.nazgul.dropwizard.component.*;
+import cyan.nazgul.dropwizard.config.BaseSvcConfig;
 import cyan.nazgul.dropwizard.config.OneRingConfigSourceProvider;
 import cyan.nazgul.dropwizard.container.GlobalInstance;
-import cyan.nazgul.dropwizard.filter.AllowedHeaderFilter;
 import cyan.nazgul.dropwizard.filter.CrossDomainFilter;
+import cyan.nazgul.dropwizard.filter.NazProductLoggingFilter;
 import cyan.nazgul.dropwizard.resources.IResource;
 import cyan.util.clazz.ClassUtil;
 import io.dropwizard.Application;
@@ -112,6 +113,9 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
         if (config.getCrossdomainConfig().getEnable()) {
             env.getApplicationContext().addFilter(CrossDomainFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST, DispatcherType.ERROR));
         }
+        /*===== Request Log =====*/
+        //env.jersey().register(new NazLogFilter());
+        env.jersey().register(new NazProductLoggingFilter());
         /*========= Scan Resource & Register ==========*/
         m_resourceList = registerReources(g_classRoot + ".resources", config, env);
     }

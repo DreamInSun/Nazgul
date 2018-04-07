@@ -156,9 +156,16 @@ public class GenericEntityResource extends DbResource<DbConfiguration> {
         }
         /*===== Build Dynamic SQL =====*/
         RSQLParser rsqlParser = new RSQLParser();
-        //伪删除筛选
-        search = search + " and itemStat == 1";
-        CriteriaQuery query = rsqlParser.parse(search).accept(visitor, this.getEntityManager());
+        /* 伪删除筛选 */
+        search += " and itemStat == 1";
+        this.getLogger().info("查询语句：" + search);
+        CriteriaQuery query;
+        try {
+            query = rsqlParser.parse(search).accept(visitor, this.getEntityManager());
+        } catch (Exception e) {
+            this.getLogger().error(e.getMessage());
+            return EntityOutput.getInstance(BaseErrCode.ENTITY_QUERY_STRING_ERROR, e.getMessage());
+        }
         if (query == null) {
             return EntityOutput.getInstance(BaseErrCode.ENTITY_QUERY_STRING_ERROR);
         }

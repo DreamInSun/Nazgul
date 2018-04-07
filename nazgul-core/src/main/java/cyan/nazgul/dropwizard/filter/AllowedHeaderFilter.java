@@ -2,11 +2,13 @@ package cyan.nazgul.dropwizard.filter;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 
 /**
  * Created by DreamInSun on 2017/11/30.
  */
+@Provider
 public class AllowedHeaderFilter implements Filter {
 
     @Override

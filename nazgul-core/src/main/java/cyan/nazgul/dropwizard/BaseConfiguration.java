@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.cache.CacheBuilderSpec;
 import cyan.nazgul.docker.svc.EnvConfig;
 import cyan.nazgul.dropwizard.auth.SuperAdmin;
+import cyan.nazgul.dropwizard.config.AuthConfig;
+import cyan.nazgul.dropwizard.config.BaseSvcConfig;
 import cyan.nazgul.dropwizard.config.CrossdomainConfig;
 import cyan.nazgul.dropwizard.config.ProjectConfig;
 import io.dropwizard.Configuration;
@@ -15,7 +17,7 @@ import org.secnod.dropwizard.shiro.ShiroConfiguration;
  * - Swagger
  * Created by DreamInSun on 2016/7/21.
  */
-public class BaseConfiguration extends Configuration {
+public class BaseConfiguration<TSvcCnfig extends BaseSvcConfig> extends Configuration {
 
     /*========= Docker Env ==========*/
     public EnvConfig envConfig;
@@ -44,8 +46,20 @@ public class BaseConfiguration extends Configuration {
         this.crossdomainConfig = crossdomainConfig;
     }
 
-     /*========= Shiro ==========*/
-     @JsonProperty("shiro")
+    /*========= Shiro ==========*/
+    @JsonProperty("auth")
+    private AuthConfig authConfig;
+
+    public AuthConfig getAuthConfig() {
+        return authConfig;
+    }
+
+    public void setAuthConfig(AuthConfig authConfig) {
+        this.authConfig = authConfig;
+    }
+
+    /*========= Shiro ==========*/
+    @JsonProperty("shiro")
     private ShiroConfiguration shiroConfig;
 
     public ShiroConfiguration getShiroConfig() {
@@ -60,6 +74,14 @@ public class BaseConfiguration extends Configuration {
     @JsonProperty("swagger")
     public SwaggerBundleConfiguration swaggerBundleConfiguration;
 
+    public SwaggerBundleConfiguration getSwaggerBundleConfiguration() {
+        return swaggerBundleConfiguration;
+    }
+
+    public void setSwaggerBundleConfiguration(SwaggerBundleConfiguration swaggerBundleConfiguration) {
+        this.swaggerBundleConfiguration = swaggerBundleConfiguration;
+    }
+
     /*========== SuperAdmin ==========*/
     public SuperAdmin getSuperadmin() {
         return superadmin;
@@ -71,6 +93,18 @@ public class BaseConfiguration extends Configuration {
 
     @JsonProperty("superadmin")
     private SuperAdmin superadmin;
+
+    /*========== SvcConfig ==========*/
+    @JsonProperty("svc")
+    private TSvcCnfig svcConfig;
+
+    public TSvcCnfig getSvcConfig() {
+        return svcConfig;
+    }
+
+    public void setSvcConfig(TSvcCnfig svcConfig) {
+        this.svcConfig = svcConfig;
+    }
 
     /*========== Cache Policy ==========*/
     public CacheBuilderSpec getAuthenticationCachePolicy() {

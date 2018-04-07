@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import cyan.nazgul.docker.onering.ConfigLoader;
 import cyan.nazgul.docker.svc.EnvConfig;
+import cyan.nazgul.dropwizard.BaseApplication;
+import cyan.util.FileLoaderUtil;
 import cyan.util.email.EmailUtil;
 import cyan.util.NetUtils;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
@@ -29,7 +31,7 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
     /*========== Factory ==========*/
     protected static OneRingConfigSourceProvider g_ConfigProcider = null;
 
-    public static OneRingConfigSourceProvider getInstance(Class<?> appClass) {
+    public static OneRingConfigSourceProvider getInstance(Class<? extends BaseApplication> appClass) {
         return OneRingConfigSourceProvider.getInstance(false, false, appClass);
     }
 
@@ -41,7 +43,7 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
      * @param appClass  应用入口类（Application）的类名，用于相对路径定位相关配置。
      * @return
      */
-    public static OneRingConfigSourceProvider getInstance(boolean isDevel, boolean isOffline, Class<?> appClass) {
+    public static OneRingConfigSourceProvider getInstance(boolean isDevel, boolean isOffline, Class<? extends BaseApplication> appClass) {
         if (g_ConfigProcider == null) {
             g_ConfigProcider = new OneRingConfigSourceProvider(isDevel, isOffline, appClass);
         }
@@ -51,7 +53,7 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
     /*========== Properties ==========*/
     protected ObjectMapper m_jsonMapper = new ObjectMapper();
     protected Map<String, Object> configMap = null;
-    protected Class<?> m_AppClass = null;
+    protected Class<? extends BaseApplication> m_AppClass = null;
     protected boolean m_isDevel = false;
     protected boolean m_isOffline = false;
 
@@ -61,7 +63,7 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
     }
 
     /*========== Constructor ==========*/
-    protected OneRingConfigSourceProvider(boolean isDevel, boolean isOffline, Class<?> appClass) {
+    protected OneRingConfigSourceProvider(boolean isDevel, boolean isOffline, Class<? extends BaseApplication> appClass) {
         super();
         this.m_isDevel = isDevel;
         this.m_isOffline = isOffline;
@@ -150,13 +152,13 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
             System.out.println("Load Config File Absolutely: " + path);
             fileInputStream = new FileInputStream(file);
         } else {
-            String relativePath = getJarPath() + path;
+            String relativePath = FileLoaderUtil.getJarPath(this.m_AppClass) + path;
             file = new File(relativePath);
             if (file.exists()) {
                 System.out.println("Load Config File Jar Relative: " + relativePath);
                 fileInputStream = new FileInputStream(file);
             } else {
-                String workingDirPath = getWorkingDirectory() + path;
+                String workingDirPath = FileLoaderUtil.getWorkingDirectory() + path;
                 file = new File(workingDirPath);
                 if (file.exists()) {
                     System.out.println("Load Config File WorkingDir Relative: " + workingDirPath);
@@ -182,10 +184,8 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
         } else {
             throw new Exception("Unsupport Confil File Format");
         }
-
         return configMap;
     }
-
 
     public Map<String, Object> mergeMap(Map<String, Object> destMap, Map<String, Object> srcMap) {
         for (Map.Entry<String, Object> entry : srcMap.entrySet()) {
@@ -205,25 +205,4 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
         return destMap;
     }
 
-    public String getWorkingDirectory() {
-        String currentDir = System.getProperty("user.dir");
-        /*=====  =====*/
-        return currentDir;
-    }
-
-    public String getJarPath() {
-        /*===== Get Jar File Path =====*/
-        String path = this.m_AppClass.getProtectionDomain().getCodeSource().getLocation().getPath();
-        try {
-            path = java.net.URLDecoder.decode(path, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        /*===== Get Jar Directory Path =====*/
-        int firstIndex = path.indexOf("/") + 1;
-        int lastIndex = path.lastIndexOf("/");
-        path = path.substring(firstIndex, lastIndex);
-        /*===== Return =====*/
-        return path;
-    }
 }

@@ -41,18 +41,20 @@ public class EntityManagerComponent<TConfig extends DbConfiguration> implements 
     /*========== Interface : IComponent ==========*/
     @Override
     public void init(Bootstrap bootstrap) {
-                /*===== Scan for entities =====*/
+        /*===== Scan for entities =====*/
         List<Class<?>> entityList = scanEntity(m_packagePath + ".entities");
         Class[] entityClzArr = new Class[entityList.size()];
         entityList.toArray(entityClzArr);
-        /*=====  =====*/
-        m_entityManagerBundle = new EntityManagerBundle<TConfig>(BaseEntity.class, entityClzArr) {
-            @Override
-            public DataSourceFactory getDataSourceFactory(TConfig configuration) {
-                return configuration.getDataSourceFactory();
-            }
-        };
-        bootstrap.addBundle(m_entityManagerBundle);
+        /*===== Register Entities =====*/
+        if(entityClzArr != null && entityClzArr.length > 0) {
+            m_entityManagerBundle = new EntityManagerBundle<TConfig>(BaseEntity.class, entityClzArr) {
+                @Override
+                public DataSourceFactory getDataSourceFactory(TConfig configuration) {
+                    return configuration.getDataSourceFactory();
+                }
+            };
+            bootstrap.addBundle(m_entityManagerBundle);
+        }
     }
 
     @Override
@@ -62,11 +64,13 @@ public class EntityManagerComponent<TConfig extends DbConfiguration> implements 
 
     @Override
     public void run(TConfig config, Environment environment) {
-        EntityManagerFactory entityManagerFactory = m_entityManagerBundle.getEntityManagerFactory();
-        GlobalInstance.setEntityManagerFactory(entityManagerFactory);
+        if(m_entityManagerBundle != null){
+            EntityManagerFactory entityManagerFactory = m_entityManagerBundle.getEntityManagerFactory();
+            GlobalInstance.setEntityManagerFactory(entityManagerFactory);
 
-        EntityManager entityManager = m_entityManagerBundle.getSharedEntityManager();
-        GlobalInstance.setEntityManager(entityManager);
+            EntityManager entityManager = m_entityManagerBundle.getSharedEntityManager();
+            GlobalInstance.setEntityManager(entityManager);
+        }
     }
 
 

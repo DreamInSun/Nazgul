@@ -3,15 +3,11 @@ package cyan.svc.nazgulexample.resources;
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.jsonschema.JsonSchema;
 import com.github.tennaito.rsql.jpa.JpaCriteriaQueryVisitor;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import cyan.nazgul.dropwizard.config.ProjectConfig;
 import cyan.nazgul.dropwizard.resources.DbResource;
-import cyan.nazgul.dropwizard.resources.GenericEntityResource;
 import cyan.svc.EntityOutput;
 import cyan.svc.entity.BaseEntity;
 import cyan.svc.err.BaseErrCode;
@@ -159,8 +155,15 @@ public class EntityResource extends DbResource<Configuration> {
         /*===== Build Dynamic SQL =====*/
         RSQLParser rsqlParser = new RSQLParser();
         /* 伪删除筛选 */
-        search = search + " and itemStat == 1";
-        CriteriaQuery query = rsqlParser.parse(search).accept(visitor, this.getEntityManager());
+        search += " and itemStat == 1";
+        this.getLogger().info("查询语句：" + search);
+        CriteriaQuery query;
+        try {
+            query = rsqlParser.parse(search).accept(visitor, this.getEntityManager());
+        } catch (Exception e) {
+            this.getLogger().error(e.getMessage());
+            return EntityOutput.getInstance(BaseErrCode.ENTITY_QUERY_STRING_ERROR, e.getMessage());
+        }
         if (query == null) {
             return EntityOutput.getInstance(BaseErrCode.ENTITY_QUERY_STRING_ERROR);
         }

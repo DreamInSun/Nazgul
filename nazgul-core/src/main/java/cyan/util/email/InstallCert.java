@@ -4,14 +4,12 @@ package cyan.util.email;
  * Created by DreamInSun on 2017/9/14.
  */
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.*;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -27,32 +25,31 @@ import javax.net.ssl.X509TrustManager;
 
 
 public class InstallCert {
+    public static final Logger g_logger = LoggerFactory.getLogger(InstallCert.class);
 
     public static void main(String[] args) throws Exception {
+        String host = "smtp.163.com";
+        int port = 465;
+        String passphraseStr = "chageit";
 
+//        if ((args.length == 1) || (args.length == 2)) {
+//            String[] c = args[0].split(":");
+//            host = c[0];
+//            port = (c.length == 1) ? 443 : Integer.parseInt(c[1]);
+//            passphraseStr = (args.length == 1) ? "changeit" : args[1];
+//        } else {
+//            System.out
+//                    .println("Usage: java InstallCert <host>[:port] [passphrase]");
+//            return;
+//        }
+//        InstallCert.run(host, port, passphraseStr);
+        InstallCert.run("smtp.163.com", 465, "changeit");
+    }
 
-        String host;
-        int port;
-        char[] passphrase;
-       /*
-        if ((args.length == 1) || (args.length == 2)) {
-            String[] c = args[0].split(":");
-            host = c[0];
-            port = (c.length == 1) ? 443 : Integer.parseInt(c[1]);
-            String p = (args.length == 1) ? "changeit" : args[1];
-            passphrase = p.toCharArray();
-        } else {
-            System.out
-                    .println("Usage: java InstallCert <host>[:port] [passphrase]");
-            return;
-        }*/
-
-        host = "smtp.exmail.qq.com";
-        port = 465;
-        String p = "changeit";
-        passphrase = p.toCharArray();
-
-        File file = new File("jssecacerts");
+    public static String run(String host, int port, String passphraseStr) throws Exception {
+        char[] passphrase = passphraseStr.toCharArray();
+        String filePath = null;
+        File file = new File("/jssecacerts");
         if (file.isFile() == false) {
             char SEP = File.separatorChar;
             File dir = new File(System.getProperty("java.home") + SEP + "lib"
@@ -62,16 +59,20 @@ public class InstallCert {
                 file = new File(dir, "cacerts");
             }
         }
-        System.out.println("Loading KeyStore " + file + "...");
+        g_logger.debug("Loading KeyStore " + file + "...");
+        filePath = file.getAbsolutePath();
+
+        KeyStore ks = null;
+
+        /*===== Load KS =====*/
         InputStream in = new FileInputStream(file);
-        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+        ks = KeyStore.getInstance(KeyStore.getDefaultType());
         ks.load(in, passphrase);
         in.close();
 
 
         SSLContext context = SSLContext.getInstance("TLS");
-        TrustManagerFactory tmf = TrustManagerFactory
-                .getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         tmf.init(ks);
         X509TrustManager defaultTrustManager = (X509TrustManager) tmf
                 .getTrustManagers()[0];
@@ -79,27 +80,24 @@ public class InstallCert {
         context.init(null, new TrustManager[]{tm}, null);
         SSLSocketFactory factory = context.getSocketFactory();
 
-
-        System.out
-                .println("Opening connection to " + host + ":" + port + "...");
+        g_logger.debug("Opening connection to " + host + ":" + port + "...");
         SSLSocket socket = (SSLSocket) factory.createSocket(host, port);
         socket.setSoTimeout(10000);
         try {
-            System.out.println("Starting SSL handshake...");
+            g_logger.debug("Starting SSL handshake...");
             socket.startHandshake();
             socket.close();
-            System.out.println();
-            System.out.println("No errors, certificate is already trusted");
+            g_logger.debug("No errors, certificate is already trusted");
         } catch (SSLException e) {
-            System.out.println();
+            g_logger.error(e.getMessage());
             e.printStackTrace(System.out);
         }
 
 
         X509Certificate[] chain = tm.chain;
         if (chain == null) {
-            System.out.println("Could not obtain server certificate chain");
-            return;
+            g_logger.debug("Could not obtain server certificate chain");
+            return null;
         }
 
 
@@ -107,55 +105,56 @@ public class InstallCert {
                 System.in));
 
 
-        System.out.println();
-        System.out.println("Server sent " + chain.length + " certificate(s):");
-        System.out.println();
+        g_logger.debug("Server sent " + chain.length + " certificate(s):");
         MessageDigest sha1 = MessageDigest.getInstance("SHA1");
         MessageDigest md5 = MessageDigest.getInstance("MD5");
         for (int i = 0; i < chain.length; i++) {
             X509Certificate cert = chain[i];
-            System.out.println(" " + (i + 1) + " Subject "
+            g_logger.debug(" " + (i + 1) + " Subject "
                     + cert.getSubjectDN());
-            System.out.println("   Issuer  " + cert.getIssuerDN());
+            g_logger.debug("   Issuer  " + cert.getIssuerDN());
             sha1.update(cert.getEncoded());
-            System.out.println("   sha1    " + toHexString(sha1.digest()));
+            g_logger.debug("   sha1    " + toHexString(sha1.digest()));
             md5.update(cert.getEncoded());
-            System.out.println("   md5     " + toHexString(md5.digest()));
-            System.out.println();
+            g_logger.debug("   md5     " + toHexString(md5.digest()));
         }
 
 
         System.out
                 .println("Enter certificate to add to trusted keystore or 'q' to quit: [1]");
-        String line = reader.readLine().trim();
+        //String line = reader.readLine().trim();
+        String line = "1";
         int k;
         try {
             k = (line.length() == 0) ? 0 : Integer.parseInt(line) - 1;
         } catch (NumberFormatException e) {
-            System.out.println("KeyStore not changed");
-            return;
+            g_logger.debug("KeyStore not changed");
+            return null;
         }
-
 
         X509Certificate cert = chain[k];
         String alias = host + "-" + (k + 1);
         ks.setCertificateEntry(alias, cert);
 
 
-        OutputStream out = new FileOutputStream("jssecacerts");
+        OutputStream out = new FileOutputStream(filePath);
         ks.store(out, passphrase);
         out.close();
-
-
-        System.out.println();
-        System.out.println(cert);
-        System.out.println();
+        g_logger.debug(cert.toString());
         System.out
                 .println("Added certificate to keystore 'jssecacerts' using alias '"
                         + alias + "'");
+
+        return filePath;
     }
 
+    /*==========  ==========*/
+    public static void downloadCert(String host, int port, String passphraseStr, String filePath) {
 
+
+    }
+
+    /*========== Assistant Function ===========*/
     private static final char[] HEXDIGITS = "0123456789abcdef".toCharArray();
 
 

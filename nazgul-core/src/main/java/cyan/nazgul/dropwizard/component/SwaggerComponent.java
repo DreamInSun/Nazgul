@@ -8,11 +8,15 @@ import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import io.swagger.jaxrs.config.BeanConfig;
+import io.swagger.models.SecurityRequirement;
+import io.swagger.models.auth.ApiKeyAuthDefinition;
+import io.swagger.models.auth.In;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Swagger组件
+ * @see <a>https://github.com/smoketurner/dropwizard-swagger</a>
  * Created by DreamInSun on 2016/7/21.
  */
 @SuppressWarnings("unchecked")
@@ -56,12 +60,19 @@ public class SwaggerComponent<TConfig extends BaseConfiguration> implements ICom
             g_Logger.error("envConfig is null");
         } else {
               /* Swagger Config */
-            BeanConfig config = new BeanConfig();
-            config.setTitle(envConfig.getSERVICE_NAME());
-            config.setVersion(envConfig.getAPI_VERSION());
-            config.setBasePath("/" + envConfig.getARTIFACT_ID().toLowerCase());
-            config.setResourcePackage(baseConfiguration.swaggerBundleConfiguration.getResourcePackage());
-            config.setScan(true);
+            BeanConfig beanConfig = new BeanConfig();
+            beanConfig.setTitle(envConfig.getSERVICE_NAME());
+            beanConfig.setVersion(envConfig.getAPI_VERSION());
+            beanConfig.setBasePath("/" + envConfig.getARTIFACT_ID().toLowerCase());
+            /* Scheme Definition */
+            //beanConfig.setSchemes(new String[]{"http","https"});
+
+            /* Security Definition */
+            //beanConfig.getSwagger().addSecurityDefinition("jwt_header", new ApiKeyAuthDefinition("access_token", In.HEADER));
+            //beanConfig.getSwagger().addSecurity(new SecurityRequirement());
+            /* Auto Fill  */
+            beanConfig.setResourcePackage(baseConfiguration.swaggerBundleConfiguration.getResourcePackage());
+            beanConfig.setScan(true);
         }
 
     }

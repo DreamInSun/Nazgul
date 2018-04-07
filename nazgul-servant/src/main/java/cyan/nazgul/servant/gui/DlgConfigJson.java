@@ -21,8 +21,12 @@ public class DlgConfigJson extends JDialog {
     String m_configStr;
 
     public DlgConfigJson() {
-        setContentPane(contentPane);
+        SwingUtilities.invokeLater(() -> init());
 
+    }
+
+    private void init(){
+        setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 

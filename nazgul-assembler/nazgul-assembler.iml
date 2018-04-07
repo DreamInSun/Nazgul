@@ -29,6 +29,7 @@
         <JAVADOC />
         <SOURCES>
           <root url="file://$MODULE_DIR$/resources/lib" />
+          <root url="jar://$USER_HOME$/.ideaLibSources/commons-lang3-3.5-sources.jar!/" />
         </SOURCES>
         <jarDirectory url="file://$MODULE_DIR$/resources/lib" recursive="false" />
         <jarDirectory url="file://$MODULE_DIR$/resources/lib" recursive="false" type="SOURCES" />

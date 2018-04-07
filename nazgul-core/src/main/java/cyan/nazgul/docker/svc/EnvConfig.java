@@ -143,7 +143,7 @@ public class EnvConfig {
         this.SERVICE_NAME = SERVICE_NAME.replace("-", ".");
         if (this.SERVICE_NAME != null) {
             /*===== Consul Compitable =====*/
-            String serviceName = SERVICE_NAME;
+            String serviceName =  this.SERVICE_NAME;
             /*===== Parse =====*/
             //String[] svcNameSegments = SERVICE_NAME.split("(?=[A-Z])");
             int pos_splitter = serviceName.lastIndexOf(".");

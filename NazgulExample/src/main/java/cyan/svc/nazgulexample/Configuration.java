@@ -2,9 +2,8 @@ package cyan.svc.nazgulexample;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import cyan.nazgul.dropwizard.DbConfiguration;
-import cyan.svc.nazgulexample.config.SuperAdminConfig;
+import cyan.svc.nazgulexample.config.SvcConfig;
 import de.spinscale.dropwizard.jobs.JobConfiguration;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import java.util.Collections;
 import java.util.Map;
@@ -15,20 +14,12 @@ import java.util.Map;
  * - You can use BaseConfiguration as base is you don't need a default database, and use MySqlMngr in Resource instead.
  * Created by DreamInSun on 2016/6/30.
  */
-public class Configuration extends DbConfiguration<Configuration> implements JobConfiguration {
+public class Configuration extends DbConfiguration<Configuration, SvcConfig> implements JobConfiguration {
 
     /*========== Properties ==========*/
-    @JsonProperty("superadmin")
-    private SuperAdminConfig superAdminConfig;
 
     /*========== Getter & Setter ==========*/
-    public SuperAdminConfig getSuperAdminConfig() {
-        return superAdminConfig;
-    }
 
-    public void setSuperAdminConfig(SuperAdminConfig superAdminConfig) {
-        this.superAdminConfig = superAdminConfig;
-    }
 
     /*========== Implements : DbConfiguration ==========*/
 
@@ -37,4 +28,16 @@ public class Configuration extends DbConfiguration<Configuration> implements Job
     public Map<String, String> getJobs() {
         return Collections.emptyMap();
     }
+
+    /*========== Properties : Service Dependency ==========*/
+    public SvcConfig getSvcConfig() {
+        return svcConfig;
+    }
+
+    public void setSvcConfig(SvcConfig svcConfig) {
+        this.svcConfig = svcConfig;
+    }
+
+    @JsonProperty("svc")
+    private SvcConfig svcConfig;
 }

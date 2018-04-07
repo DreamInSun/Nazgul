@@ -11,6 +11,9 @@ public class ProjectConfig {
     @JsonProperty("rootPackage")
     private String rootPackage;
 
+    @JsonProperty("fileStorage")
+    private String fileStorage;
+
     /*========== Getter @ Setter  ==========*/
 
     public String getRootPackage() {
@@ -20,4 +23,13 @@ public class ProjectConfig {
     public void setRootPackage(String rootPackage) {
         this.rootPackage = rootPackage;
     }
+
+    public String getFileStorage() {
+        return fileStorage;
+    }
+
+    public void setFileStorage(String fileStorage) {
+        this.fileStorage = fileStorage;
+    }
+
 }

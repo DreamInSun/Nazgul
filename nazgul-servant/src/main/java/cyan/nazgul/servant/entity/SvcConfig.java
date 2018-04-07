@@ -97,15 +97,18 @@ public class SvcConfig {
         this.api_version = api_version;
     }
 
+    /*========== Assistant ==========*/
+    @JsonIgnore
     public String getGroupId() {
         return groupId;
     }
 
+    @JsonIgnore
     public String getArtifactId() {
         return artifactId;
     }
 
-    /*========== Assistant ==========*/
+    @JsonIgnore
     public String getRootPackage() {
         return (this.getGroupId() + '.' + this.getArtifactId()).toLowerCase();
     }

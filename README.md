@@ -150,27 +150,30 @@ https://github.com/DreamInSun/Nazgul
 * 脚本请先在测试数据库执行确保不会中断，造成升级失败。
 
 ====================
-0.2.1
+
+## 更新历史
+
+#### 0.2.1
 增加了OneRing服务器可以配置端口的设定，注意配置拉取端口默认是5678，一般读不到配置都是端口不通。
 
-0.2.2
+#### 0.2.2
 修正了OneRing配置文件路径问题，兼容Windown 10和网络延迟问题。
 
-0.2.3
+#### 0.2.3
 优化了OneRing远程读取配置时的设定，预防了OneRing在高负荷下Timeout问题
 
-0.2.4
+#### 0.2.4
 处理了特殊情况下OneRing连接不上时出现的内存溢出错误
 
-0.2.5
+#### 0.2.5
 增加Resource的initialize方法，可以在Application基础组件初始化完毕后再次对Resouece需要依赖基础组件的部分进行初始化
 
-0.2.6
+#### 0.2.6
 增加了定時任務組件
 增加了Websocket組件
 升级Dropwizard到1.2.0
 
-0.2.7
+#### 0.2.7
 增加了JPA支持
 新增了DbResource，DbMngr基础类
 优化了数据库类对SqlSessionFactory的获取
@@ -182,19 +185,27 @@ MyBatisMngr类改为MybatisMngr
 新增了Shiro支持
 新增了default.yml配置项
 
-0.2.8
+#### 0.2.8
 支持RSQL https://github.com/jirutka/rsql-parser
 
-0.3.0 
+#### 0.3.0 
 完成了泛类型的实体REST API，实现CURDL中的List。
 可以使用数据库逆向生产JPA对象，直接提供API
 或者定义JPA对象，生成数据库脚本以及提供REST API
 
-0.3.1
+#### 0.3.1
 完成了GenericEntityResource作为基础组件，提供实体的CURDL能力.
 
-0.3.2 
+#### 0.3.2 
 GenericEntityResource增加了Entity列表和JsonSchema
 修改了基础支持，ServiceName支持'-'分割和'.'等价，用于ServiceName不支持dot的场景。例如Consul（与DNS混淆）
 升级了Nazgul-servantb版本0.3.0
 升级了NazgulExample版本1.4.0
+
+#### 0.3.3
+增加了自定义日志
+固化了内置SuperAdmin配置
+固化了内置SvcConfig配置
+
+#### 0.3.4
+升级了Dropwizard-swagger到1.3.0-1

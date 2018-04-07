@@ -47,6 +47,11 @@ public class Output {
 
     /*========== Constructor ==========*/
     @JsonCreator
+    public Output() {
+        //Default Constructor
+    }
+
+    @JsonCreator
     public Output(int errCode, String errInfo) {
         this.errCode = errCode;
         this.errInfo = errInfo;
@@ -62,5 +67,9 @@ public class Output {
 
     public static void setErrInfoMapping(IErrInfoMapper errInfoMapper) {
         g_ErrInfoMapper = errInfoMapper;
+    }
+
+    public static IErrInfoMapper getErrInfoMapping() {
+        return g_ErrInfoMapper;
     }
 }

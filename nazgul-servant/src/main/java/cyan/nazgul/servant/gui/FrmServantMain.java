@@ -110,7 +110,7 @@ public class FrmServantMain {
             String configItemStr = m_configConvertor.getDevelConfigJson();
             DlgConfigJson dlgConfigJson = new DlgConfigJson();
             dlgConfigJson.setBounds(200, 200, 800, 800);
-            dlgConfigJson.setConfigString(JsonUtil.format(configItemStr));
+            dlgConfigJson.setConfigString(configItemStr);
             dlgConfigJson.setVisible(true);
         });
 

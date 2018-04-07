@@ -1,12 +1,16 @@
 package cyan.svc;
 
+import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.jaxrs.json.annotation.JSONP;
+import com.mysql.cj.core.log.LogFactory;
 import cyan.svc.err.IErrInfoMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Array;
 import java.util.List;
@@ -15,7 +19,7 @@ import java.util.List;
  * Created by DreamInSun on 2016/7/7.
  */
 public class EntityOutput extends Output {
-
+    private static final Logger g_Logger = LoggerFactory.getLogger(EntityOutput.class);
     /*========== Properties ==========*/
     @JsonProperty
     @JsonInclude(value = Include.NON_NULL)
@@ -86,7 +90,17 @@ public class EntityOutput extends Output {
         return new EntityOutput(errCode, entity);
     }
 
+    public static EntityOutput getInstance(NazException ex) {
+        return new EntityOutput(ex.getErrCode(), ex.getMessage(), ex.getStackTrace());
+    }
+
     /*========== Constructor ==========*/
+    @JsonCreator
+    public EntityOutput(){
+        super();
+        //Default Constructor
+    }
+
     @JsonCreator
     public EntityOutput(int errCode, String errInfo, Object entity) {
         super(errCode, errInfo);

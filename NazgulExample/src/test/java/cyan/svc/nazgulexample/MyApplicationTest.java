@@ -1,15 +1,13 @@
 package cyan.svc.nazgulexample;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import cyan.svc.nazgulexample.config.SuperAdminConfig;
+import cyan.nazgul.dropwizard.auth.SuperAdmin;
+import io.dropwizard.jersey.setup.JerseyEnvironment;
+import io.dropwizard.setup.Environment;
 import org.junit.Before;
 import org.junit.Test;
 
-import io.dropwizard.jersey.setup.JerseyEnvironment;
-import io.dropwizard.setup.Environment;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * JUnit Test
@@ -24,7 +22,7 @@ public class MyApplicationTest {
 
     @Before
     public void setup() throws Exception {
-        config.setSuperAdminConfig(new SuperAdminConfig());
+        config.setSuperadmin(new SuperAdmin());
         when(environment.jersey()).thenReturn(jersey);
 
     }
