@@ -3,10 +3,6 @@ package cyan.svc.nazgulexample;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import cyan.nazgul.dropwizard.DbConfiguration;
 import cyan.svc.nazgulexample.config.SvcConfig;
-import de.spinscale.dropwizard.jobs.JobConfiguration;
-
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * Customized Application Configuration
@@ -14,7 +10,7 @@ import java.util.Map;
  * - You can use BaseConfiguration as base is you don't need a default database, and use MySqlMngr in Resource instead.
  * Created by DreamInSun on 2016/6/30.
  */
-public class Configuration extends DbConfiguration<Configuration, SvcConfig> implements JobConfiguration {
+public class Configuration extends DbConfiguration<Configuration, SvcConfig> {
 
     /*========== Properties ==========*/
 
@@ -23,11 +19,6 @@ public class Configuration extends DbConfiguration<Configuration, SvcConfig> imp
 
     /*========== Implements : DbConfiguration ==========*/
 
-
-    /*========== Implements : JobConfiguration ==========*/
-    public Map<String, String> getJobs() {
-        return Collections.emptyMap();
-    }
 
     /*========== Properties : Service Dependency ==========*/
     public SvcConfig getSvcConfig() {

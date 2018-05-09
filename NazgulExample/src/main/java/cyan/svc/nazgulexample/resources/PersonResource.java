@@ -7,13 +7,14 @@ import com.codahale.metrics.annotation.Timed;
 import com.github.tennaito.rsql.jpa.JpaCriteriaQueryVisitor;
 import com.google.common.base.Optional;
 import cyan.nazgul.dropwizard.resources.DbResource;
-import cyan.svc.EntityOutput;
+import cyan.svc.exception.NazException;
 import cyan.svc.nazgulexample.Configuration;
 import cyan.svc.nazgulexample.contract.ErrCode;
 import cyan.svc.nazgulexample.entities.Person;
 import cyan.svc.nazgulexample.entities.QPerson;
 import cyan.svc.nazgulexample.mappers.PersonMapper;
 import cyan.svc.nazgulexample.views.PersonView;
+import cyan.svc.output.EntityOutput;
 import cyan.util.FileOperation;
 import cz.jirutka.rsql.parser.RSQLParser;
 import cz.jirutka.rsql.parser.ast.Node;
@@ -102,6 +103,13 @@ public class PersonResource extends DbResource<Configuration> {
     @CacheControl(maxAge = 6, maxAgeUnit = TimeUnit.HOURS)
     public EntityOutput getTest(@PathParam("id") String id) {
         return EntityOutput.getInstance(ErrCode.SUCCESS);
+    }
+
+    @ApiOperation(value = "演示捕获应用级错误")
+    @GET
+    @Path("/exception/_test")
+    public EntityOutput testException() throws NazException {
+        throw new NazException(ErrCode.NAZ_INTERNAL_UNHANDLERED_ERR, "测试内部错误");
     }
 
     @ApiOperation(value = "简单的服务演示",
@@ -206,7 +214,7 @@ public class PersonResource extends DbResource<Configuration> {
     @Path("/entity/{clz}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Person> query(
-            @ApiParam(value = "源IP", required = true, example = "id==1") @QueryParam("clz") String clz,
+            @ApiParam(value = "源IP", required = true, example = "id==1") @PathParam("clz") String clz,
             @ApiParam(value = "RSQL查询语句,参看ISO-14977标准", required = true, example = "id==1") @QueryParam("search") String search,
             @Context ServletContext application) {
         EntityManager entityMngr = this.getEntityManager();
@@ -251,7 +259,7 @@ public class PersonResource extends DbResource<Configuration> {
 
     @ApiOperation(value = "表单提交用户数据")
     @POST
-    @Path("/add")
+    @Path("person/add")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.TEXT_HTML)
     @RolesAllowed("SUPER_ADMIN")
@@ -274,7 +282,7 @@ public class PersonResource extends DbResource<Configuration> {
             @ApiResponse(code = 400, message = "No Name Provided")
     })
     @GET
-    @Path("/id/{id}")
+    @Path("person/id/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public EntityOutput getUserByID(
             @ApiParam(value = "Person的逻辑主键，默认为ID", required = true, example = "1") @PathParam("id") Long id) {
@@ -294,12 +302,48 @@ public class PersonResource extends DbResource<Configuration> {
             @ApiResponse(code = 400, message = "No Name Provided")
     })
     @POST
-    @Path("/")
+    @Path("person/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public EntityOutput createUser(
             @ApiParam(value = "person对象的JSON字符串") Person person) {
 //        m_userDao.createUser(user.id, user.name);
+        return EntityOutput.getInstance(ErrCode.SUCCESS, person);
+    }
+
+
+    @ApiOperation(value = "测试获取不同的数据库连接",
+            notes = "config中填写了3个数据库，可选数据库为Null，nazgul1,nazgul2",
+            response = EntityOutput.class,
+            position = 1)
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "No Name Provided")
+    })
+    @GET
+    @Path("/databases")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public EntityOutput multiDatabase(
+            @ApiParam(value = "person对象的JSON字符串", required = false, example = "nazgul2") @QueryParam("database") Optional<String> databaseName,
+            @ApiParam(value = "personId", example = "1") @QueryParam("personId") Long personId) {
+
+//        m_userDao.createUser(user.id, user.name);
+
+        /*=====  =====*/
+        Person person = null;
+        /*===== =====*/
+        try {
+            SqlSession session;
+            if (databaseName.isPresent()) {
+                session = this.getSqlSession(databaseName.get());
+            } else {
+                session = this.getSqlSession();
+            }
+            person = session.getMapper(PersonMapper.class).findOneById(personId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return EntityOutput.getInstance(ErrCode.INPUT_DATABASE_QUERY_ERROR, e.getMessage());
+        }
         return EntityOutput.getInstance(ErrCode.SUCCESS, person);
     }
 }

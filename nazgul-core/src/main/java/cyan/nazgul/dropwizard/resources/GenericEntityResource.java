@@ -3,15 +3,12 @@ package cyan.nazgul.dropwizard.resources;
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
 import com.github.tennaito.rsql.jpa.JpaCriteriaQueryVisitor;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import cyan.nazgul.dropwizard.DbConfiguration;
 import cyan.nazgul.dropwizard.config.ProjectConfig;
-import cyan.svc.EntityOutput;
+import cyan.svc.output.EntityOutput;
 import cyan.svc.entity.BaseEntity;
 import cyan.svc.err.BaseErrCode;
 import cyan.util.JsonUtil;
@@ -176,7 +173,9 @@ public class GenericEntityResource extends DbResource<DbConfiguration> {
         Integer iPageSize = pageSize.orElse(DFLT_PAGE_SIZE);
         Integer pageIdx = (iPageStart - 1) * iPageSize;
         /*===== Execute Query =====*/
-        List<Object> resultList = this.getEntityManager().createQuery(query).setFirstResult(pageIdx).setMaxResults(iPageSize).getResultList();
+        EntityManager entityManager = this.getEntityManager();
+        List<Object> resultList = entityManager.createQuery(query).setFirstResult(pageIdx).setMaxResults(iPageSize).getResultList();
+        entityManager.close();
         return EntityOutput.getInstance(BaseErrCode.SUCCESS, resultList);
     }
 
@@ -199,6 +198,7 @@ public class GenericEntityResource extends DbResource<DbConfiguration> {
         /*===== Query =====*/
         EntityManager entityMngr = this.getEntityManager();
         retObj = entityMngr.find(entityClz, id);
+        entityMngr.close();
         /*===== Return =====*/
         return EntityOutput.getInstance(BaseErrCode.SUCCESS, retObj);
     }
@@ -232,6 +232,7 @@ public class GenericEntityResource extends DbResource<DbConfiguration> {
         }
         /*===== Persistence =====*/
         EntityManager entityMngr = this.getEntityManager();
+        /* Start Transaction */
         EntityTransaction entityTransaction = entityMngr.getTransaction();
         entityTransaction.begin();
         try {

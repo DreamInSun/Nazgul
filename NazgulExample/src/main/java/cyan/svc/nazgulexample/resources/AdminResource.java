@@ -1,9 +1,9 @@
 package cyan.svc.nazgulexample.resources;
 
-import cyan.nazgul.dropwizard.auth.SuperAdmin;
+import cyan.nazgul.dropwizard.auth.superadmin.SuperAdmin;
 import cyan.nazgul.dropwizard.config.BaseSvcConfig;
 import cyan.nazgul.dropwizard.resources.DbResource;
-import cyan.svc.EntityOutput;
+import cyan.svc.output.EntityOutput;
 import cyan.svc.err.BaseErrCode;
 import cyan.svc.err.IErrInfoMapper;
 import cyan.svc.nazgulexample.Configuration;

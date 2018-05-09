@@ -1,4 +1,4 @@
-package cyan.nazgul.dropwizard.auth;
+package cyan.nazgul.dropwizard.auth.superadmin;
 
 import cyan.nazgul.dropwizard.BaseConfiguration;
 import cyan.nazgul.dropwizard.container.GlobalInstance;

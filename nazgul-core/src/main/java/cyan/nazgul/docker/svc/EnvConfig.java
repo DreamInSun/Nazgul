@@ -19,7 +19,6 @@ import java.util.Map;
  */
 public class EnvConfig {
 
-
     /*========== Static Properties ==========*/
     protected static EnvConfig runtimeEnvConfig = null;
 
@@ -55,7 +54,7 @@ public class EnvConfig {
 
     protected String ARTIFACT_ID;
 
-    /* Addtional Status Flag */
+    /* Additional Status Flag */
     protected Boolean isDebug;
     protected Boolean isOffline;
 
@@ -96,10 +95,14 @@ public class EnvConfig {
     }
 
     public void loadFromResource(String path, Class<?> appClass) throws FileNotFoundException {
-
-        String resPath = appClass.getResource(path).getPath();
-
-        InputStream inputStream = appClass.getResourceAsStream(path);
+        /* Load Resource File As InputStream */
+        InputStream inputStream;
+        if (appClass != null) {
+            inputStream = appClass.getResourceAsStream(path);
+        } else {
+            inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
+        }
+        /* Convert to Ymal */
         if (inputStream != null) {
             this.loadFromYmal(inputStream);
         } else {
@@ -109,7 +112,6 @@ public class EnvConfig {
     }
 
     public void loadFromYmal(InputStream ymlInputStream) {
-
         /*===== Parse YAML =====*/
         Yaml yml = new Yaml();
         Map configMap = (Map<?, ?>) (yml.load(ymlInputStream));
@@ -143,7 +145,7 @@ public class EnvConfig {
         this.SERVICE_NAME = SERVICE_NAME.replace("-", ".");
         if (this.SERVICE_NAME != null) {
             /*===== Consul Compitable =====*/
-            String serviceName =  this.SERVICE_NAME;
+            String serviceName = this.SERVICE_NAME;
             /*===== Parse =====*/
             //String[] svcNameSegments = SERVICE_NAME.split("(?=[A-Z])");
             int pos_splitter = serviceName.lastIndexOf(".");

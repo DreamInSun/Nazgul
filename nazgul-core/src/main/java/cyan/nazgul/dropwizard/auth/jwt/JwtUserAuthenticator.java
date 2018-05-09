@@ -1,4 +1,4 @@
-package cyan.nazgul.dropwizard.auth;
+package cyan.nazgul.dropwizard.auth.jwt;
 
 import io.dropwizard.auth.Authenticator;
 import org.jose4j.jwt.MalformedClaimException;

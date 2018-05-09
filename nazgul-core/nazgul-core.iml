@@ -16,6 +16,46 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/mysqlJDBC.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/oracleJDBC.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/sqliteJDBC.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/okio-1.11.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/okhttp-3.6.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/cloning-1.9.3.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/objenesis-2.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/sqlserverJDBC.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/commons-io-2.5.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/postgresqlJDBC.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/commons-lang3-3.5.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/freemarker-2.3.23.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/helpinfo-1.0-SNAPSHOT.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/mysql-connector-java-5.1.40.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/mybatis-generator-core-1.3.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/mysqlJDBC.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/oracleJDBC.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/sqliteJDBC.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/okio-1.11.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/okhttp-3.6.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/cloning-1.9.3.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/objenesis-2.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/sqlserverJDBC.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/commons-io-2.5.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/postgresqlJDBC.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/commons-lang3-3.5.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/freemarker-2.3.23.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/helpinfo-1.0-SNAPSHOT.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/mysql-connector-java-5.1.40.jar!/" />
+          <root url="jar://$MODULE_DIR$/../nazgul-assembler/resources/lib/mybatis-generator-core-1.3.5.jar!/" />
+          <root url="jar://$USER_HOME$/.ideaLibSources/commons-lang3-3.5-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
     <orderEntry type="library" name="Maven: io.dropwizard:dropwizard-core:1.2.1" level="project" />
     <orderEntry type="library" name="Maven: io.dropwizard:dropwizard-util:1.2.1" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:3.0.2" level="project" />

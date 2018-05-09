@@ -1,14 +1,14 @@
 package cyan.svc.nazgulexample;
 
 import cyan.nazgul.dropwizard.DbApplication;
-import cyan.nazgul.dropwizard.component.JwtComponent;
-import cyan.nazgul.dropwizard.component.JobComponent;
-import cyan.nazgul.dropwizard.component.ShiroComponent;
-import cyan.svc.EntityOutput;
 import cyan.svc.nazgulexample.contract.ErrCode;
+import cyan.svc.output.EntityOutput;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Contact;
+import io.swagger.annotations.Info;
+import io.swagger.annotations.License;
+import io.swagger.annotations.SwaggerDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,13 +29,8 @@ public class Application<TConfig extends Configuration> extends DbApplication<TC
     /*========== Constructor ==========*/
     public Application(String[] args) {
         super(args, Configuration.class);
-        /*===== Optional Component =====*/
-        m_CompList.add(new JobComponent<>(g_classRoot));
-        m_CompList.add(new ShiroComponent<>());
-        m_CompList.add(new JwtComponent<>());
-        //m_CompList.add(new WebSocketComponent<>(g_classRoot));
+        /*===== Business Component =====*/
         /*===== Register ErrorInfoMap =====*/
-        //TODO 可以用其他版本的错误表代替内置错误表
         EntityOutput.setErrInfoMapping(ErrCode.getDefaultErrInfoMapper(ErrCode.class));
     }
 

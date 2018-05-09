@@ -74,16 +74,14 @@ public class EntityManagerComponent<TConfig extends DbConfiguration> implements 
     }
 
 
-    /*==========  ==========*/
-
+    /*========== Assistant Function ==========*/
     /**
      * Search Resource class inhert from BaseResrouce, and register them.
      *
      * @param resPath resource class root package name
      */
     protected List<Class<?>> scanEntity(String resPath) {
-        g_logger.info("\r\n\r\n/*========== Register Resources ===========*/\r\n");
-
+        g_logger.info("## Scan Entities");
         List<Class<?>> clzList = ClassUtil.getClassList(resPath, true, javax.persistence.Entity.class);
 
         List<Class<?>> entityClzList = Lists.newLinkedList();

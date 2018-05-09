@@ -1,26 +1,28 @@
 package cyan.nazgul.dropwizard;
 
 import cyan.nazgul.docker.svc.EnvConfig;
+import cyan.nazgul.dropwizard.auth.multiauth.MultiAuthDynamicFeature;
+import cyan.nazgul.dropwizard.auth.multiauth.MultiAuthFilter;
+import cyan.nazgul.dropwizard.auth.multiauth.MultiAuthValueFactoryProvider;
 import cyan.nazgul.dropwizard.cli.DockerCommand;
+import cyan.nazgul.dropwizard.cli.DockerCommandHandler;
 import cyan.nazgul.dropwizard.component.*;
-import cyan.nazgul.dropwizard.config.BaseSvcConfig;
 import cyan.nazgul.dropwizard.config.OneRingConfigSourceProvider;
 import cyan.nazgul.dropwizard.container.GlobalInstance;
 import cyan.nazgul.dropwizard.filter.CrossDomainFilter;
 import cyan.nazgul.dropwizard.filter.NazProductLoggingFilter;
 import cyan.nazgul.dropwizard.resources.IResource;
+import cyan.svc.exception.NazExceptionMapper;
 import cyan.util.clazz.ClassUtil;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.DispatcherType;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Nazgul BaseApplication
@@ -51,15 +53,22 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
         this.m_args = args;
         g_classRoot = this.getClass().getPackage().getName();
         /* Init Component */
-        m_CompList.add(new SwaggerComponent<>());
+        m_CompList.add(new SwaggerComponent<>(g_classRoot));
+
         m_CompList.add(new DbHealthComponent<>());
+        /* Web */
         m_CompList.add(new WebComponent<>());
         m_CompList.add(new MultipartyComponent<>());
-        m_CompList.add(new SuperAdminComponent<>());
-        /* Optional Component */
-        //m_CompList.add(new JobComponent<>(g_classRoot));
-        //m_CompList.add(new ShiroComponent<>());
-        //m_CompList.add(new WebSocketComponent<>(g_classRoot));
+        m_CompList.add(new ErrorPageComponent());
+
+        m_CompList.add(new MngrComponent<>(g_classRoot));
+        m_CompList.add(new JobComponent<>(g_classRoot));
+
+        m_CompList.add(new ShiroComponent<>());
+        m_CompList.add(new JwtComponent<>(g_classRoot));
+        m_CompList.add(new SuperAdminComponent<>(g_classRoot));
+
+        m_CompList.add(new WebSocketComponent<>(g_classRoot));
     }
 
     /*========== Application Initialization ==========*/
@@ -75,19 +84,59 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
 //                        new EnvironmentVariableSubstitutor(false)
 //                )
 //        );
-
-        /*===== Initialize Components =====*/
-        for (IComponent comp : m_CompList) {
-            comp.init(bootstrap);
-        }
         /*===== CLI : Docker =====*/
-        bootstrap.addCommand(new DockerCommand(this));
+        bootstrap.addCommand(new DockerCommand(this, new DockerCommandHandler<BaseConfiguration>() {
+            @Override
+            public void processAfterConfigBeforeBootstrap(BaseConfiguration config) {
+                /*===== Initialize Components =====*/
+                g_logger.info("/*========== Initializing Components ==========*/");
+                int compCnt = 1;
+                Map<String, Boolean> nazComponents = config.getNazComponents();
+                for (IComponent comp : m_CompList) {
+                    String compName = comp.getClass().getSimpleName();
+                    Boolean isEnable = nazComponents.get(compName);
+                    g_logger.debug(String.format("Initialize Component %d/%d : %s", compCnt++, m_CompList.size(), compName));
+                    if( isEnable == null ){
+                        g_logger.debug(String.format("Not Configured"));
+                    }else {
+                        if (isEnable) {
+                            comp.init(bootstrap);
+                            g_logger.debug(String.format("Complete"));
+                        } else {
+                            g_logger.debug(String.format("Skipped"));
+                        }
+                    }
+                }
+            }
+        }));
+
     }
 
+    /**
+     * 在Nazgul基础框架创建完毕后，执行Bundle的注册。
+     *
+     * @param envConfig
+     * @param bootstrap
+     */
     public void postInitialize(EnvConfig envConfig, Bootstrap<TConfig> bootstrap) {
-         /*===== Initialize Components =====*/
+        this.g_logger.info("/*========== Post Initializing Components ==========*/");
+        int compCnt = 1;
+        BaseConfiguration config = GlobalInstance.getConfiguration();
+        Map<String, Boolean> nazComponents = config.getNazComponents();
         for (IComponent comp : m_CompList) {
-            comp.postInit(envConfig, bootstrap);
+            String compName = comp.getClass().getSimpleName();
+            Boolean isEnable = nazComponents.get(compName);
+            g_logger.info(String.format("Post Initialize Component %d/%d : %s", compCnt++, m_CompList.size(), compName));
+            if( isEnable == null ){
+                g_logger.debug(String.format("Not Configured"));
+            }else {
+                if (isEnable) {
+                    comp.postInit(envConfig, bootstrap);
+                    g_logger.debug(String.format("Complete"));
+                } else {
+                    g_logger.debug(String.format("Skipped"));
+                }
+            }
         }
     }
 
@@ -106,8 +155,23 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
         m_CompList.add(new FreemarkerComponent<>());
 
         /*===== Setup Components =====*/
+        this.g_logger.info("/*========== Setup Components ==========*/");
+        int compCnt = 1;
+        Map<String, Boolean> nazComponents = config.getNazComponents();
         for (IComponent comp : m_CompList) {
-            comp.run(config, env);
+            String compName = comp.getClass().getSimpleName();
+            Boolean isEnable = nazComponents.get(compName);
+            g_logger.info(String.format("Setup Component %d/%d : %s", compCnt++, m_CompList.size(), compName));
+            if( isEnable == null ){
+                g_logger.debug(String.format("Not Configured"));
+            }else {
+                if (isEnable) {
+                    comp.run(config, env);
+                    g_logger.debug(String.format("Complete"));
+                } else {
+                    g_logger.debug(String.format("Skipped"));
+                }
+            }
         }
         /*===== Cross Domain =====*/
         if (config.getCrossdomainConfig().getEnable()) {
@@ -116,6 +180,19 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
         /*===== Request Log =====*/
         //env.jersey().register(new NazLogFilter());
         env.jersey().register(new NazProductLoggingFilter());
+        /*===== Exception Handler ======*/
+        env.jersey().register(new NazExceptionMapper());
+        /*===== Register Auth Strategy =====*/
+        List<? extends MultiAuthFilter> authFilterList = GlobalInstance.getAuthFilterList();
+        MultiAuthFilter[] simpleAuthFilters = new MultiAuthFilter[authFilterList.size()];
+        authFilterList.toArray(simpleAuthFilters);
+        env.jersey().register(new MultiAuthDynamicFeature(simpleAuthFilters));
+        env.jersey().register(RolesAllowedDynamicFeature.class);
+
+        /* Custom @Auth Annotation Inject Class */
+        env.jersey().register(new MultiAuthValueFactoryProvider.Binder());
+        /*  */
+
         /*========= Scan Resource & Register ==========*/
         m_resourceList = registerReources(g_classRoot + ".resources", config, env);
     }
@@ -155,7 +232,7 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
             System.out.println("Get Docker EnvConfig via Standard Mode.");
             dockerEnv = EnvConfig.getFromEnvironment();
         }
-        /* Additonal Status Flag */
+        /* Additional Status Flag */
         dockerEnv.setIsDebug(g_isDebug);
         dockerEnv.setIsOffline(g_isOffline);
         /* Print EnvConfig */
@@ -164,7 +241,6 @@ public class BaseApplication<TConfig extends BaseConfiguration> extends Applicat
             System.out.println("\r\n/*========== Load OneRing Config ==========*/\r\n");
                 /* Save Env for further usage */
             EnvConfig.setRuntimeEnvConfig(dockerEnv);
-
         }
 
         /*===== Kick Start =====*/

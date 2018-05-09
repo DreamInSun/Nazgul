@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
  * Base Manager for further extension
  * Created by DreamInSun on 2017/10/8.
  */
+@NazMngr
 public class BaseMngr<TConfig> {
 
     /*========== Logger ==========*/
@@ -27,6 +28,10 @@ public class BaseMngr<TConfig> {
         this.m_config = config;
         this.m_env = env;
         MngrFactory.registerMngr(this);
+    }
+
+    protected TConfig getConfig() {
+        return m_config;
     }
 
     /*========== Assistant Function ==========*/

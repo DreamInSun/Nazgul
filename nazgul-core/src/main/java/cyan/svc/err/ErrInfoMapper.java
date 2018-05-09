@@ -1,7 +1,5 @@
 package cyan.svc.err;
 
-import cyan.svc.Output;
-
 import java.util.Map;
 
 /**

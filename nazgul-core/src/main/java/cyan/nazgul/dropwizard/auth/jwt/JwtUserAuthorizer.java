@@ -1,11 +1,7 @@
-package cyan.nazgul.dropwizard.auth;
+package cyan.nazgul.dropwizard.auth.jwt;
 
 import cyan.nazgul.dropwizard.BaseConfiguration;
-import cyan.nazgul.dropwizard.container.GlobalInstance;
 import io.dropwizard.auth.Authorizer;
-import jersey.repackaged.com.google.common.collect.Lists;
-
-import java.util.List;
 
 public class JwtUserAuthorizer implements Authorizer<JwtUser> {
 

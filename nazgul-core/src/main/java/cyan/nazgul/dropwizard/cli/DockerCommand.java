@@ -27,9 +27,13 @@ public class DockerCommand<T extends Configuration> extends EnvironmentCommand<T
 
     /*========== Static Properties ==========*/
     private static Bootstrap<?> g_bootstrap = null;
+    private final Application<T> application;
+    private final DockerCommandHandler dockerCommandHandler;
 
     /*========== Properties ==========*/
     private final Class<T> configurationClass;
+
+    /*========== Constructor ==========*/
 
     /*========== Getter & Setter ==========*/
     /*
@@ -42,10 +46,12 @@ public class DockerCommand<T extends Configuration> extends EnvironmentCommand<T
     }
 
     /*========== Constructor ==========*/
-    public DockerCommand(Application<T> application) {
+    public DockerCommand(Application<T> application, DockerCommandHandler dockerCommandHandler) {
         super(application, "docker", "Runs as an HTTP server application in docker mode.");
+        /* Set Properties */
         this.configurationClass = application.getConfigurationClass();
-
+        this.application = application;
+        this.dockerCommandHandler = dockerCommandHandler;
         /* SubCommand */
 
     }
@@ -96,6 +102,22 @@ public class DockerCommand<T extends Configuration> extends EnvironmentCommand<T
         super.run(bootstrap, namespace);
     }
 
+    @Override
+    protected void run(Bootstrap<T> bootstrap, Namespace namespace, T configuration) throws Exception {
+        final Environment environment = new Environment(bootstrap.getApplication().getName(),
+                bootstrap.getObjectMapper(),
+                bootstrap.getValidatorFactory().getValidator(),
+                bootstrap.getMetricRegistry(),
+                bootstrap.getClassLoader(),
+                bootstrap.getHealthCheckRegistry());
+        configuration.getMetricsFactory().configure(environment.lifecycle(),
+                bootstrap.getMetricRegistry());
+        configuration.getServerFactory().configure(environment);
+        dockerCommandHandler.processAfterConfigBeforeBootstrap(configuration);
+        bootstrap.run(configuration, environment);
+        application.run(configuration, environment);
+        run(environment, namespace, configuration);
+    }
 
     /*========== Life Cycle Control ==========*/
     private class LifeCycleListener extends AbstractLifeCycle.AbstractLifeCycleListener {

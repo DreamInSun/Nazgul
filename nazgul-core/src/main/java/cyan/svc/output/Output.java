@@ -1,4 +1,4 @@
-package cyan.svc;
+package cyan.svc.output;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

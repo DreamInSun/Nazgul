@@ -31,6 +31,9 @@
 
     <!--auto generated Code-->
     <insert id="insert" useGeneratedKeys="true" keyProperty="person.id">
+        <selectKey resultType="java.lang.Long" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
         INSERT INTO naz_person (
             person_id,
             name,
@@ -58,6 +61,9 @@
 
     <!--auto generated Code-->
     <insert id="insertSelective" useGeneratedKeys="true" keyProperty="person.id">
+        <selectKey resultType="java.lang.Long" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
         INSERT INTO naz_person
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="person.personId!=null"> person_id,</if>

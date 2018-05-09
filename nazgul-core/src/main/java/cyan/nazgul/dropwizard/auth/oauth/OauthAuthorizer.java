@@ -1,31 +1,27 @@
-package cyan.nazgul.dropwizard.auth;
+package cyan.nazgul.dropwizard.auth.oauth;
 
 import cyan.nazgul.dropwizard.BaseConfiguration;
-import cyan.nazgul.dropwizard.container.GlobalInstance;
 import io.dropwizard.auth.Authorizer;
 import jersey.repackaged.com.google.common.collect.Lists;
 
 import java.util.List;
 
-public class SuperAdminAuthorizer implements Authorizer<SuperAdmin> {
+public class OauthAuthorizer implements Authorizer<OauthUser> {
 
     /*========== Properties ==========*/
-    private static BaseConfiguration g_config;
+    BaseConfiguration m_config;
 
     /*========== Constructor ==========*/
-    public SuperAdminAuthorizer(BaseConfiguration config) {
-        g_config = config;
+    public OauthAuthorizer(BaseConfiguration config) {
+        m_config = config;
     }
 
     /*========== Interface ; Authorizer ==========*/
     @Override
-    public boolean authorize(SuperAdmin superadmin, String role) {
-        if (g_config == null) {
-            g_config = GlobalInstance.getConfiguration();
-        }
+    public boolean authorize(OauthUser superadmin, String role) {
         /*==== STEP 1. From User Find Role =====*/
         List<String> roleList = Lists.newArrayList();
-        if (superadmin.getName().endsWith(g_config.getSuperadmin().getName())) {
+        if (superadmin.getName().endsWith(m_config.getSuperadmin().getName())) {
             roleList.add("SUPER_ADMIN");
         }
         /*===== STEP 2. Check Roles =====*/

@@ -1,4 +1,4 @@
-package cyan.nazgul.dropwizard.auth;
+package cyan.nazgul.dropwizard.auth.superadmin;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;

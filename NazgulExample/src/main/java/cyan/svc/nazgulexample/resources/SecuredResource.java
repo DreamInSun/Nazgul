@@ -5,13 +5,13 @@ import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
-import cyan.nazgul.dropwizard.auth.JwtUser;
+import cyan.nazgul.dropwizard.auth.jwt.JwtUser;
 import cyan.nazgul.dropwizard.resources.DbResource;
 import cyan.svc.nazgulexample.Configuration;
-import cyan.svc.nazgulexample.entities.Person;
 import io.dropwizard.auth.Auth;
 import io.dropwizard.setup.Environment;
 import io.swagger.annotations.*;
+import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.keys.HmacKey;
@@ -21,11 +21,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.security.Principal;
+import java.util.Collections;
 import java.util.Map;
-
-import static java.util.Collections.singletonMap;
-import static org.jose4j.jws.AlgorithmIdentifiers.HMAC_SHA256;
 
 /**
  * 测试类
@@ -44,6 +41,7 @@ import static org.jose4j.jws.AlgorithmIdentifiers.HMAC_SHA256;
 @Metered(name = "SecuredResource")
 public class SecuredResource extends DbResource<Configuration> {
 
+    /*========== Properties ==========*/
     private final byte[] m_tokenSecret;
 
     /*========== Constructor ==========*/
@@ -52,13 +50,8 @@ public class SecuredResource extends DbResource<Configuration> {
         this.m_tokenSecret = config.getAuthConfig().convertJwtTokenSecret();
     }
 
-    /*==========  ==========*/
-    @ApiOperation(value = "生成过期的Token",
-            notes = "",
-            response = Person.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "成功返回"),
-    })
+    /*========== API ==========*/
+    @ApiOperation(value = "生成过期的Token")
     @GET
     @Path("/generateExpiredToken")
     public Map<String, String> generateExpiredToken() {
@@ -68,20 +61,17 @@ public class SecuredResource extends DbResource<Configuration> {
 
         final JsonWebSignature jws = new JsonWebSignature();
         jws.setPayload(claims.toJson());
-        jws.setAlgorithmHeaderValue(HMAC_SHA256);
+        jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA256);
         jws.setKey(new HmacKey(m_tokenSecret));
-
         try {
-            return singletonMap("token", jws.getCompactSerialization());
+            return Collections.singletonMap("token", jws.getCompactSerialization());
         } catch (JoseException e) {
             throw Throwables.propagate(e);
         }
     }
 
     /*==========  ==========*/
-    @ApiOperation(value = "生成有效的Token",
-            notes = "",
-            response = Person.class)
+    @ApiOperation(value = "生成有效的Token")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "成功返回"),
     })
@@ -94,11 +84,11 @@ public class SecuredResource extends DbResource<Configuration> {
 
         final JsonWebSignature jws = new JsonWebSignature();
         jws.setPayload(claims.toJson());
-        jws.setAlgorithmHeaderValue(HMAC_SHA256);
+        jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA256);
         jws.setKey(new HmacKey(m_tokenSecret));
 
         try {
-            return singletonMap("token", jws.getCompactSerialization());
+            return Collections.singletonMap("token", jws.getCompactSerialization());
         } catch (JoseException e) {
             throw Throwables.propagate(e);
         }
@@ -122,4 +112,6 @@ public class SecuredResource extends DbResource<Configuration> {
         Map<String, Object> retMap = ImmutableMap.<String, Object>of("username", user.getName(), "id", (user).getId());
         return retMap;
     }
+
+
 }

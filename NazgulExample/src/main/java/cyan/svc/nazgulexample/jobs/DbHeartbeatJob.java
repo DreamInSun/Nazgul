@@ -5,7 +5,6 @@ import cyan.svc.nazgulexample.mappers.SqlMapper;
 import de.spinscale.dropwizard.jobs.Job;
 import de.spinscale.dropwizard.jobs.annotations.DelayStart;
 import de.spinscale.dropwizard.jobs.annotations.Every;
-import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;

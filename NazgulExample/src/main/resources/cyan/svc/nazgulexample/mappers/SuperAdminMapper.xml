@@ -21,6 +21,9 @@
 
     <!--auto generated Code-->
     <insert id="insert" useGeneratedKeys="true" keyProperty="superAdmin.id">
+        <selectKey resultType="java.lang.Long" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
         INSERT INTO naz_super_admin (
             username,
             password,
@@ -38,6 +41,9 @@
 
     <!--auto generated Code-->
     <insert id="insertSelective" useGeneratedKeys="true" keyProperty="superAdmin.id">
+        <selectKey resultType="java.lang.Long" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
         INSERT INTO naz_super_admin
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="superAdmin.username!=null"> username,</if>

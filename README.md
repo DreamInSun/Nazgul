@@ -209,3 +209,21 @@ GenericEntityResource增加了Entity列表和JsonSchema
 
 #### 0.3.4
 升级了Dropwizard-swagger到1.3.0-1
+修改了异常处理机制
+迁移了EntityOutput和NazgulException路径，需要修改相关引用
+优化了Manager机制
+增加了Mybatis在Insert之后获取Insert的PrimaryID的示例
+增加了MyBatis的多数据库连接模式，配置需增加databaseMap相关，DbResource,DbMngr可以使用getSqlSession(name)模式
+
+#### 0.3.5
+添加了多@Auth注入支持
+增加了NazException异常的捕获，应用级开发不需要再进行捕获返回
+增加了Jwt配置项，需要更新default.yml文件
+修正了EntityManager的连接未关闭
+ 
+#### 0.3.6
+增加了自定义错误页，存储路径/resource/web/error,需要从NazgulExample 1.3.5复制
+增加了Component的自定义开关，需要在default.yml中增加nazComponents配置项
+优化了启动顺序，在Bootstrap运行之前，完成了配置加载
+
+#### 0.3.7

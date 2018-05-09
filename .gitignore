@@ -14,6 +14,3 @@ hs_err_pid*
 */target
 
 .idea
-src/main/java/cyan/svc/nazgulexample/notuse/
-src/main/java/cyan/svc/nazgulexample/util/
-src/test/java/cyan/svc/nazgul/

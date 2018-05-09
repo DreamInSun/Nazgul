@@ -1,5 +1,7 @@
 package cyan.util.clazz;
 
+import com.google.common.collect.Lists;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -25,17 +27,17 @@ public class ClassUtil {
     private static final org.slf4j.Logger g_Logger = org.slf4j.LoggerFactory.getLogger(ClassUtil.class);
 
     public static List<Class<?>> getClassList(String pkgName, boolean isRecursive, Class<? extends Annotation> annotation) {
-        List<Class<?>> classList = new ArrayList<Class<?>>();
+        List<Class<?>> classList = Lists.newArrayList();
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         try {
             /* 按文件的形式去查找 */
             String strFile = pkgName.replaceAll("\\.", "/");
-            g_Logger.info("Resource Package:\t" + strFile);
+            g_Logger.debug("Resource Package:\t" + strFile);
             Enumeration<URL> urls = loader.getResources(strFile);
             while (urls.hasMoreElements()) {
                 String norlFilePath = URLDecoder.decode(urls.nextElement().toString(), "UTF-8");
                 URL url = new URL(norlFilePath);
-                System.out.println("File Path:" + norlFilePath);
+                g_Logger.info("File Path: " + norlFilePath);
                 if (url != null) {
                     String protocol = url.getProtocol();
                     String pkgPath = URLDecoder.decode(url.getPath(), "UTF-8");
@@ -46,7 +48,7 @@ public class ClassUtil {
                         findClassNameFromDir(classList, pkgName, pkgPath, isRecursive, annotation);
                     } else if ("jar".equals(protocol)) {
                         /* 引用第三方jar的代码 */
-                        g_Logger.info("Load Classes From External JAR.");
+                        g_Logger.debug("Load Classes From External JAR.");
                         findClassNameFromJar(classList, pkgName, url, isRecursive, annotation);
                     }
                 }
@@ -78,7 +80,7 @@ public class ClassUtil {
         }
         /*========== Find Class File ==========*/
         File[] files = filterClassFiles(pkgPath);// 过滤出.class文件及文件夹
-        g_Logger.info("files:" + ((files == null) ? "null" : "length=" + files.length));
+        g_Logger.debug("files : " + ((files == null) ? "null" : "length=" + files.length));
         if (files != null) {
             for (File f : files) {
                 String fileName = f.getName();
@@ -134,11 +136,11 @@ public class ClassUtil {
                 }
 
                 if (prefix.equals(pkgName)) {
-                    g_Logger.info("jar entryName:" + jarEntryName);
+                    g_Logger.debug("jar entryName:" + jarEntryName);
                     addClassName(clazzList, clazzName, annotation);
                 } else if (isRecursive && prefix.startsWith(pkgName)) {
                     // 遍历子包名：子类
-                    g_Logger.info("jar entryName:" + jarEntryName + " isRecursive:" + isRecursive);
+                    g_Logger.debug("jar entryName:" + jarEntryName + " isRecursive:" + isRecursive);
                     addClassName(clazzList, clazzName, annotation);
                 }
             }
@@ -185,10 +187,10 @@ public class ClassUtil {
             if (clazz != null) {
                 if (annotation == null) {
                     clazzList.add(clazz);
-                    g_Logger.info("Find class: " + clazz);
+                    g_Logger.debug("Find class: " + clazz);
                 } else if (clazz.isAnnotationPresent(annotation)) {
                     clazzList.add(clazz);
-                    g_Logger.info("Find annotation:" + clazz);
+                    g_Logger.debug("Find annotation:" + clazz);
                 }
             }
         }

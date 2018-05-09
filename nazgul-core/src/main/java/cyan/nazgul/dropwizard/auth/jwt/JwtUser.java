@@ -1,4 +1,4 @@
-package cyan.nazgul.dropwizard.auth;
+package cyan.nazgul.dropwizard.auth.jwt;
 
 import java.security.Principal;
 import java.util.Objects;
@@ -14,6 +14,7 @@ public class JwtUser implements Principal {
 
     /*========= Constructor ==========*/
     public JwtUser(Long id, String name) {
+        //super();
         this.id = id;
         this.name = name;
     }

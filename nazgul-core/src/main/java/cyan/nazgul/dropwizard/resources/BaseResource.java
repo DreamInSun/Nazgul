@@ -50,7 +50,7 @@ public class BaseResource<TConfig extends Configuration> implements IResource<TC
 
     @Override
     public int initialize(TConfig config, Environment env) {
-        this.getLogger().info("Initializing " + this.getClass().getName());
+        this.getLogger().debug("Initializing " + this.getClass().getName());
         return 0;
     }
 

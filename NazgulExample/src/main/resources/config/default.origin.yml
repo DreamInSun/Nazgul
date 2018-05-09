@@ -6,7 +6,32 @@ project:
   rootPackage: ${root_package}
   fileStorage: /data
 
-#========== Configuration ==========#
+#========== Component Configuration ==========#
+nazComponents:
+  # API
+  SwaggerComponent: true
+  # Web
+  WebComponent: true
+  FreemarkerComponent: true
+  MultipartyComponent: true
+  ErrorPageComponent: true
+  WebSocketComponent: false
+  # DB
+  MyBatisComponent: true
+  MultipleDataSourceComponent: true
+  DbHealthComponent: true
+  EntityManagerComponent: true
+  RestEntityComponent: true
+  FlywayComponent: true
+  SpringContextComponent: false
+  # Manager
+  MngrComponent: false
+  # Schedule
+  JobComponent: true
+  # Auth
+  JwtComponent: true
+  SuperAdminComponent: true
+  ShiroComponent: false
 
 #========== Super Admin ==========#
 superadmin:
@@ -33,6 +58,7 @@ authenticationCachePolicy: maximumSize=10000,expireAfterAccess=10m
 server:
   type: default
   maxThreads: 1024
+  registerDefaultExceptionMappers: false
   applicationConnectors:
     - type: http
       port: 8080
@@ -49,9 +75,12 @@ swagger:
       type: "apiKey"
       name: "Authorization"
       in: "header"
+
 #========== Auth JWT ==========#
 auth:
   jwtTokenSecret: "e72a9e79b45927f9de9b7b4e819f787bcf46f197342b48564ebdc3e7046d9c94"
+  jwtRealm: "JWT"
+  jwtPreFix: "Bearer"
 
 #========== Shiro ==========#
 #See https://github.com/silb/shiro-jersey#configure-shiro
@@ -158,6 +187,8 @@ logging:
     io.netty: INFO
     #Logger Filter
     cyan.nazgul.dropwizard: INFO
+    # Utils
+    cyan.util.clazz.ClassUtil: INFO
     #==== Application =====
     ${root_package}: INFO
     ${root_package}.mappers: DEBUG

@@ -13,6 +13,12 @@ public class AuthConfig {
     @JsonProperty
     private String jwtTokenSecret;
 
+    @JsonProperty
+    private String jwtRealm;
+
+    @JsonProperty
+    private String jwtPreFix = "Bearer";
+
     /*========== Getter & Setter ===========*/
     public String getJwtTokenSecret() {
         return jwtTokenSecret;
@@ -20,6 +26,22 @@ public class AuthConfig {
 
     public void setJwtTokenSecret(String jwtTokenSecret) {
         this.jwtTokenSecret = jwtTokenSecret;
+    }
+
+    public String getJwtRealm() {
+        return jwtRealm;
+    }
+
+    public void setJwtRealm(String jwtRealm) {
+        this.jwtRealm = jwtRealm;
+    }
+
+    public String getJwtPreFix() {
+        return jwtPreFix;
+    }
+
+    public void setJwtPreFix(String jwtPreFix) {
+        this.jwtPreFix = jwtPreFix;
     }
 
     /*========== Assistant Function ===========*/

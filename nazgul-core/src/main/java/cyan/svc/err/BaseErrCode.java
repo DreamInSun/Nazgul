@@ -14,6 +14,9 @@ public class BaseErrCode {
     /*========== Default ===========*/
     public static final int SUCCESS = 0;
 
+    /*========== Framework Internal ===========*/
+    public static final int NAZ_INTERNAL_UNHANDLERED_ERR = 100;
+
     /*========== Entity ===========*/
     public static final int ENTITY_BASE = 10000;
     public static final int ENTITY_CLASS_NOT_FOUND = ENTITY_BASE + 1;
@@ -29,14 +32,26 @@ public class BaseErrCode {
     public static final int INPUT_BASE = 20000;
     public static final int INPUT_ERQUIRED_PARAM_IS_NULL = INPUT_BASE + 1;
     public static final int INPUT_PARAM_FORMAT_IS_ILLEGAL = INPUT_BASE + 2;
-    public static final int INPUT_PARAM_IS_NOT_VALID = INPUT_BASE + 31;
 
     public static final int INPUT_DATABASE_QUERY_ERROR = INPUT_BASE + 21;
 
-    /*========== File ===========*/
+    public static final int INPUT_PARAM_IS_NOT_VALID = INPUT_BASE + 31;
+    public static final int INPUT_PARAM_INSUFFICENT = INPUT_BASE + 32;
+
+    /*========== Config ===========*/
+    public static final int CONFIG_BASE = 30000;
+    public static final int CONFIG_REQUIRED_CONFIG_IS_NULL = CONFIG_BASE + 1;
+    public static final int CONFIG_VALUE_NOT_VALID = CONFIG_BASE + 11;
+
+    /*========== SYSTEM_IO ===========*/
+    public static final int SYSTEM_IO_BASE = 40000;
+
+    /*========== SVC ===========*/
+    public static final int SVC_BASE = 50000;
+
 
     /*===== Superadmin =====*/
-    public static final int SUPERADMIN_BASE = 30000;
+    public static final int SUPERADMIN_BASE = 60000;
     public static final int SUPERADMIN_APIKEY_NOT_VALID = SUPERADMIN_BASE + 11;
 
 
@@ -54,7 +69,7 @@ public class BaseErrCode {
                 if (f.getType().equals(int.class)) {
                     int errCode = (int) f.get(null);
                     String errInfo = f.getName();
-                    g_logger.info("注册错误代码：" + errInfo + ":" + errCode);//打印每个属性的类型名字
+                    g_logger.debug("注册错误代码：" + errInfo + ":" + errCode);//打印每个属性的类型名字
                     String oldErrInfo = errInfoMapper.getInfo(errCode);
                     if (null != oldErrInfo) {
                         g_logger.error("错误代码 “" + errInfo + "”与“" + oldErrInfo + "”重复");

@@ -1,17 +1,13 @@
 package cyan.nazgul.dropwizard.component;
 
-import com.github.toastshaman.dropwizard.auth.jwt.JwtAuthFilter;
+
 import cyan.nazgul.docker.svc.EnvConfig;
 import cyan.nazgul.dropwizard.BaseConfiguration;
-import cyan.nazgul.dropwizard.auth.JwtUser;
-import cyan.nazgul.dropwizard.auth.JwtUserAuthenticator;
-import cyan.nazgul.dropwizard.auth.JwtUserAuthorizer;
-import io.dropwizard.auth.AuthDynamicFeature;
-import io.dropwizard.auth.AuthValueFactoryProvider;
+import cyan.nazgul.dropwizard.auth.jwt.*;
+import cyan.nazgul.dropwizard.config.AuthConfig;
+import cyan.nazgul.dropwizard.container.GlobalInstance;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-
-import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.keys.HmacKey;
@@ -26,10 +22,11 @@ public class JwtComponent<TConfig extends BaseConfiguration> implements ICompone
 
     /*========== Properties ==========*/
     private byte[] m_jwtKey;
+    private AuthConfig m_authConfig;
 
 
     /*========== Constructor ==========*/
-    public JwtComponent() {
+    public JwtComponent(String rootPackage) {
 
     }
 
@@ -45,9 +42,11 @@ public class JwtComponent<TConfig extends BaseConfiguration> implements ICompone
     }
 
     @Override
-    public void run(TConfig tConfig, Environment environment) {
+    public void run(TConfig config, Environment environment) {
+
         /*======  =====*/
-        m_jwtKey = tConfig.getAuthConfig().convertJwtTokenSecret();
+        m_authConfig = config.getAuthConfig();
+        m_jwtKey = config.getAuthConfig().convertJwtTokenSecret();
         /*======  =====*/
         final JwtConsumer consumer = new JwtConsumerBuilder()
                 .setAllowedClockSkewInSeconds(30) // allow some leeway in validating time based claims to account for clock skew
@@ -56,18 +55,20 @@ public class JwtComponent<TConfig extends BaseConfiguration> implements ICompone
                 .setVerificationKey(new HmacKey(m_jwtKey)) // verify the signature with the public key
                 .setRelaxVerificationKeyValidation() // relaxes key length requirement
                 .build(); // create the JwtConsumer instance
-
-        environment.jersey().register(new AuthDynamicFeature(
-                new JwtAuthFilter.Builder<JwtUser>()
-                        .setJwtConsumer(consumer)
-                        .setRealm("realm")
-                        .setPrefix("Bearer")
-                        .setAuthenticator(new JwtUserAuthenticator())
-                        .setAuthorizer(new JwtUserAuthorizer(tConfig))
-                        .buildAuthFilter()));
         /*=====  =====*/
-        environment.jersey().register(new AuthValueFactoryProvider.Binder<>(JwtUser.class));
-        environment.jersey().register(RolesAllowedDynamicFeature.class);
+        JwtAuthFilter<JwtUser> jwtAuthFilter = new JwtAuthFilter.Builder<JwtUser>()
+                .setJwtConsumer(consumer)
+                .setRealm(m_authConfig.getJwtRealm())
+                .setPrefix(m_authConfig.getJwtPreFix())
+                .setAuthenticator(new JwtUserAuthenticator())
+                .setAuthorizer(new JwtUserAuthorizer(config))
+                .setPrincipal(JwtUser.class)
+                .buildAuthFilter();
+         /* 添加全局授权验证链，在BaseApplication中注册所有授权链 */
+        GlobalInstance.getAuthFilterList().add(jwtAuthFilter);
+        /* 注入@Auth注解支持 */
+        GlobalInstance.getAuthBinderList().add(JwtAuthBinder.class);
+
     }
 
 

@@ -1,6 +1,6 @@
 package cyan.svc.nazgulexample;
 
-import cyan.nazgul.dropwizard.auth.SuperAdmin;
+import cyan.nazgul.dropwizard.auth.superadmin.SuperAdmin;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.setup.Environment;
 import org.junit.Before;

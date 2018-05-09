@@ -1,8 +1,10 @@
 package cyan.svc;
 
 /**
+ * use cyan.svc.exception.NazException Instead.
  * Created by DreamInSun on 2017/11/24.
  */
+@Deprecated
 public class NazException extends Exception {
 
     /*========== Properties ==========*/

@@ -1,21 +1,15 @@
 package cyan.nazgul.dropwizard.component;
 
-import com.google.common.collect.Lists;
 import cyan.nazgul.docker.svc.EnvConfig;
 import cyan.nazgul.dropwizard.BaseConfiguration;
-import cyan.nazgul.dropwizard.auth.SuperAdmin;
-import cyan.nazgul.dropwizard.auth.SuperAdminAuthenticator;
-import cyan.nazgul.dropwizard.auth.SuperAdminAuthorizer;
-import io.dropwizard.auth.AuthDynamicFeature;
-import io.dropwizard.auth.AuthFilter;
-import io.dropwizard.auth.AuthValueFactoryProvider;
-import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
-import io.dropwizard.auth.chained.ChainedAuthFilter;
+import cyan.nazgul.dropwizard.auth.superadmin.SuperAdmin;
+import cyan.nazgul.dropwizard.auth.superadmin.SuperAdminAuthBinder;
+import cyan.nazgul.dropwizard.auth.superadmin.SuperAdminAuthenticator;
+import cyan.nazgul.dropwizard.auth.superadmin.SuperAdminAuthorizer;
+import cyan.nazgul.dropwizard.auth.multiauth.MultiCredentialAuthFilter;
+import cyan.nazgul.dropwizard.container.GlobalInstance;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
-
-import java.util.List;
 
 /**
  * 应用超管访问管理组件
@@ -25,7 +19,7 @@ import java.util.List;
 public class SuperAdminComponent<TConfig extends BaseConfiguration> implements IComponent<TConfig> {
 
     /*========== Constructor ==========*/
-    public SuperAdminComponent() {
+    public SuperAdminComponent(String rootPackage) {
 
     }
 
@@ -53,19 +47,17 @@ public class SuperAdminComponent<TConfig extends BaseConfiguration> implements I
 //                new BasicAuthFactory<>(cachingAuthenticator,
 //                        "Example Realm", AuthUser.class)));
         /* Chained Auth Strategy */
-        AuthFilter basicCredentialAuthFilter = new BasicCredentialAuthFilter.Builder<SuperAdmin>()
+        MultiCredentialAuthFilter<SuperAdmin> basicCredentialAuthFilter = new MultiCredentialAuthFilter.Builder<SuperAdmin>()
                 .setAuthenticator(superAdminAuthenticator)
+                .setPrincipal(SuperAdmin.class)
                 .setAuthorizer(superAdminAuthorizer)
-                .setRealm("需要超级管理员权限")
+                .setRealm("超级管理员")
                 .setPrefix("basic")
                 .buildAuthFilter();
-
-        List<AuthFilter> filters = Lists.newArrayList(basicCredentialAuthFilter);
-        /* Register Auth Strategy */
-        environment.jersey().register(new AuthDynamicFeature(new ChainedAuthFilter(filters)));
-        environment.jersey().register(RolesAllowedDynamicFeature.class);
-        //If you want to use @Auth to inject a custom Principal type into your resource
-        environment.jersey().register(new AuthValueFactoryProvider.Binder<>(SuperAdmin.class));
+        /* 添加全局授权验证链，在BaseApplication中注册所有授权链 */
+        GlobalInstance.getAuthFilterList().add(basicCredentialAuthFilter);
+        /* 注入@Auth注解支持 */
+        GlobalInstance.getAuthBinderList().add(SuperAdminAuthBinder.class);
     }
 
 

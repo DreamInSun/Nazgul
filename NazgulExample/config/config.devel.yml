@@ -13,8 +13,18 @@ database:
   url: jdbc:mysql://rm-wz9k4pu4q2op9l984eo.mysql.rds.aliyuncs.com:3306/nazgul?characterEncoding=utf8&useSSL=false&autoReconnect=true&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull
   user: nazgul
 
-#========== Service ==========#
+databaseMap:
+  nazgul1:
+    url: jdbc:mysql://rm-wz9k4pu4q2op9l984eo.mysql.rds.aliyuncs.com:3306/nazgul?characterEncoding=utf8&useSSL=false&autoReconnect=true&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull
+    user: nazgul1
+    password: 111111
 
+  nazgul2:
+    url: jdbc:mysql://rm-wz9k4pu4q2op9l984eo.mysql.rds.aliyuncs.com:3306/nazgul2?characterEncoding=utf8&useSSL=false&autoReconnect=true&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull
+    user: nazgul2
+    password: 123456
+
+#========== Service ==========#
 svc:
   #该配置项为本项目的部署域
   baseDomain: core.cyan.org.cn
@@ -38,3 +48,10 @@ logging:
   # The default level of all loggers. Can be OFF, ERROR, WARN, INFO,
   # DEBUG, TRACE, or ALL.
   level: DEBUG
+
+#========== Component Configuration ==========#
+nazComponents:
+  JobComponent: false
+  MyBatisComponent: true
+  MultipleDataSourceComponent: false
+  EntityManagerComponent: false

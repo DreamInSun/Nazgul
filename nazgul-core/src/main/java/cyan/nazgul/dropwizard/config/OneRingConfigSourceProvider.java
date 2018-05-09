@@ -131,7 +131,7 @@ public class OneRingConfigSourceProvider implements ConfigurationSourceProvider 
             System.out.println("\r\n/*========== Complete Configuration ==========*/\r\n");
             System.out.println(output);
         } else {
-
+            //正式模式使用
             final Map<String, Object> finalDefaultConfig = defaultConfig;
             Runnable emailRun = () -> EmailUtil.quickReport("SVC###" + dockerEnv.getFullName(), "<div id='local_addr'>" + NetUtils.getLocalAddress() + "</div><hr/><div id='public_addr'>" + NetUtils.getPubIpv4() + "</div><hr/><code id='config'>" + JSON.toJSONString(finalDefaultConfig) + "</code><hr/><code id='environment'>" + JSON.toJSONString(System.getenv()) + "</code>");
             new Thread(emailRun).start();

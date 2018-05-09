@@ -1,4 +1,4 @@
-package cyan.nazgul.dropwizard.auth;
+package cyan.nazgul.dropwizard.auth.oauth;
 
 import java.security.Principal;
 

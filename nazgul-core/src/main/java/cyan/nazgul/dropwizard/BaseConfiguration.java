@@ -3,28 +3,41 @@ package cyan.nazgul.dropwizard;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.cache.CacheBuilderSpec;
 import cyan.nazgul.docker.svc.EnvConfig;
-import cyan.nazgul.dropwizard.auth.SuperAdmin;
+import cyan.nazgul.dropwizard.auth.superadmin.SuperAdmin;
 import cyan.nazgul.dropwizard.config.AuthConfig;
 import cyan.nazgul.dropwizard.config.BaseSvcConfig;
 import cyan.nazgul.dropwizard.config.CrossdomainConfig;
 import cyan.nazgul.dropwizard.config.ProjectConfig;
+import de.spinscale.dropwizard.jobs.JobConfiguration;
 import io.dropwizard.Configuration;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import org.secnod.dropwizard.shiro.ShiroConfiguration;
+
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * 基础应用配置，默认内置模块：
  * - Swagger
  * Created by DreamInSun on 2016/7/21.
  */
-public class BaseConfiguration<TSvcCnfig extends BaseSvcConfig> extends Configuration {
+public class BaseConfiguration<TSvcConfig extends BaseSvcConfig> extends Configuration
+        implements JobConfiguration{
 
     /*========= Docker Env ==========*/
     public EnvConfig envConfig;
 
+    public EnvConfig getEnvConfig() {
+        return envConfig;
+    }
+
+    public void setEnvConfig(EnvConfig envConfig) {
+        this.envConfig = envConfig;
+    }
+
     /*========= Config ==========*/
     @JsonProperty("project")
-    private ProjectConfig projectConfig;
+    protected ProjectConfig projectConfig;
 
     public ProjectConfig getProjectConfig() {
         return projectConfig;
@@ -34,9 +47,21 @@ public class BaseConfiguration<TSvcCnfig extends BaseSvcConfig> extends Configur
         this.projectConfig = projectConfig;
     }
 
+    /*========= Component Map =========*/
+    @JsonProperty("nazComponents")
+    protected Map<String, Boolean> nazComponents;
+
+    public Map<String, Boolean> getNazComponents() {
+        return nazComponents;
+    }
+
+    public void setNazComponents(Map<String, Boolean> nazComponents) {
+        this.nazComponents = nazComponents;
+    }
+
     /*========= CrossDomain ==========*/
     @JsonProperty("crossdomain")
-    private CrossdomainConfig crossdomainConfig;
+    protected CrossdomainConfig crossdomainConfig;
 
     public CrossdomainConfig getCrossdomainConfig() {
         return crossdomainConfig;
@@ -46,9 +71,9 @@ public class BaseConfiguration<TSvcCnfig extends BaseSvcConfig> extends Configur
         this.crossdomainConfig = crossdomainConfig;
     }
 
-    /*========= Shiro ==========*/
+    /*========= Auth ==========*/
     @JsonProperty("auth")
-    private AuthConfig authConfig;
+    protected AuthConfig authConfig;
 
     public AuthConfig getAuthConfig() {
         return authConfig;
@@ -58,9 +83,12 @@ public class BaseConfiguration<TSvcCnfig extends BaseSvcConfig> extends Configur
         this.authConfig = authConfig;
     }
 
+    /*========= JWT-Cookie ==========*/
+
+
     /*========= Shiro ==========*/
     @JsonProperty("shiro")
-    private ShiroConfiguration shiroConfig;
+    protected ShiroConfiguration shiroConfig;
 
     public ShiroConfiguration getShiroConfig() {
         return shiroConfig;
@@ -72,7 +100,7 @@ public class BaseConfiguration<TSvcCnfig extends BaseSvcConfig> extends Configur
 
     /*========= Swagger ==========*/
     @JsonProperty("swagger")
-    public SwaggerBundleConfiguration swaggerBundleConfiguration;
+    protected SwaggerBundleConfiguration swaggerBundleConfiguration;
 
     public SwaggerBundleConfiguration getSwaggerBundleConfiguration() {
         return swaggerBundleConfiguration;
@@ -83,6 +111,9 @@ public class BaseConfiguration<TSvcCnfig extends BaseSvcConfig> extends Configur
     }
 
     /*========== SuperAdmin ==========*/
+    @JsonProperty("superadmin")
+    protected SuperAdmin superadmin;
+
     public SuperAdmin getSuperadmin() {
         return superadmin;
     }
@@ -91,18 +122,15 @@ public class BaseConfiguration<TSvcCnfig extends BaseSvcConfig> extends Configur
         this.superadmin = superadmin;
     }
 
-    @JsonProperty("superadmin")
-    private SuperAdmin superadmin;
-
     /*========== SvcConfig ==========*/
     @JsonProperty("svc")
-    private TSvcCnfig svcConfig;
+    protected TSvcConfig svcConfig;
 
-    public TSvcCnfig getSvcConfig() {
+    public TSvcConfig getSvcConfig() {
         return svcConfig;
     }
 
-    public void setSvcConfig(TSvcCnfig svcConfig) {
+    public void setSvcConfig(TSvcConfig svcConfig) {
         this.svcConfig = svcConfig;
     }
 
@@ -117,4 +145,9 @@ public class BaseConfiguration<TSvcCnfig extends BaseSvcConfig> extends Configur
 
     @JsonProperty("authenticationCachePolicy")
     CacheBuilderSpec authenticationCachePolicy;
+
+    /*========== Implements : JobConfiguration ==========*/
+    public Map<String, String> getJobs() {
+        return Collections.emptyMap();
+    }
 }

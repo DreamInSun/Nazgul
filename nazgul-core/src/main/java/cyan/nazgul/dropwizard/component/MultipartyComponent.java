@@ -5,6 +5,7 @@ import cyan.nazgul.dropwizard.BaseConfiguration;
 import io.dropwizard.forms.MultiPartBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 /**
  * JAX-RS支持 Multipart的启动组件
@@ -24,7 +25,7 @@ public class MultipartyComponent<TConfig extends BaseConfiguration> implements I
 
     @Override
     public void run(TConfig config, Environment environment) {
-//        environment.jersey().register(MultiPartFeature.class);
+        environment.jersey().register(MultiPartFeature.class);
 //        environment.jersey().register(MultiPartConfigProvider.class);
     }
 }

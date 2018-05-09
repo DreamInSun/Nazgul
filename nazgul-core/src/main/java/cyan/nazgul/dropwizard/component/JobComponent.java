@@ -15,6 +15,7 @@ import java.util.List;
 
 /**
  * 定时任务组件
+ *
  * @see <a>https://github.com/spinscale/dropwizard-jobs</a>
  * Created by DreamInSun on 2017/9/15.
  */
@@ -24,9 +25,9 @@ public class JobComponent<TConfig extends BaseConfiguration> implements ICompone
     /*========== Logger ==========*/
     private static final Logger g_Logger = LoggerFactory.getLogger(JobComponent.class);
 
-    /*========== Constructor ==========*/
+    /*========== Properties ==========*/
     private String m_classRoot;
-    private JobsBundle jobsBunlde;
+    private JobsBundle m_jobsBunlde;
 
     /*========== Constructor ==========*/
     public JobComponent(String classRoot) {
@@ -38,13 +39,13 @@ public class JobComponent<TConfig extends BaseConfiguration> implements ICompone
     public void init(Bootstrap bootstrap) {
         /*===== Scan Jobs =====*/
 
-        /*===== Create Jobgs ====*/
+        /*===== Create Jobs ====*/
         List<Job> jobList = scanJobs(m_classRoot + ".jobs");
         if (jobList != null && jobList.size() > 0) {
             Job[] jobs = new Job[jobList.size()];
             jobList.toArray(jobs);
-            jobsBunlde = new JobsBundle(jobs);
-            bootstrap.addBundle(jobsBunlde);
+            m_jobsBunlde = new JobsBundle(jobs);
+            bootstrap.addBundle(m_jobsBunlde);
         }
     }
 
@@ -61,8 +62,7 @@ public class JobComponent<TConfig extends BaseConfiguration> implements ICompone
     /*==========  ==========*/
 
     protected List<Job> scanJobs(String resPath) {
-        g_Logger.info("\r\n\r\n/*========== Register Resources ===========*/\r\n");
-        System.out.println("## Scan Jobs");
+        g_Logger.info("## Scan Jobs");
         List<Class<?>> clzList = ClassUtil.getClassList(resPath, false, null);
         List<Job> jobList = new LinkedList<>();
 

@@ -3,39 +3,18 @@ package cyan.svc.nazgulexample.resources;
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import com.github.tennaito.rsql.jpa.JpaCriteriaQueryVisitor;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import cyan.nazgul.dropwizard.config.ProjectConfig;
-import cyan.nazgul.dropwizard.resources.DbResource;
-import cyan.svc.EntityOutput;
-import cyan.svc.entity.BaseEntity;
-import cyan.svc.err.BaseErrCode;
+import cyan.nazgul.dropwizard.resources.GenericEntityResource;
 import cyan.svc.nazgulexample.Configuration;
-import cyan.util.JsonUtil;
-import cyan.util.clazz.ClassUtil;
-import cz.jirutka.rsql.parser.RSQLParser;
-import cz.jirutka.rsql.parser.ast.RSQLVisitor;
+import cyan.svc.output.EntityOutput;
 import io.dropwizard.setup.Environment;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.commons.beanutils.BeanUtils;
 
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceException;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -49,43 +28,17 @@ import java.util.Optional;
 @Counted
 @Timed
 @Metered(name = "EntityResource")
-public class EntityResource extends DbResource<Configuration> {
+public class EntityResource extends GenericEntityResource {
 
     /*========== Static Properties =========*/
-    public static final int DFLT_PAGE_IDX = 1;
-    public static final int DFLT_PAGE_SIZE = 50;
 
     /*========== Properties =========*/
-    private ProjectConfig m_projectConfig;
-    private String m_entityPackage;
-    private final Map<String, Class<?>> m_entityClzMap = Maps.newHashMap();
 
     /*========== Constructor =========*/
     public EntityResource(Configuration config, Environment env) {
-        super(config, env);
-        m_projectConfig = config.getProjectConfig();
-        m_entityPackage = m_projectConfig.getRootPackage() + ".entities";
-        /*===== Scan Entities =====*/
-        List<Class<?>> clzList = ClassUtil.getClassList(m_entityPackage, true, Entity.class);
-        for (Class<?> entityClazz : clzList) {
-            /*========== Create Resource Instance ==========*/
-            try {
-                /* Patch for debug file */
-                if (entityClazz.getName().endsWith("$1")) continue;
-                /* */
-                String clzName = entityClazz.getName().substring(m_entityPackage.length() + 1);
-                m_entityClzMap.put(clzName, entityClazz);
-            } catch (Exception e) {
-                this.getLogger().error(e.getMessage());
-            }
-        }
+        super( config, env);
     }
 
-    @Override
-    public int initialize(Configuration config, Environment env) {
-        super.initialize(config, env);
-        return 0;
-    }
 
     /*========= Class Definition API ==========*/
     @ApiOperation(value = "获取支持的实体列表",
@@ -94,9 +47,7 @@ public class EntityResource extends DbResource<Configuration> {
     @GET
     @Path("/clz")
     public EntityOutput getClzList() {
-        List<String> retList = Lists.newArrayList(m_entityClzMap.keySet());
-        Collections.sort(retList);
-        return EntityOutput.getInstance(BaseErrCode.SUCCESS, retList);
+        return super.getClzList();
     }
 
     @ApiOperation(value = "获取指定实体的字段定义",
@@ -107,15 +58,7 @@ public class EntityResource extends DbResource<Configuration> {
     public Response getClzJsonSchema(
             @ApiParam(value = "JPA类的名称，entities文件夹以下相对路径,子路径用'.'分隔,例如admin.SuperAdmin", required = true, example = "Person") @PathParam("clz") String clz
     ) throws IllegalAccessException, InstantiationException, IOException {
-        /*===== Class =====*/
-        Class<?> entityClz = m_entityClzMap.get(clz);
-        if (null == entityClz) {
-            return Response.noContent().build();
-        }
-
-        /*===== Format Entity Definition =====*/
-        String schemaStr = JsonUtil.getJsonSchema(entityClz);
-        return Response.ok(schemaStr).build();
+        return super.getClzJsonSchema(clz);
     }
 
 
@@ -139,43 +82,7 @@ public class EntityResource extends DbResource<Configuration> {
             @ApiParam(value = "分页", required = false, example = "1") @QueryParam("page") @DefaultValue("1") Optional<Integer> pageStart,
             @ApiParam(value = "页面大小", required = false, example = "10") @QueryParam("size") @DefaultValue("10") Optional<Integer> pageSize
     ) {
-        /*===== Class =====*/
-        Class<?> entityClz = m_entityClzMap.get(clz);
-        if (null == entityClz) {
-            return EntityOutput.getInstance(BaseErrCode.ENTITY_CLASS_NOT_FOUND);
-        }
-        /*===== Create Generic JpaCriteriaQueryVisitor =====*/
-        RSQLVisitor<CriteriaQuery, EntityManager> visitor = null;
-        try {
-            visitor = getEntityVisitor(entityClz);
-        } catch (Exception e) {
-            this.getLogger().error(e.getMessage());
-            return EntityOutput.getInstance(BaseErrCode.ENTITY_CLASS_JPA_ERROR);
-        }
-        /*===== Build Dynamic SQL =====*/
-        RSQLParser rsqlParser = new RSQLParser();
-        /* 伪删除筛选 */
-        search += " and itemStat == 1";
-        this.getLogger().info("查询语句：" + search);
-        CriteriaQuery query;
-        try {
-            query = rsqlParser.parse(search).accept(visitor, this.getEntityManager());
-        } catch (Exception e) {
-            this.getLogger().error(e.getMessage());
-            return EntityOutput.getInstance(BaseErrCode.ENTITY_QUERY_STRING_ERROR, e.getMessage());
-        }
-        if (query == null) {
-            return EntityOutput.getInstance(BaseErrCode.ENTITY_QUERY_STRING_ERROR);
-        }
-        /*===== Order =====*/
-        //query.orderBy(orders);
-        /*===== Page =====*/
-        Integer iPageStart = pageStart.orElse(DFLT_PAGE_IDX);
-        Integer iPageSize = pageSize.orElse(DFLT_PAGE_SIZE);
-        Integer pageIdx = (iPageStart - 1) * iPageSize;
-        /*===== Execute Query =====*/
-        List<Object> resultList = this.getEntityManager().createQuery(query).setFirstResult(pageIdx).setMaxResults(iPageSize).getResultList();
-        return EntityOutput.getInstance(BaseErrCode.SUCCESS, resultList);
+       return super.getList(clz, search, pageStart, pageSize);
     }
 
     @ApiOperation(value = "根据ID获取实体",
@@ -188,17 +95,7 @@ public class EntityResource extends DbResource<Configuration> {
             @ApiParam(value = "JPA类的名称，entities文件夹以下相对路径,子路径用'.'分隔,例如admin.SuperAdmin", required = true, example = "Person") @PathParam("clz") String clz,
             @ApiParam(value = "实体逻辑主键ID，继承自BaseEntity, 注意数据类型为Long，持久化类型为BIGINT", required = true, example = "1") @PathParam("id") Long id
     ) {
-        Object retObj = null;
-        /*===== Class =====*/
-        Class<?> entityClz = m_entityClzMap.get(clz);
-        if (null == entityClz) {
-            return EntityOutput.getInstance(BaseErrCode.ENTITY_CLASS_NOT_FOUND);
-        }
-        /*===== Query =====*/
-        EntityManager entityMngr = this.getEntityManager();
-        retObj = entityMngr.find(entityClz, id);
-        /*===== Return =====*/
-        return EntityOutput.getInstance(BaseErrCode.SUCCESS, retObj);
+        return super.get(clz, id);
     }
 
     @ApiOperation(value = "创建实体并返回",
@@ -211,41 +108,7 @@ public class EntityResource extends DbResource<Configuration> {
             @ApiParam(value = "JPA类的名称，entities文件夹以下相对路径", required = true, example = "Person") @PathParam("clz") String clz,
             @ApiParam(value = "实体对象", required = true, example = "{\"pid\": 2,\"name\": \"Tester\",\"firstName\": \"Robert\",\"lastName\": \"Willson\"}") Object obj
     ) {
-        /*===== Class =====*/
-        Class<?> entityClz = m_entityClzMap.get(clz);
-        if (null == entityClz) {
-            return EntityOutput.getInstance(BaseErrCode.ENTITY_CLASS_NOT_FOUND);
-        }
-        /*===== Reflection Object =====*/
-        Object entity = null;
-        try {
-            entity = entityClz.newInstance();
-            BeanUtils.copyProperties(entity, obj);
-        } catch (Exception e) {
-            this.getLogger().error(e.getMessage());
-        }
-
-        if (entity == null) {
-            return EntityOutput.getInstance(BaseErrCode.ENTITY_CLASS_REFLECTION_ERROR);
-        }
-        /*===== Persistence =====*/
-        EntityManager entityMngr = this.getEntityManager();
-        EntityTransaction entityTransaction = entityMngr.getTransaction();
-        entityTransaction.begin();
-        try {
-            entityMngr.persist(entity);
-        } catch (IllegalArgumentException e) {
-            return EntityOutput.getInstance(BaseErrCode.ENTITY_DIFINITION_ERROR, e.getMessage().toString(), null);
-        } catch (PersistenceException e) {
-            return EntityOutput.getInstance(BaseErrCode.ENTITY_QUERY_PERSISTENCE_ERROR, e.getMessage().toString(), null);
-        } catch (Exception e) {
-            e.printStackTrace();
-            //return EntityOutput.getInstance(BaseErrCode.ENTITY_QUERY_PERSISTENCE_ERROR, e.getMessage().toString(), null);
-        }
-        entityTransaction.commit();
-        entityMngr.close();
-        /*===== Return =====*/
-        return EntityOutput.getInstance(BaseErrCode.SUCCESS, entity);
+        return super.create(clz, obj);
     }
 
     @ApiOperation(value = "更新实体可更新的属性",
@@ -258,42 +121,7 @@ public class EntityResource extends DbResource<Configuration> {
             @ApiParam(value = "JPA类的名称，entities文件夹以下相对路径", required = true, example = "Person") @PathParam("clz") String clz,
             @ApiParam(value = "实体逻辑主键ID，继承自BaseEntity, 注意数据类型为Long，持久化类型为BIGINT", required = true, example = "1") @PathParam("id") Long id,
             @ApiParam(value = "实体对象", required = true, example = "{'id'}") Object obj) {
-        /*===== Class =====*/
-        Class<?> entityClz = m_entityClzMap.get(clz);
-        if (null == entityClz) {
-            return EntityOutput.getInstance(BaseErrCode.ENTITY_CLASS_NOT_FOUND);
-        }
-        /*===== Reflection Object =====*/
-        EntityManager entityMngr = this.getEntityManager();
-        Object entity = null;
-        try {
-            entity = entityMngr.find(entityClz, id);
-            BeanUtils.copyProperties(entity, obj);
-            ((BaseEntity) entity).setId(id);
-        } catch (Exception e) {
-            this.getLogger().error(e.getMessage());
-        }
-        if (entity == null) {
-            return EntityOutput.getInstance(BaseErrCode.ENTITY_CLASS_REFLECTION_ERROR);
-        }
-        /*===== Persistence =====*/
-        EntityTransaction entityTransaction = entityMngr.getTransaction();
-        entityTransaction.begin();
-        try {
-            entityMngr.merge(entity);
-            entityMngr.flush();
-        } catch (IllegalArgumentException e) {
-            return EntityOutput.getInstance(BaseErrCode.ENTITY_DIFINITION_ERROR, e.getMessage().toString(), null);
-        } catch (PersistenceException e) {
-            return EntityOutput.getInstance(BaseErrCode.ENTITY_QUERY_PERSISTENCE_ERROR, e.getMessage().toString(), null);
-        } catch (Exception e) {
-            e.printStackTrace();
-            //return EntityOutput.getInstance(BaseErrCode.ENTITY_QUERY_PERSISTENCE_ERROR, e.getMessage().toString(), null);
-        }
-        entityTransaction.commit();
-        entityMngr.close();
-        /*===== Class =====*/
-        return EntityOutput.getInstance(BaseErrCode.SUCCESS, entity);
+        return super.update(clz, id, obj);
     }
 
     @ApiOperation(value = "删除实体记录",
@@ -305,51 +133,6 @@ public class EntityResource extends DbResource<Configuration> {
             @ApiParam(value = "JPA类的名称，entities文件夹以下相对路径", required = true, example = "Person") @PathParam("clz") String clz,
             @ApiParam(value = "实体逻辑主键ID，继承自BaseEntity, 注意数据类型为Long，持久化类型为BIGINT", required = true, example = "1") @PathParam("id") Long id
     ) {
-  /*===== Class =====*/
-        Class<?> entityClz = m_entityClzMap.get(clz);
-        if (null == entityClz) {
-            return EntityOutput.getInstance(BaseErrCode.ENTITY_CLASS_NOT_FOUND);
-        }
-        /*===== Reflection Object =====*/
-        EntityManager entityMngr = this.getEntityManager();
-        Object entity = null;
-        try {
-            entity = entityMngr.find(entityClz, id);
-        } catch (Exception e) {
-            this.getLogger().error(e.getMessage());
-        }
-        if (entity == null) {
-            return EntityOutput.getInstance(BaseErrCode.ENTITY_CLASS_REFLECTION_ERROR);
-        }
-        /*===== Persistence =====*/
-        EntityTransaction entityTransaction = entityMngr.getTransaction();
-        entityTransaction.begin();
-        try {
-            ((BaseEntity) entity).delete();
-            entityMngr.merge(entity);
-            entityMngr.flush();
-        } catch (IllegalArgumentException e) {
-            return EntityOutput.getInstance(BaseErrCode.ENTITY_DIFINITION_ERROR, e.getMessage().toString(), null);
-        } catch (PersistenceException e) {
-            return EntityOutput.getInstance(BaseErrCode.ENTITY_QUERY_PERSISTENCE_ERROR, e.getMessage().toString(), null);
-        } catch (Exception e) {
-            e.printStackTrace();
-            //return EntityOutput.getInstance(BaseErrCode.ENTITY_QUERY_PERSISTENCE_ERROR, e.getMessage().toString(), null);
-        }
-        entityTransaction.commit();
-        entityMngr.close();
-        return EntityOutput.getInstance(BaseErrCode.SUCCESS);
-    }
-
-    /*========  ===========*/
-    RSQLVisitor<CriteriaQuery, EntityManager> getEntityVisitor(Class<?> entityClz) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        RSQLVisitor<CriteriaQuery, EntityManager> visitor = null;
-        /* Get Constructor */
-        Constructor constructor = (JpaCriteriaQueryVisitor.class.getConstructors())[0];
-        /* Create Instance */
-        Object[] entityClzPara = {entityClz.newInstance()};
-        Object[] parameters = {entityClzPara};
-        visitor = (RSQLVisitor<CriteriaQuery, EntityManager>) constructor.newInstance(parameters);
-        return visitor;
+        return super.delete(clz,id);
     }
 }

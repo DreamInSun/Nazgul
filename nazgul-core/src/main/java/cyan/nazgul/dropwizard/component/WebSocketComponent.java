@@ -34,9 +34,6 @@ public class WebSocketComponent<TConfig extends BaseConfiguration> implements IC
     /*========== Interface : IComponent ==========*/
     @Override
     public void init(Bootstrap bootstrap) {
-        /*===== Scan Jobs =====*/
-
-        /*===== Create Jobgs ====*/
         Class[] wsServerClzArr = {};
         websocketBundle = new WebsocketBundle(wsServerClzArr);
         bootstrap.addBundle(websocketBundle);

@@ -1,6 +1,7 @@
-package cyan.nazgul.dropwizard.auth;
+package cyan.nazgul.dropwizard.auth.oauth;
 
 import cyan.nazgul.dropwizard.BaseConfiguration;
+import cyan.nazgul.dropwizard.auth.superadmin.SuperAdmin;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
 import io.dropwizard.auth.basic.BasicCredentials;

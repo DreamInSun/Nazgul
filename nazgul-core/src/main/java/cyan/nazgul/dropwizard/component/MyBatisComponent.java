@@ -4,8 +4,6 @@ import com.loginbox.dropwizard.mybatis.MybatisBundle;
 import cyan.nazgul.docker.svc.EnvConfig;
 import cyan.nazgul.dropwizard.DbConfiguration;
 import cyan.nazgul.dropwizard.container.GlobalInstance;
-import cyan.nazgul.dropwizard.resources.MybatisResource;
-import cyan.nazgul.mngr.MybatisMngr;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -22,7 +20,7 @@ public class MyBatisComponent<TConfig extends DbConfiguration> implements ICompo
 
     /*========== Constructor ==========*/
     public MyBatisComponent(String packagePath) {
-        mybatisBundle = new MybatisBundle<TConfig>(packagePath) {
+        mybatisBundle = new MybatisBundle<TConfig>(packagePath + ".mappers") {
             @Override
             public DataSourceFactory getDataSourceFactory(TConfig configuration) {
                 return configuration.getDataSourceFactory();
@@ -33,7 +31,6 @@ public class MyBatisComponent<TConfig extends DbConfiguration> implements ICompo
     /*========== Interface : IComponent ==========*/
     public void init(Bootstrap bootstrap) {
         bootstrap.addBundle(mybatisBundle);
-
     }
 
     public void postInit(EnvConfig envConfig, Bootstrap<TConfig> bootstrap) {
