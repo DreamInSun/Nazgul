@@ -53,13 +53,31 @@ CYAN 缴费系统 辅助工具
 ## 历史版本
  
 ###1.3.3
-配合Nazgul-Core 0.3.3 新增功能的演示
+* 配合Nazgul-Core 0.3.3 新增功能的演示
 
 ### 1.3.4
-配合Nazgul-Core 0.3.4 新增功能的演示
+* 配合Nazgul-Core 0.3.4 新增功能的演示
 
 ### 1.3.5
-配合Nazgul-Core 0.3.5 新增功能的演示
+* 配合Nazgul-Core 0.3.5 新增功能的演示
 
 ### 1.3.6
-配合Nazgul-Core 0.3.6 新增功能的演示
+* 配合Nazgul-Core 0.3.6 新增功能的演示
+
+### 1.5.1
+* 配合Nazgul-Core 0.5.1 新增功能的演示
+* 制作了一个基于WebSocketComponent的聊天室Demo：http://localhost:8080/nazgulexample/web/ws/demo/index.html
+
+### 1.5.2
+* 配合Nazgul-Core 0.5.2 新增功能的演示
+
+### 1.5.3
+* 配合Nazgul-Core 0.5.3 新增功能的演示
+* 增加了BeanValidator功能演示
+
+### 1.5.4
+* 配合Nazgul-Core 0.5.4 新增功能的演示
+* 精简了基础文件
+
+### 1.5.5
+* 配合Nazgul-Core 0.5.5 新增功能的演示 
